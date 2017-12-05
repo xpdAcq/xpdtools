@@ -1,0 +1,40 @@
+language: python
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.cache/pip
+    - $HOME/.cache/matplotlib
+
+python:
+  - 3.5
+  - 3.6
+before_install:
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b -p ~/mc
+  - export PATH=~/mc/bin:$PATH
+  - conda update conda --yes
+  - export CONDARC=ci/condarc
+
+
+install:
+  - export GIT_FULL_HASH=`git rev-parse HEAD`
+  - conda create --yes -n testenv numpy scipy flake8 matplotlib python=$TRAVIS_PYTHON_VERSION pytest coverage pip xlrd scikit-beam pyFAI xray-vision -c conda-forge
+  - source activate testenv
+  - pip install .
+  - pip install codecov pytest-env
+
+script:
+  - set -e
+  - coverage run run_tests.py
+  - coverage report -m
+  - codecov
+  - flake8 xpdan
+  - conda install --yes sphinx sphinx_rtd_theme
+  - pip install git+git://github.com/drdoctr/doctr.git
+  - cd docs
+  - make html
+  - cd ..
+  - doctr deploy . --built-docs ./docs/_build/html;
+
