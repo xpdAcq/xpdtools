@@ -341,7 +341,9 @@ def pull_array(img2):
     return img2
 
 
-def generate_binner(geo, img_shape, mask=None):
+def generate_binner(geo, img_shape=None, mask=None):
+    if img_shape is None:
+        img_shape = mask.shape
     r = geo.rArray(img_shape)
     q = geo.qArray(img_shape) / 10  # type: np.ndarray
     q_dq = geo.deltaQ(img_shape) / 10  # type: np.ndarray
@@ -381,8 +383,9 @@ def z_score_image(img, binner):
     return img2.reshape(img.shape)
 
 
-def integrate(img, binner):
-    return binner.bin_centers, np.nan_to_num(binner(img.flatten()))
+def integrate(img, binner, statistic='mean'):
+    return binner.bin_centers, np.nan_to_num(binner(img.flatten(),
+                                                    statistic=statistic))
 
 
 def polarization_correction(img, geo, polarization_factor=.99):
