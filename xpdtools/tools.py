@@ -17,7 +17,7 @@ import numpy as np
 try:
     from diffpy.pdfgetx import PDFGetter
 except ImportError:
-    from xpdan.shim import PDFGetterShim as PDFGetter
+    from xpdtools.shim import PDFGetterShim as PDFGetter
 from matplotlib.path import Path
 from scipy.sparse import csr_matrix
 

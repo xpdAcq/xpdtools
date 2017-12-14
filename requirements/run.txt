@@ -1,0 +1,9 @@
+numpy
+scipy
+scikit-beam
+pyyaml
+pyFAI
+fire
+pims
+fabio
+streamz

@@ -20,7 +20,7 @@ import yaml
 from pyFAI.calibration import Calibration, PeakPicker, Calibrant
 from pyFAI.gui.utils import update_fig
 
-from xpdan.dev_utils import _timestampstr
+from xpdtools.dev_utils import _timestampstr
 from tempfile import TemporaryDirectory
 
 

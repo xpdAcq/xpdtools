@@ -1,19 +1,16 @@
-import operator as op
 import os
 
 import fabio
 import fire
 import pyFAI
-from pims import ImageSequence
 import tifffile
+from pims import ImageSequence
 from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
 from skbeam.io.save_powder_output import save_output
 from streamz import Stream
 
-from xpdtools.tools import *
 from xpdtools.pipelines.iq_pipeline import conf_iq_pipeline
-import matplotlib.pyplot as plt
-from matplotlib.colors import SymLogNorm
+from xpdtools.tools import *
 
 SUPPORTED_FORMATS = ('.tif', '.tiff', '.edf')
 VERSION = '0.0.1-alpha'
@@ -30,7 +27,8 @@ def main(poni_file=None,
          bs_width=None, tri_offset=13, v_asym=0,
          alpha=2.5,
          auto_type='median',
-         bg_scale=1):
+         bg_scale=1,
+         plot=()):
     """Run the data processing protocol taking raw images to background
     subtracted I(Q) files.
 
@@ -119,14 +117,12 @@ def main(poni_file=None,
         zip_latest(z_score_fn)
         .sink(lambda a: tifffile.imsave(a[1], a[0].astype(np.float32)))
         )
-    # z_score.sink(ax.imshow, norm=SymLogNorm(1.))
 
     # emit into pipeline
     background.emit(bg_img)
     geometry.emit(geo)
     for img, f in zip(imgs, img_file):
         start.emit((img, f))
-    plt.show()
 
 
 def main2():
