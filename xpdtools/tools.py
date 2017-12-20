@@ -20,6 +20,7 @@ except ImportError:
     from xpdtools.shim import PDFGetterShim as PDFGetter
 from matplotlib.path import Path
 from scipy.sparse import csr_matrix
+from scipy.integrate import simps
 
 from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
 from skbeam.core.mask import margin, binned_outlier
@@ -408,14 +409,18 @@ def add_img(img1, img2):
     return img1 + img2
 
 
-def pdf_getter(*args, **kwargs):
+def pdf_getter(x, y, composition, **kwargs):
     pg = PDFGetter()
+    kwargs.update({'composition': composition})
+    args = (x, y)
     res = pg(*args, **kwargs)
     return res[0], res[1], pg.config
 
 
-def fq_getter(*args, **kwargs):
+def fq_getter(x, y, composition, **kwargs):
     pg = PDFGetter()
+    kwargs.update({'composition': composition})
+    args = (x, y)
     pg(*args, **kwargs)
     res = pg.fq
     return res[0], res[1], pg.config
@@ -425,3 +430,23 @@ def overlay_mask(img, mask):
     img2 = img.copy()
     img2[~mask] = np.nan
     return img2
+
+
+def nu_fq_getter(q, iq, composition, **kwargs):
+    kwargs.update({'composition': composition})
+    # explicit qmin/qmaxinst cutting
+    truth_values = np.where((kwargs['qmaxinst'] > q) & (q > kwargs['qmin']))
+    pg = PDFGetter()
+    # remove resampling transformations (and bg sub)
+    for t in [7, 6, 1]:
+        pg.transformations.pop(t)
+    pg(q[truth_values], iq[truth_values], **kwargs)
+    res = pg.fq
+    return res[0], res[1], pg.config
+
+
+def nu_pdf_getter(q, fq):
+    rgrid = np.arange(0, 30.01, np.pi / np.max(q))
+    dgr = 2 / np.pi * fq * np.sin(q * rgrid[:, np.newaxis])
+    gr = simps(dgr, q)
+    return rgrid, gr
