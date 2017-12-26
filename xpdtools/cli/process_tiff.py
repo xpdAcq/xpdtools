@@ -1,9 +1,15 @@
-import fabio
-from ..pipelines.raw_pipeline import *
-import pyFAI
 import os
+
+import fabio
+import numpy as np
+import pyFAI
 from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
 from skbeam.io.save_powder_output import save_output
+from streamz import Stream
+
+from ..pipelines.raw_pipeline import (pol_corrected_img, mask, mean, q,
+                                      geometry, dark_corrected_foreground,
+                                      dark_corrected_background)
 
 
 def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
@@ -66,11 +72,14 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
 
     # Modify graph
     # create filename nodes
-    filename_node = Stream(stream_name='filename').map(lambda x: os.path.splitext(x)[0])
+    filename_node = (
+        Stream(stream_name='filename').
+            map(lambda x: os.path.splitext(x)[0]))
     # write out mask
     mask.zip_latest(filename_node).sink(lambda x: fit2d_save(x[0], x[1]))
     # write out chi
-    mean.zip(q).zip_latest(filename_node).sink(lambda x: save_output(x[1], x[0], x[2], 'Q'))
+    (mean.zip(q).zip_latest(filename_node).
+        sink(lambda x: save_output(x[1], x[0], x[2], 'Q')))
 
     pol_corrected_img.args = polarization
     if mask_file:
@@ -102,3 +111,9 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
             bg = np.zeros(img.shape)
             dark_corrected_background.emit(bg)
         dark_corrected_foreground.emit(img)
+
+
+if __name__ == '__main__':
+    import fire
+
+    fire.Fire(main)
