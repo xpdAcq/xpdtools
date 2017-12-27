@@ -15,7 +15,6 @@ before_install:
   - ./miniconda.sh -b -p ~/mc
   - export PATH=~/mc/bin:$PATH
   - conda update conda --yes
-  - export CONDARC=ci/condarc
   - conda config --add channels conda-forge
 
 
