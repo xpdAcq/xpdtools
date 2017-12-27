@@ -20,21 +20,22 @@ before_install:
 
 install:
   - export GIT_FULL_HASH=`git rev-parse HEAD`
-  - conda create --yes -n testenv numpy scipy flake8 matplotlib python=$TRAVIS_PYTHON_VERSION pytest coverage pip xlrd scikit-beam pyFAI xray-vision -c conda-forge
+  - conda create --yes -n testenv python=$TRAVIS_PYTHON_VERSION -c conda-forge
   - source activate testenv
+  - conda install --yes --file requirements/build.txt
   - pip install .
-  - pip install codecov pytest-env
 
 script:
   - set -e
+  - pip install codecov pytest-env
+  - conda install --yes --file requirements/run.txt
   - coverage run run_tests.py
   - coverage report -m
   - codecov
-  - flake8 xpdan
+  - flake8 xpdtools
   - conda install --yes sphinx sphinx_rtd_theme
   - pip install git+git://github.com/drdoctr/doctr.git
   - cd docs
   - make html
   - cd ..
   - doctr deploy . --built-docs ./docs/_build/html;
-
