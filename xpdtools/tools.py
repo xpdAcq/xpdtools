@@ -19,11 +19,10 @@ try:
 except ImportError:
     from xpdtools.shim import PDFGetterShim as PDFGetter
 from matplotlib.path import Path
-from scipy.sparse import csr_matrix
 from scipy.integrate import simps
 
 from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
-from skbeam.core.mask import margin, binned_outlier
+from skbeam.core.mask import margin
 
 
 def mask_ring_median(a):
