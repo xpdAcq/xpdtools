@@ -6,4 +6,3 @@ pyFAI
 fire
 pims
 fabio
-streamz

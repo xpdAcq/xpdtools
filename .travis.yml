@@ -24,6 +24,7 @@ install:
   - source activate testenv
   - conda install --yes --file requirements/build.txt
   - conda install pip
+  - pip install -r requirements/pip.txt
   - pip install .
 
 script:
