@@ -31,14 +31,13 @@ def _save_calib_param(calib_c, timestr, calib_yml_fp):
     ----------
     calib_c : pyFAI.calibration.Calibration instance
         pyFAI Calibration instance with parameters after calibration
-    time_str : str
+    timestr : str
         human readable time string
     calib_yml_fp : str
         filepath to the yml file which stores calibration param
     """
     # save glbl attribute for xpdAcq
     calibrant_name = calib_c.calibrant.__repr__().split(' ')[0]
-    calib_config_dict = {}
     calib_config_dict = calib_c.geoRef.getPyFAI()
     calib_config_dict.update(calib_c.geoRef.getFit2D())
     calib_config_dict.update({'poni_file_name':
@@ -52,19 +51,16 @@ def _save_calib_param(calib_c, timestr, calib_yml_fp):
     # save yaml dict used for xpdAcq
     with open(os.path.expanduser(calib_yml_fp), 'w') as f:
         yaml.dump(calib_config_dict, f)
-    stem, fn = os.path.split(calib_yml_fp)
     print("INFO: End of calibration process. This set of calibration "
           "will be injected as metadata to subsequent scans until you "
           "perform this process again\n")
     print("INFO: you can also use:\n>>> show_calib()\ncommand to check"
           " current calibration parameters")
-    # print("INFO: To save your calibration image as a tiff file run\n"
-    #      "save_last_tiff()\nnow.")
     return calib_config_dict
 
 
 def _calibration(img, calibration, calib_ref_fp=None, **kwargs):
-    """engine for performing calibration on a image with geometry
+    """Engine for performing calibration on a image with geometry
     correction software. current backend is ``pyFAI``.
 
     Parameters
@@ -118,8 +114,8 @@ def _calibration(img, calibration, calib_ref_fp=None, **kwargs):
     return c, timestr
 
 
-def img_calibration(img, wavelength, calibrant=None,
-                    detector=None, calib_ref_fp=None, **kwargs):
+def img_calibration(img, wavelength, calibrant='Ni',
+                    detector='perkin_elmer', calib_ref_fp=None, **kwargs):
     """function to calibrate experimental geometry wrt an image
 
     Parameters
@@ -158,13 +154,13 @@ def img_calibration(img, wavelength, calibrant=None,
     # calib Ni image with pyFAI default ``Ni.D`` d-spacing
     # with wavlength 0.1823 angstrom
     >>> import tifffile as tif
-    >>> ni_img = tif.imread(<path_to_img_file>)
+    >>> ni_img = tif.imread('<path_to_img_file>')
     >>> ai = img_calibration(ni_img, 0.1823)
 
     # calib Ni image with pyFAI customized ``myNi.D`` d-spacing
     # with wavlength 0.1823 angstrom
     >>> import tifffile as tif
-    >>> ni_img = tif.imread(<path_to_img_file>)
+    >>> ni_img = tif.imread('<path_to_img_file>')
     >>> ai = img_calibration(ni_img, 0.1823, 'path/to/myNi.D')
 
     # integrate image right after calibration
@@ -179,19 +175,13 @@ def img_calibration(img, wavelength, calibrant=None,
     http://pyfai.readthedocs.io/en/latest/
     """
     wavelength *= 10**-10
-    if detector is None:
-        detector = 'perkin_elmer'
-    if calibrant is None:
-        calibrant = 'Ni'
-    elif isinstance(calibrant, list):
+    if isinstance(calibrant, list):
         calibrant = Calibrant(dSpacing=calibrant, wavelength=wavelength)
     # configure calibration instance
     c = Calibration(calibrant=calibrant, detector=detector,
                     wavelength=wavelength)
     # pyFAI calibration
     calib_c, timestr = _calibration(img, c, calib_ref_fp, **kwargs)
-    # img2 = img.copy()
-    # img2 /= calib_c.ai.polarization(img2.shape, .99)
-    # calib_c, timestr = _calibration(img2, c, calib_ref_fp, **kwargs)
+    # TODO: apply polarization correction and recalibrate?
 
     return calib_c, calib_c.ai

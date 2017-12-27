@@ -6,10 +6,11 @@ import pyFAI
 from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
 from skbeam.io.save_powder_output import save_output
 from streamz import Stream
+import tifffile
 
 from ..pipelines.raw_pipeline import (pol_corrected_img, mask, mean, q,
                                       geometry, dark_corrected_foreground,
-                                      dark_corrected_background)
+                                      dark_corrected_background, z_score)
 
 
 def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
@@ -67,7 +68,6 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
             poni_file = poni_file[0]
     geo = pyFAI.load(poni_file)
     bg = None
-    imgs = None
     filenames = None
 
     # Modify graph
@@ -76,14 +76,24 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
         Stream(stream_name='filename').
             map(lambda x: os.path.splitext(x)[0]))
     # write out mask
-    mask.zip_latest(filename_node).sink(lambda x: fit2d_save(x[0], x[1]))
+    mask.zip_latest(filename_node).sink(lambda x: fit2d_save(np.flipud(x[0]),
+                                                             x[1]))
+    mask.zip_latest(filename_node).sink(lambda x: np.save(x[0]+'_mask.npy',
+                                                          x[1]))
     # write out chi
     (mean.zip(q).zip_latest(filename_node).
         sink(lambda x: save_output(x[1], x[0], x[2], 'Q')))
+    # write out zscore
+    (z_score.
+        zip_latest(filename_node).
+        sink(lambda x: tifffile.imsave(x[1] + '_zscore.tiff', x[0])))
 
     pol_corrected_img.args = polarization
     if mask_file:
-        tmsk = read_fit2d_msk(mask_file)
+        if mask_file.endswith('.msk'):
+            tmsk = read_fit2d_msk(mask_file)
+        else:
+            tmsk = np.load(mask_file)
     else:
         tmsk = None
 

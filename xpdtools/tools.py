@@ -35,7 +35,7 @@ def mask_ring_median(a):
 
 
 def mask_ring_mean(a):
-    """Find outlier piels in a single ring via a pixel by pixel method with
+    """Find outlier pixels in a single ring via a pixel by pixel method with
     the mean"""
     values_array, positions_array, alpha = a
     m = np.ones_like(positions_array, dtype=bool)
@@ -90,9 +90,8 @@ def new_masking_method(img, geo, alpha=3, tmsk=None, mask_method='median'):
         if k > 0:
             t.append((vfs[i: i + k], pfs[i: i + k], alpha))
         i += k
-    mask_ring = mask_ring_dict[mask_method]
     p_err = np.seterr(all='ignore')
-    removals = map(mask_ring, t)
+    removals = map(mask_ring_dict[mask_method], t)
     np.seterr(**p_err)
     removals = [item for sublist in removals for item in sublist]
     tmsk = tmsk.ravel()
