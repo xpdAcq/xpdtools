@@ -23,12 +23,13 @@ install:
   - conda create --yes -n testenv python=$TRAVIS_PYTHON_VERSION
   - source activate testenv
   - conda install --yes --file requirements/build.txt
+  - conda install pip
   - pip install .
 
 script:
   - set -e
-  - pip install codecov pytest-env
   - conda install --yes --file requirements/run.txt
+  - pip install codecov pytest-env
   - coverage run run_tests.py
   - coverage report -m
   - codecov
