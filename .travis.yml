@@ -36,7 +36,7 @@ script:
   - codecov
   - image_to_iq -- --help
   - flake8 xpdtools
-  - conda install --yes sphinx sphinx_rtd_theme
+  - conda install --yes --file requirements/docs
   - pip install git+git://github.com/drdoctr/doctr.git
   - cd docs
   - make html
