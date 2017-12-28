@@ -13,11 +13,10 @@
 #
 ##############################################################################
 import numpy as np
-from numpy.testing import assert_array_equal
 
+from xpdtools.tests.utils import pyFAI_calib
 from xpdtools.tools import (mask_ring_mean, mask_ring_median, load_geo,
                             generate_binner)
-from xpdtools.tests.utils import pyFAI_calib
 
 
 def test_mask_ring_mean():

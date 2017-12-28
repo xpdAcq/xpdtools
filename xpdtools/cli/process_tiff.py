@@ -104,16 +104,13 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
 
     (mean.zip(q).zip_latest(filename_node).
         map(lambda l: (*l[0], l[1])).
-        sink(lambda x: save_output(x[1], x[0], x[2], 'Q'))
-        )
+        sink(lambda x: save_output(x[1], x[0], x[2], 'Q')))
     (median.zip(q).zip_latest(filename_node).
         map(lambda l: (*l[0], l[1])).
-        sink(lambda x: save_output(x[1], x[0], x[2] + '_median', 'Q'))
-        )
+        sink(lambda x: save_output(x[1], x[0], x[2] + '_median', 'Q')))
     (std.zip(q).zip_latest(filename_node).
         map(lambda l: (*l[0], l[1])).
-        sink(lambda x: save_output(x[1], x[0], x[2] + '_std', 'Q'))
-        )
+        sink(lambda x: save_output(x[1], x[0], x[2] + '_std', 'Q')))
     fig, ax = plt.subplots()
     # write out zscore
     (z_score.map(ax.imshow, norm=SymLogNorm(1.)).map(fig.colorbar).
