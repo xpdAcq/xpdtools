@@ -12,14 +12,6 @@
 # See LICENSE.txt for license information.
 #
 ##############################################################################
-import tempfile
-from itertools import product
-from uuid import uuid4
-
-import numpy as np
-
-from bluesky.plans import count
-from ophyd import sim
 
 pyFAI_calib = {'calibrant_name': 'Ni24',
                'centerX': 997.79605730878336,
@@ -68,88 +60,3 @@ pyFAI_calib = {'calibrant_name': 'Ni24',
                'tiltPlanRotation': -164.75544250965393,
                'time': '20170822-190241',
                'wavelength': 1.832e-11}
-
-
-def insert_imgs(RE, reg, n, shape, save_dir=tempfile.mkdtemp(), **kwargs):
-    """
-    Insert images into mds and fs for testing
-
-    Parameters
-    ----------
-    RE: bluesky.run_engine.RunEngine instance
-    reg: Registry instance
-    n: int
-        Number of images to take
-    shape: tuple of ints
-        The shape of the resulting images
-    save_dir
-
-    Returns
-    -------
-
-    """
-    # Create detectors
-    dark_det = sim.SynSignalWithRegistry(name='pe1_image',
-                                         func=lambda: np.random.random(shape),
-                                         reg=reg)
-    light_det = sim.SynSignalWithRegistry(name='pe1_image',
-                                          func=lambda: np.random.random(shape),
-                                          reg=reg)
-    beamtime_uid = str(uuid4())
-    base_md = dict(beamtime_uid=beamtime_uid,
-                   calibration_md=pyFAI_calib,
-                   bt_wavelength=0.1847,
-                   **kwargs)
-
-    # Insert the dark images
-    dark_md = base_md.copy()
-    dark_md.update(name='test-dark', is_dark=True)
-
-    dark_uid = RE(count([dark_det], num=1), **dark_md)
-
-    # Insert the light images
-    light_md = base_md.copy()
-    light_md.update(name='test', sc_dk_field_uid=dark_uid)
-    uid = RE(count([light_det], num=n), **light_md)
-
-    return uid
-
-
-integrate_params = [
-    'polarization_factor',
-    'mask_setting',
-    'mask_kwargs',
-]
-good_kwargs = [
-    (.99,),
-    (
-        # 'default',
-        # 'auto',
-        None,
-    ),
-    [
-        None,
-        # {'alpha': 10}
-    ],
-]
-
-bad_integrate_params = ['polarization_factor',
-                        'mask_setting',
-                        'mask_kwargs']
-
-bad_kwargs = [['str'] for i in range(len(bad_integrate_params))]
-
-integrate_kwarg_values = product(*good_kwargs)
-integrate_kwargs = []
-for vs in integrate_kwarg_values:
-    d = {k: v for (k, v) in zip(integrate_params, vs)}
-    integrate_kwargs.append((d, False))
-
-# for vs in bad_kwargs:
-#     d = {k: v for (k, v) in zip(bad_integrate_params, vs)}
-#     integrate_kwargs.append((d, True))
-
-save_tiff_kwargs = []
-for d in [save_tiff_kwargs, integrate_kwargs]:
-    for d2 in d:
-        d2[0]['image_data_key'] = 'pe1_image'

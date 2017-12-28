@@ -13,66 +13,30 @@
 #
 ##############################################################################
 import numpy as np
-from numpy.testing import assert_array_equal
 
-from xpdan.tools import margin, binned_outlier, compress_mask, decompress_mask
-
-
-def test_margin():
-    size = (10, 10)
-    edge = 1
-    mask1 = margin(size, edge)
-    mask2 = np.zeros(size)
-    mask2[:, :edge] = 1
-    mask2[:, -edge:] = 1
-    mask2[:edge, :] = 1
-    mask2[-edge:, :] = 1
-    mask2 = mask2.astype(bool)
-    assert_array_equal(mask1, ~mask2)
+from xpdtools.tests.utils import pyFAI_calib
+from xpdtools.tools import (mask_ring_mean, mask_ring_median, load_geo,
+                            generate_binner)
 
 
-def test_ring_blur_mask():
-    from skbeam.core import recip
-    g = recip.geo.Geometry(
-        detector='Perkin', pixel1=.0002, pixel2=.0002,
-        dist=.23,
-        poni1=.209, poni2=.207,
-        # rot1=.0128, rot2=-.015, rot3=-5.2e-8,
-        wavelength=1.43e-11
-    )
-    r = g.rArray((2048, 2048))
-    # make some sample data
-    iq = 100 * np.cos(50 * r) ** 2 + 150  # type: np.ndarray
-
-    np.random.seed(10)
-    pixels = []
-    for i in range(0, 100):
-        a, b = np.random.randint(low=0, high=2048), \
-               np.random.randint(low=0, high=2048)
-        if np.random.random() > .5:
-            # Add some hot pixels
-            iq[a, b] = np.random.randint(low=200, high=255)
-        else:
-            # and dead pixels
-            iq[a, b] = np.random.randint(low=0, high=10)
-        pixels.append((a, b))
-    pixel_size = [getattr(g, k) for k in ['pixel1', 'pixel2']]
-    rres = np.hypot(*pixel_size)
-    bins = np.arange(np.min(r) - rres / 2., np.max(r) + rres / 2., rres)
-    msk = binned_outlier(iq, r, (3., 3), bins, mask=None)
-    a = set(zip(*np.nonzero(~msk)))
-    b = set(pixels)
-    a_not_in_b = a - b
-    b_not_in_a = b - a
-
-    # We have not over masked 10% of the number of bad pixels
-    assert len(a_not_in_b) / len(b) < .1
-    # Make certain that we have masked over 90% of the bad pixels
-    assert len(b_not_in_a) / len(b) < .1
+def test_mask_ring_mean():
+    values = np.asarray([0, 0, 0, 10, 0, 0, 0, 0])
+    positions = np.arange(0, len(values))
+    assert mask_ring_mean(values, positions, 1) == np.argmax(values)
 
 
-def test_compression_decompression():
-    mask = np.ones((10, 10)).astype(bool)
-    a, b, c = compress_mask(mask)
-    mask2 = decompress_mask(a, b, c, mask.shape)
-    assert_array_equal(mask, mask2)
+def test_mask_ring_median():
+    values = np.asarray([0, 0, 0, 1, 0, 0, 0, 0])
+    positions = np.arange(0, len(values))
+    assert mask_ring_median(values, positions, 3) == np.argmax(values)
+
+
+def test_load_geo():
+    geo = load_geo(pyFAI_calib)
+    assert geo
+
+
+def test_generate_binner():
+    geo = load_geo(pyFAI_calib)
+    b = generate_binner(geo, (2048, 2048))
+    assert b

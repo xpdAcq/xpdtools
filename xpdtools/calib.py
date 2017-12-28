@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+"""Tools for running pyFAI calibraion"""
 ##############################################################################
 #
 # xpdacq            by Billinge Group
@@ -15,13 +15,13 @@
 ##############################################################################
 import os
 import time
+from tempfile import TemporaryDirectory
 
 import yaml
 from pyFAI.calibration import Calibration, PeakPicker, Calibrant
 from pyFAI.gui.utils import update_fig
 
-from xpdan.dev_utils import _timestampstr
-from tempfile import TemporaryDirectory
+from xpdtools.dev_utils import _timestampstr
 
 
 def _save_calib_param(calib_c, timestr, calib_yml_fp):
@@ -31,14 +31,13 @@ def _save_calib_param(calib_c, timestr, calib_yml_fp):
     ----------
     calib_c : pyFAI.calibration.Calibration instance
         pyFAI Calibration instance with parameters after calibration
-    time_str : str
+    timestr : str
         human readable time string
     calib_yml_fp : str
         filepath to the yml file which stores calibration param
     """
     # save glbl attribute for xpdAcq
     calibrant_name = calib_c.calibrant.__repr__().split(' ')[0]
-    calib_config_dict = {}
     calib_config_dict = calib_c.geoRef.getPyFAI()
     calib_config_dict.update(calib_c.geoRef.getFit2D())
     calib_config_dict.update({'poni_file_name':
@@ -52,19 +51,16 @@ def _save_calib_param(calib_c, timestr, calib_yml_fp):
     # save yaml dict used for xpdAcq
     with open(os.path.expanduser(calib_yml_fp), 'w') as f:
         yaml.dump(calib_config_dict, f)
-    stem, fn = os.path.split(calib_yml_fp)
     print("INFO: End of calibration process. This set of calibration "
           "will be injected as metadata to subsequent scans until you "
           "perform this process again\n")
     print("INFO: you can also use:\n>>> show_calib()\ncommand to check"
           " current calibration parameters")
-    # print("INFO: To save your calibration image as a tiff file run\n"
-    #      "save_last_tiff()\nnow.")
     return calib_config_dict
 
 
 def _calibration(img, calibration, calib_ref_fp=None, **kwargs):
-    """engine for performing calibration on a image with geometry
+    """Engine for performing calibration on a image with geometry
     correction software. current backend is ``pyFAI``.
 
     Parameters
@@ -118,9 +114,9 @@ def _calibration(img, calibration, calib_ref_fp=None, **kwargs):
     return c, timestr
 
 
-def img_calibration(img, wavelength, calibrant=None,
-                    detector=None, calib_ref_fp=None, **kwargs):
-    """function to calibrate experimental geometry wrt an image
+def img_calibration(img, wavelength, calibrant='Ni',
+                    detector='perkin_elmer', calib_ref_fp=None, **kwargs):
+    """Function to calibrate experimental geometry for an image
 
     Parameters
     ----------
@@ -130,14 +126,14 @@ def img_calibration(img, wavelength, calibrant=None,
         x-ray wavelength in angstrom.
     calibrant : str, optional
         calibrant being used, default is 'Ni'.
-        input could be ``full file path'' to customized d-spacing file with
+        input could be "full file path" to customized d-spacing file with
         ".D" extension or one of pre-defined calibrant names.
-        List of pre-defined calibrant names is:
+        List of pre-defined calibrant names:
         ['NaCl', 'AgBh', 'quartz', 'Si_SRM640', 'Ni', 'Si_SRM640d',
-         'Si_SRM640a', 'alpha_Al2O3', 'LaB6_SRM660b', 'TiO2', 'CrOx',
-         'LaB6_SRM660c', 'CeO2', 'Si_SRM640c', 'CuO', 'Si_SRM640e',
-         'PBBA', 'ZnO', 'Si', 'C14H30O', 'cristobaltite', 'LaB6_SRM660a',
-         'Au', 'Cr2O3', 'Si_SRM640b', 'LaB6', 'Al', 'mock']
+        'Si_SRM640a', 'alpha_Al2O3', 'LaB6_SRM660b', 'TiO2', 'CrOx',
+        'LaB6_SRM660c', 'CeO2', 'Si_SRM640c', 'CuO', 'Si_SRM640e',
+        'PBBA', 'ZnO', 'Si', 'C14H30O', 'cristobaltite', 'LaB6_SRM660a',
+        'Au', 'Cr2O3', 'Si_SRM640b', 'LaB6', 'Al', 'mock']
     detector : str or pyFAI.detector.Detector instance, optional.
         detector used to collect data. default value is 'perkin-elmer'.
         other allowed values are in pyFAI documentation.
@@ -151,47 +147,45 @@ def img_calibration(img, wavelength, calibrant=None,
     Returns
     -------
     ai : pyFAI.AzimuthalIntegrator
-        instance of AzimuthalIntegrator. can be used to integrate 2D
+        instance of AzimuthalIntegrator. Can be used to integrate 2D
         images directly.
+
     Examples
     --------
-    # calib Ni image with pyFAI default ``Ni.D`` d-spacing
-    # with wavlength 0.1823 angstrom
+    calib Ni image with pyFAI default ``Ni.D`` d-spacing
+    with wavlength 0.1823 angstrom
+
     >>> import tifffile as tif
-    >>> ni_img = tif.imread(<path_to_img_file>)
+    >>> ni_img = tif.imread('<path_to_img_file>')
     >>> ai = img_calibration(ni_img, 0.1823)
 
-    # calib Ni image with pyFAI customized ``myNi.D`` d-spacing
-    # with wavlength 0.1823 angstrom
+    calib Ni image with pyFAI customized ``myNi.D`` d-spacing
+    with wavlength 0.1823 angstrom
+
     >>> import tifffile as tif
-    >>> ni_img = tif.imread(<path_to_img_file>)
+    >>> ni_img = tif.imread('<path_to_img_file>')
     >>> ai = img_calibration(ni_img, 0.1823, 'path/to/myNi.D')
 
-    # integrate image right after calibration
+    integrate image right after calibration
+
     >>> import matplotlib.pyplot as plt
     >>> npt = 1482 # just a number for demonstration
     >>> q, Iq = ai.integrate1d(ni_img, npt, unit="q_nm^-1")
     >>> plt.plot(q, Iq)
 
-    Reference
+    References
     ---------
     pyFAI documentation:
     http://pyfai.readthedocs.io/en/latest/
     """
     wavelength *= 10**-10
-    if detector is None:
-        detector = 'perkin_elmer'
-    if calibrant is None:
-        calibrant = 'Ni'
-    elif isinstance(calibrant, list):
+    if isinstance(calibrant, list):
         calibrant = Calibrant(dSpacing=calibrant, wavelength=wavelength)
     # configure calibration instance
     c = Calibration(calibrant=calibrant, detector=detector,
                     wavelength=wavelength)
     # pyFAI calibration
     calib_c, timestr = _calibration(img, c, calib_ref_fp, **kwargs)
-    # img2 = img.copy()
-    # img2 /= calib_c.ai.polarization(img2.shape, .99)
-    # calib_c, timestr = _calibration(img2, c, calib_ref_fp, **kwargs)
+    # TODO: apply polarization correction and recalibrate?
 
     return calib_c, calib_c.ai

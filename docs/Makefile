@@ -2,9 +2,9 @@
 #
 
 # You can set these variables from the command line.
-SPHINXOPTS    =
-SPHINXBUILD   = python -msphinx
-PAPER         =
+SPHINXOPTS   ?=
+SPHINXBUILD  ?= sphinx-build
+PAPER        ?=
 BUILDDIR      = _build
 
 # Internal variables.
@@ -93,9 +93,9 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/xpdAn.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/xpdtools.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/xpdAn.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/xpdtools.qhc"
 
 .PHONY: applehelp
 applehelp:
@@ -112,8 +112,8 @@ devhelp:
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/xpdAn"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/xpdAn"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/xpdtools"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/xpdtools"
 	@echo "# devhelp"
 
 .PHONY: epub

@@ -2,12 +2,13 @@ from setuptools import setup, find_packages
 
 
 setup(
-    name='xpdan',
-    version='0.2.0',
+    name='xpdtools',
+    version='0.0.0',
     packages=find_packages(),
     description='data processing module',
     zip_safe=False,
-    package_data={'xpdan': ['config/*']},
+    # package_data={'xpdan': ['config/*']},
     include_package_data=True,
-    url='http:/github.com/xpdAcq/xpdAn'
+    entry_points={
+        'console_scripts': 'image_to_iq = xpdtools.cli.process_tiff:run_main'}
 )
