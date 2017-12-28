@@ -89,9 +89,10 @@ mean = (
             statistic='mean'))
 median = (
     f_img_binner.
-        starmap(lambda img, binner, **kwargs: binner(img, **kwargs),
-                statistic='median'))
-std = (f_img_binner.
+    starmap(lambda img, binner, **kwargs: binner(img, **kwargs),
+            statistic='median'))
+std = (
+    f_img_binner.
     starmap(lambda img, binner, **kwargs: binner(img, **kwargs),
             statistic='std'))
 
