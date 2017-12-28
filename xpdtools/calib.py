@@ -116,7 +116,7 @@ def _calibration(img, calibration, calib_ref_fp=None, **kwargs):
 
 def img_calibration(img, wavelength, calibrant='Ni',
                     detector='perkin_elmer', calib_ref_fp=None, **kwargs):
-    """function to calibrate experimental geometry wrt an image
+    """Function to calibrate experimental geometry for an image
 
     Parameters
     ----------
@@ -126,14 +126,14 @@ def img_calibration(img, wavelength, calibrant='Ni',
         x-ray wavelength in angstrom.
     calibrant : str, optional
         calibrant being used, default is 'Ni'.
-        input could be ``full file path'' to customized d-spacing file with
+        input could be "full file path" to customized d-spacing file with
         ".D" extension or one of pre-defined calibrant names.
-        List of pre-defined calibrant names is:
+        List of pre-defined calibrant names:
         ['NaCl', 'AgBh', 'quartz', 'Si_SRM640', 'Ni', 'Si_SRM640d',
-         'Si_SRM640a', 'alpha_Al2O3', 'LaB6_SRM660b', 'TiO2', 'CrOx',
-         'LaB6_SRM660c', 'CeO2', 'Si_SRM640c', 'CuO', 'Si_SRM640e',
-         'PBBA', 'ZnO', 'Si', 'C14H30O', 'cristobaltite', 'LaB6_SRM660a',
-         'Au', 'Cr2O3', 'Si_SRM640b', 'LaB6', 'Al', 'mock']
+        'Si_SRM640a', 'alpha_Al2O3', 'LaB6_SRM660b', 'TiO2', 'CrOx',
+        'LaB6_SRM660c', 'CeO2', 'Si_SRM640c', 'CuO', 'Si_SRM640e',
+        'PBBA', 'ZnO', 'Si', 'C14H30O', 'cristobaltite', 'LaB6_SRM660a',
+        'Au', 'Cr2O3', 'Si_SRM640b', 'LaB6', 'Al', 'mock']
     detector : str or pyFAI.detector.Detector instance, optional.
         detector used to collect data. default value is 'perkin-elmer'.
         other allowed values are in pyFAI documentation.
@@ -147,29 +147,33 @@ def img_calibration(img, wavelength, calibrant='Ni',
     Returns
     -------
     ai : pyFAI.AzimuthalIntegrator
-        instance of AzimuthalIntegrator. can be used to integrate 2D
+        instance of AzimuthalIntegrator. Can be used to integrate 2D
         images directly.
+
     Examples
     --------
-    # calib Ni image with pyFAI default ``Ni.D`` d-spacing
-    # with wavlength 0.1823 angstrom
+    calib Ni image with pyFAI default ``Ni.D`` d-spacing
+    with wavlength 0.1823 angstrom
+
     >>> import tifffile as tif
     >>> ni_img = tif.imread('<path_to_img_file>')
     >>> ai = img_calibration(ni_img, 0.1823)
 
-    # calib Ni image with pyFAI customized ``myNi.D`` d-spacing
-    # with wavlength 0.1823 angstrom
+    calib Ni image with pyFAI customized ``myNi.D`` d-spacing
+    with wavlength 0.1823 angstrom
+
     >>> import tifffile as tif
     >>> ni_img = tif.imread('<path_to_img_file>')
     >>> ai = img_calibration(ni_img, 0.1823, 'path/to/myNi.D')
 
-    # integrate image right after calibration
+    integrate image right after calibration
+
     >>> import matplotlib.pyplot as plt
     >>> npt = 1482 # just a number for demonstration
     >>> q, Iq = ai.integrate1d(ni_img, npt, unit="q_nm^-1")
     >>> plt.plot(q, Iq)
 
-    Reference
+    References
     ---------
     pyFAI documentation:
     http://pyfai.readthedocs.io/en/latest/

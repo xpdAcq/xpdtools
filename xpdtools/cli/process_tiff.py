@@ -2,6 +2,7 @@
 import os
 
 import fabio
+import fire
 import numpy as np
 import pyFAI
 from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
@@ -157,7 +158,9 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     return q_l, mean_l, median_l, std_l
 
 
-if __name__ == '__main__':
-    import fire
-
+def run_main():
     fire.Fire(main)
+
+
+if __name__ == '__main__':
+    run_main()
