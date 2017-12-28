@@ -2,7 +2,7 @@ $PROJECT = 'xpdtools'
 $ACTIVITIES = ['version_bump',
                'changelog',
                'tag',
-               'tag-push',
+               'push-tag',
                'ghrelease']
 
 $VERSION_BUMP_PATTERNS = [
