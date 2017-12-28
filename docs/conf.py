@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# xpdAn documentation build configuration file, created by
-# sphinx-quickstart on Wed Jul 26 11:18:15 2017.
+# xpdtools documentation build configuration file, created by
+# sphinx-quickstart on Thu Dec 28 12:06:17 2017.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -19,7 +19,7 @@
 #
 # import os
 # import sys
-# sys.path.insert(0, '/home/christopher/dev/xpdAn/xpdan')
+# sys.path.insert(0, '/home/christopher/dev/xpdtools/xpdtools')
 
 
 # -- General configuration ------------------------------------------------
@@ -31,16 +31,9 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-import sphinx_rtd_theme
-html_theme = "sphinx_rtd_theme"
-
-
-extensions = ['sphinx.ext.autodoc','sphinx.ext.napoleon',
+extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode']
-napoleon_google_docstring = False
-napoleon_use_param = False
-napoleon_use_ivar = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -55,7 +48,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'xpdAn'
+project = 'xpdtools'
 copyright = '2017, Author'
 author = 'Author'
 
@@ -92,7 +85,7 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-# html_theme = 'alabaster'
+html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -112,11 +105,8 @@ html_static_path = ['_static']
 # refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
 html_sidebars = {
     '**': [
-        'about.html',
-        'navigation.html',
         'relations.html',  # needs 'show_related': True theme option to display
         'searchbox.html',
-        'donate.html',
     ]
 }
 
@@ -124,7 +114,7 @@ html_sidebars = {
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'xpdAndoc'
+htmlhelp_basename = 'xpdtoolsdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -151,7 +141,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'xpdAn.tex', 'xpdAn Documentation',
+    (master_doc, 'xpdtools.tex', 'xpdtools Documentation',
      'Author', 'manual'),
 ]
 
@@ -161,7 +151,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'xpdan', 'xpdAn Documentation',
+    (master_doc, 'xpdtools', 'xpdtools Documentation',
      [author], 1)
 ]
 
@@ -172,8 +162,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'xpdAn', 'xpdAn Documentation',
-     author, 'xpdAn', 'One line description of project.',
+    (master_doc, 'xpdtools', 'xpdtools Documentation',
+     author, 'xpdtools', 'One line description of project.',
      'Miscellaneous'),
 ]
 
