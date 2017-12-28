@@ -10,5 +10,5 @@ setup(
     # package_data={'xpdan': ['config/*']},
     include_package_data=True,
     entry_points={
-        'console_scripts': 'image_to_iq = xpdtools.cli.process_tiff:main2'}
+        'console_scripts': 'image_to_iq = xpdtools.cli.process_tiff:run_main'}
 )
