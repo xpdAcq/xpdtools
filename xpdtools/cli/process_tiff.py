@@ -1,3 +1,4 @@
+"""Main entry point for processing images to I(Q)"""
 import os
 
 import fabio
@@ -63,6 +64,16 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
         The type of automasking to use, median is faster, mean is more
         accurate. Defaults to 'median'.
 
+    Returns
+    -------
+    q_l : list of ndarrays
+        The list of q values
+    mean_l : list of ndarrays
+        The list of mean values
+    median_l : list of ndarrays
+        The list of median values
+    std_l : list of ndarrays
+        The list of standard deviation values
     """
     # Load calibration
     if poni_file is None:
@@ -85,6 +96,11 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     mask.zip_latest(filename_node).sink(lambda x: np.save(x[1] + '_mask.npy',
                                                           x[0]))
     # write out chi
+    mean_l = mean.sink_to_list()
+    median_l = median.sink_to_list()
+    std_l = std.sink_to_list()
+    q_l = q.sink_to_list()
+
     (mean.zip(q).zip_latest(filename_node).
         map(lambda l: (*l[0], l[1])).
         sink(lambda x: save_output(x[1], x[0], x[2], 'Q'))
@@ -138,6 +154,7 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
             bg = np.zeros(img.shape)
             dark_corrected_background.emit(bg)
         dark_corrected_foreground.emit(img)
+    return q_l, mean_l, median_l, std_l
 
 
 if __name__ == '__main__':

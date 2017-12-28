@@ -1,3 +1,4 @@
+"""Main pipeline for processing images to I(Q) and PDF"""
 import operator as op
 
 from skbeam.core.utils import q_to_twotheta
@@ -76,7 +77,7 @@ mean = f_img_binner.starmap(lambda img, binner, **kwargs: binner(img, **kwargs),
 median = f_img_binner.starmap(
     lambda img, binner, **kwargs: binner(img, **kwargs), statistic='median')
 std = f_img_binner.starmap(lambda img, binner, **kwargs: binner(img, **kwargs),
-                         statistic='std').zip(mean).starmap(op.truediv)
+                         statistic='std')
 
 q = binner.map(getattr, 'bin_centers')
 tth = q.zip_latest(wavelength).starmap(q_to_twotheta, stream_name='tth')
@@ -90,6 +91,3 @@ composition = Stream(stream_name='composition')
 iq_comp = q.zip(mean).zip_latest(composition)
 fq = iq_comp.starmap(fq_getter, stream_name='fq', **fq_kwargs)
 pdf = iq_comp.starmap(pdf_getter, stream_name='pdf', **pdf_kwargs)
-
-# raw_foreground.visualize('/home/christopher/raw_mystream.png',
-#                          source_node=True)

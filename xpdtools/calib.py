@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+"""Tools for running pyFAI calibraion"""
 ##############################################################################
 #
 # xpdacq            by Billinge Group
@@ -15,13 +15,13 @@
 ##############################################################################
 import os
 import time
+from tempfile import TemporaryDirectory
 
 import yaml
 from pyFAI.calibration import Calibration, PeakPicker, Calibrant
 from pyFAI.gui.utils import update_fig
 
 from xpdtools.dev_utils import _timestampstr
-from tempfile import TemporaryDirectory
 
 
 def _save_calib_param(calib_c, timestr, calib_yml_fp):

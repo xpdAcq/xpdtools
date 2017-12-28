@@ -1,8 +1,11 @@
+"""Tools for x-ray scattering data processing """
+from itertools import starmap
+
 ##############################################################################
 #
-# xpdan            by Billinge Group
+# xpdtools            by Billinge Group
 #                   Simon J. L. Billinge sb2896@columbia.edu
-#                   (c) 2016 trustees of Columbia University in the City of
+#                   (c) 2017 trustees of Columbia University in the City of
 #                        New York.
 #                   All rights reserved
 #
@@ -13,30 +16,48 @@
 #
 ##############################################################################
 import numpy as np
+from matplotlib.path import Path
+from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
+from scipy.integrate import simps
+from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
+from skbeam.core.mask import margin
 
 try:
     from diffpy.pdfgetx import PDFGetter
 except ImportError:
     from xpdtools.shim import PDFGetterShim as PDFGetter
-from matplotlib.path import Path
-from scipy.integrate import simps
-
-from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
-from skbeam.core.mask import margin
 
 
-def mask_ring_median(a):
-    """Find outlier pixels in a single ring via a single pass with the median."""
-    values_array, positions_array, alpha = a
+def mask_ring_median(values_array, positions_array, alpha):
+    """Find outlier pixels in a single ring via a single pass with the median.
+
+    Parameters
+    ----------
+    values_array : ndarray
+        The ring values
+    positions_array : ndarray
+        The positions of the values
+    alpha: float
+        The threshold
+    """
     z = np.abs(values_array - np.median(values_array)) / np.std(values_array)
     removals = positions_array[z > alpha]
     return removals
 
 
-def mask_ring_mean(a):
+def mask_ring_mean(values_array, positions_array, alpha):
     """Find outlier pixels in a single ring via a pixel by pixel method with
-    the mean"""
-    values_array, positions_array, alpha = a
+    the mean.
+
+    Parameters
+    ----------
+    values_array : ndarray
+        The ring values
+    positions_array : ndarray
+        The positions of the values
+    alpha: float
+        The threshold
+    """
     m = np.ones_like(positions_array, dtype=bool)
     removals = []
     while len(values_array) > 0:
@@ -56,7 +77,7 @@ def mask_ring_mean(a):
 mask_ring_dict = {'median': mask_ring_median, 'mean': mask_ring_mean}
 
 
-def new_masking_method(img, geo, alpha=3, tmsk=None, mask_method='median'):
+def binned_outlier(img, geo, alpha=3, tmsk=None, mask_method='median'):
     """Sigma Clipping based masking
 
     Parameters
@@ -94,7 +115,7 @@ def new_masking_method(img, geo, alpha=3, tmsk=None, mask_method='median'):
             t.append((vfs[i: i + k], pfs[i: i + k], alpha))
         i += k
     p_err = np.seterr(all='ignore')
-    removals = map(mask_ring_dict[mask_method], t)
+    removals = starmap(mask_ring_dict[mask_method], t)
     np.seterr(**p_err)
     removals = [item for sublist in removals for item in sublist]
     tmsk = tmsk.ravel()
@@ -189,14 +210,30 @@ def mask_img(img, geo,
         working_mask *= ~grid.reshape((ny, nx))
 
     if alpha:
-        working_mask *= new_masking_method(img, geo, alpha=alpha,
-                                           tmsk=working_mask,
-                                           mask_method=auto_type)
+        working_mask *= binned_outlier(img, geo, alpha=alpha,
+                                       tmsk=working_mask,
+                                       mask_method=auto_type)
     working_mask = working_mask.astype(np.bool)
     return working_mask
 
 
 def generate_binner(geo, img_shape=None, mask=None):
+    """Create a pixel resolution BinnedStats1D instance
+
+    Parameters
+    ----------
+    geo : pyFAI.geometry.Geometry instance
+        The calibrated geometry
+    img_shape : tuple, optional
+        The shape of the image, if None pull from the mask. Defaults to None.
+    mask : ndarray, optional
+        The mask to be applied, if None no mask is applied. Defaults to None.
+
+    Returns
+    -------
+    BinnedStatistic1D :
+        The configured instance of the binner.
+    """
     if img_shape is None:
         img_shape = mask.shape
     r = geo.rArray(img_shape)
@@ -219,6 +256,19 @@ def generate_binner(geo, img_shape=None, mask=None):
 
 
 def z_score_image(img, binner):
+    """Z score an image according to the azimuthal average
+
+    Parameters
+    ----------
+    img : ndarray
+        The image
+    binner : BinnedStatistic1D instance
+        The binner
+    Returns
+    -------
+    ndarray :
+        The z scored image
+    """
     xy = binner.xy
     idx = xy.argsort()
 
@@ -238,23 +288,67 @@ def z_score_image(img, binner):
     return img2.reshape(img.shape)
 
 
-def integrate(img, binner, statistic='mean'):
-    return binner.bin_centers, np.nan_to_num(binner(img.flatten(),
-                                                    statistic=statistic))
-
-
 def polarization_correction(img, geo, polarization_factor=.99):
+    """Perform polarization correction on an image
+
+    Parameters
+    ----------
+    img : ndarray
+        The image
+    geo : pyFAI.geometry.Geometry instance
+        The calibrated geometry
+    polarization_factor : float
+        The polarization factor to apply
+
+    Returns
+    -------
+    ndarray :
+        The corrected image
+    """
     return img / geo.polarization(img.shape, polarization_factor)
 
 
 def load_geo(cal_params):
-    from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
+    """Load a pyFAI geometry from a dict of calibration parameters
+
+    Parameters
+    ----------
+    cal_params : dict
+        The calibration parameters
+
+    Returns
+    -------
+    AzimuthalIntegrator :
+        The calibrate azimuthal integrator (which inherits from the geometry)
+    """
     ai = AzimuthalIntegrator()
     ai.setPyFAI(**cal_params)
     return ai
 
 
 def pdf_getter(x, y, composition, **kwargs):
+    """Process the data to the PDF
+
+    Parameters
+    ----------
+    x : ndarray
+        The q or tth values
+    y : ndarray
+        The scattered intensity
+    composition : str
+        The composition
+    kwargs: dict
+        Additional kwargs for PDFGetter
+
+    Returns
+    -------
+    r : ndarray
+        The radial values
+    gr: ndarray
+        The PDF
+    config: dict
+        The PDFGetter config
+    """
     pg = PDFGetter()
     kwargs.update({'composition': composition})
     args = (x, y)
@@ -263,6 +357,28 @@ def pdf_getter(x, y, composition, **kwargs):
 
 
 def fq_getter(x, y, composition, **kwargs):
+    """Process the data to F(Q)
+
+    Parameters
+    ----------
+    x : ndarray
+        The q or tth values
+    y : ndarray
+        The scattered intensity
+    composition : str
+        The composition
+    kwargs: dict
+        Additional kwargs for PDFGetter
+
+    Returns
+    -------
+    q : ndarray
+        The radial values
+    fq: ndarray
+        The reduced structure function
+    config: dict
+        The PDFGetter config
+    """
     pg = PDFGetter()
     kwargs.update({'composition': composition})
     args = (x, y)
@@ -272,12 +388,35 @@ def fq_getter(x, y, composition, **kwargs):
 
 
 def overlay_mask(img, mask):
+    """Overlay mask on image, masked pixels are ``np.nan``"""
     img2 = img.copy()
     img2[~mask] = np.nan
     return img2
 
 
 def nu_fq_getter(q, iq, composition, **kwargs):
+    """Process the data to F(Q) on a non uniform grid
+
+    Parameters
+    ----------
+    x : ndarray
+        The q or tth values
+    y : ndarray
+        The scattered intensity
+    composition : str
+        The composition
+    kwargs: dict
+        Additional kwargs for PDFGetter
+
+    Returns
+    -------
+    q : ndarray
+        The radial values
+    fq: ndarray
+        The reduced structure function
+    config: dict
+        The PDFGetter config
+    """
     kwargs.update({'composition': composition})
     # explicit qmin/qmaxinst cutting
     truth_values = np.where((kwargs['qmaxinst'] > q) & (q > kwargs['qmin']))
@@ -291,6 +430,22 @@ def nu_fq_getter(q, iq, composition, **kwargs):
 
 
 def nu_pdf_getter(q, fq):
+    """Process a non uniform F(Q) to the PDF
+
+    Parameters
+    ----------
+    q : ndarray
+        The q or tth values
+    fq : ndarray
+        The reduced structure funciton
+
+    Returns
+    -------
+    r : ndarray
+        The radial values
+    gr: ndarray
+        The PDF
+    """
     rgrid = np.arange(0, 30.01, np.pi / np.max(q))
     dgr = 2 / np.pi * fq * np.sin(q * rgrid[:, np.newaxis])
     gr = simps(dgr, q)
