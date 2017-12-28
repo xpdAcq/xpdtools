@@ -30,6 +30,7 @@ install:
 script:
   - set -e
   - conda install --yes --file requirements/run.txt
+  - conda install --yes --file requirements/test.txt
   - pip install codecov pytest-env
   - coverage run run_tests.py
   - coverage report -m
