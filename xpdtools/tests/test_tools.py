@@ -23,15 +23,13 @@ from xpdtools.tests.utils import pyFAI_calib
 def test_mask_ring_mean():
     values = np.asarray([0, 0, 0, 10, 0, 0, 0, 0])
     positions = np.arange(0, len(values))
-    print(np.mean(values), np.std(values))
-    print(mask_ring_mean((values, positions, 1)))
-    assert mask_ring_mean((values, positions, 1)) == np.argmax(values)
+    assert mask_ring_mean(values, positions, 1) == np.argmax(values)
 
 
 def test_mask_ring_median():
     values = np.asarray([0, 0, 0, 1, 0, 0, 0, 0])
     positions = np.arange(0, len(values))
-    assert mask_ring_median((values, positions, 3)) == np.argmax(values)
+    assert mask_ring_median(values, positions, 3) == np.argmax(values)
 
 
 def test_load_geo():
