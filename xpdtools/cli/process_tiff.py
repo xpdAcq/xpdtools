@@ -6,11 +6,13 @@ import pyFAI
 from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
 from skbeam.io.save_powder_output import save_output
 from streamz import Stream
-import tifffile
+import matplotlib.pyplot as plt
+from matplotlib.colors import SymLogNorm
 
 from ..pipelines.raw_pipeline import (pol_corrected_img, mask, mean, q,
                                       geometry, dark_corrected_foreground,
-                                      dark_corrected_background, z_score)
+                                      dark_corrected_background, z_score, std,
+                                      median)
 
 
 def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
@@ -18,7 +20,7 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
          edge=20,
          lower_thresh=1.,
          upper_thresh=None,
-         alpha=3.):
+         alpha=3., auto_type='median'):
     """Run the data processing protocol taking raw images to background
     subtracted I(Q) files.
 
@@ -57,6 +59,9 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     alpha: float, optional
         Number of standard deviations away from the ring mean to mask, defaults
         to 3. if None do not apply automated masking
+    auto_type : {'median', 'mean'}, optional
+        The type of automasking to use, median is faster, mean is more
+        accurate. Defaults to 'median'.
 
     """
     # Load calibration
@@ -72,23 +77,33 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
 
     # Modify graph
     # create filename nodes
-    filename_node = (
-        Stream(stream_name='filename').
-            map(lambda x: os.path.splitext(x)[0]))
+    filename_source = Stream(stream_name='filename')
+    filename_node = (filename_source.map(lambda x: os.path.splitext(x)[0]))
     # write out mask
     mask.zip_latest(filename_node).sink(lambda x: fit2d_save(np.flipud(x[0]),
                                                              x[1]))
-    mask.zip_latest(filename_node).sink(lambda x: np.save(x[0]+'_mask.npy',
-                                                          x[1]))
+    mask.zip_latest(filename_node).sink(lambda x: np.save(x[1] + '_mask.npy',
+                                                          x[0]))
     # write out chi
     (mean.zip(q).zip_latest(filename_node).
-        sink(lambda x: save_output(x[1], x[0], x[2], 'Q')))
+        map(lambda l: (*l[0], l[1])).
+        sink(lambda x: save_output(x[1], x[0], x[2], 'Q'))
+        )
+    (median.zip(q).zip_latest(filename_node).
+        map(lambda l: (*l[0], l[1])).
+        sink(lambda x: save_output(x[1], x[0], x[2] + '_median', 'Q'))
+        )
+    (std.zip(q).zip_latest(filename_node).
+        map(lambda l: (*l[0], l[1])).
+        sink(lambda x: save_output(x[1], x[0], x[2] + '_std', 'Q'))
+        )
+    fig, ax = plt.subplots()
     # write out zscore
-    (z_score.
+    (z_score.map(ax.imshow, norm=SymLogNorm(1.)).map(fig.colorbar).
         zip_latest(filename_node).
-        sink(lambda x: tifffile.imsave(x[1] + '_zscore.tiff', x[0])))
+        sink(lambda x: fig.savefig(x[1] + '_zscore.png')))
 
-    pol_corrected_img.args = polarization
+    pol_corrected_img.args = (polarization,)
     if mask_file:
         if mask_file.endswith('.msk'):
             tmsk = read_fit2d_msk(mask_file)
@@ -101,7 +116,9 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
                        edge=edge,
                        lower_thresh=lower_thresh,
                        upper_thresh=upper_thresh,
-                       alpha=alpha)
+                       alpha=alpha,
+                       bs_width=None,
+                       auto_type=auto_type)
 
     geometry.emit(geo)
     if image_files is None:
@@ -116,7 +133,7 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
         bg = fabio.open(bg_file).data.astype(float)
 
     for fn, img in zip(filenames, imgs):
-        filename_node.emit(fn)
+        filename_source.emit(fn)
         if bg is None:
             bg = np.zeros(img.shape)
             dark_corrected_background.emit(bg)

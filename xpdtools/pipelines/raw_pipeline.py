@@ -19,15 +19,15 @@ raw_background_dark = Stream(stream_name='raw background dark')
 dark_corrected_foreground = (
     raw_foreground.
         zip_latest(raw_foreground_dark).
-        map(op.sub))
+        starmap(op.sub))
 dark_corrected_background = (
     raw_background.
         zip_latest(raw_background_dark).
-        map(op.sub))
+        starmap(op.sub))
 bg_corrected_img = (
     dark_corrected_foreground.
         zip_latest(dark_corrected_background).
-        map(op.sub, stream_name='background corrected img')
+        starmap(op.sub, stream_name='background corrected img')
 )
 
 # Calibration management
@@ -58,27 +58,32 @@ geometry = (geo_input.zip_latest(is_calibration_img).
 # Image corrections
 pol_corrected_img = (bg_corrected_img.
     zip_latest(geometry).
-    map(lambda a, **kwargs: polarization_correction(
-    *a, **kwargs), .99, stream_name='corrected image'))
+    starmap(polarization_correction, .99, stream_name='corrected image')
+)
 
 mask = (pol_corrected_img.
     zip_latest(geometry).
-    map(mask_img, stream_name='mask', **mask_kwargs))
+    starmap(mask_img, stream_name='mask', **mask_kwargs))
 
 # Integration
-binner = (mask.zip_latest(pol_corrected_img, geometry).map(generate_binner))
-img_binner = pol_corrected_img.zip_latest(binner)
-mean = img_binner.starmap(lambda img, binner, **kwargs: binner(img, **kwargs),
+binner = (mask.
+    zip_latest(geometry).
+    starmap(lambda mask, geo: generate_binner(geo, mask=mask)))
+f_img_binner = pol_corrected_img.map(np.ravel).zip_latest(binner)
+
+mean = f_img_binner.starmap(lambda img, binner, **kwargs: binner(img, **kwargs),
                           statistic='mean')
-median = img_binner.starmap(
-    lambda img, binner, **kwargs: binner(img, **kwargs),
-    statistic='median')
-std = img_binner.starmap(lambda img, binner, **kwargs: binner(img, **kwargs),
-                         statistic='std')
-q = binner.map(lambda x: x.bin_centers)
+median = f_img_binner.starmap(
+    lambda img, binner, **kwargs: binner(img, **kwargs), statistic='median')
+std = f_img_binner.starmap(lambda img, binner, **kwargs: binner(img, **kwargs),
+                         statistic='std').zip(mean).starmap(op.truediv)
+
+q = binner.map(getattr, 'bin_centers')
 tth = q.zip_latest(wavelength).starmap(q_to_twotheta, stream_name='tth')
 
-z_score = img_binner.map(z_score_image, stream_name='z score')
+z_score = (pol_corrected_img.zip_latest(binner).starmap(z_score_image,
+                                                        stream_name='z score').
+    zip_latest(mask).starmap(overlay_mask))
 
 # PDF
 composition = Stream(stream_name='composition')
