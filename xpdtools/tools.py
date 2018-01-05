@@ -21,6 +21,7 @@ from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from scipy.integrate import simps
 from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
 from skbeam.core.mask import margin
+from numba import jit
 
 try:
     from diffpy.pdfgetx import PDFGetter
@@ -28,6 +29,7 @@ except ImportError:
     from xpdtools.shim import PDFGetterShim as PDFGetter
 
 
+@jit(cache=True, nopython=True, nogil=True)
 def mask_ring_median(values_array, positions_array, alpha):
     """Find outlier pixels in a single ring via a single pass with the median.
 
@@ -41,7 +43,7 @@ def mask_ring_median(values_array, positions_array, alpha):
         The threshold
     """
     z = np.abs(values_array - np.median(values_array)) / np.std(values_array)
-    removals = positions_array[z > alpha]
+    removals = positions_array[np.where(z > alpha)]
     return removals
 
 
@@ -77,15 +79,15 @@ def mask_ring_mean(values_array, positions_array, alpha):
 mask_ring_dict = {'median': mask_ring_median, 'mean': mask_ring_mean}
 
 
-def binned_outlier(img, geo, alpha=3, tmsk=None, mask_method='median'):
+def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median'):
     """Sigma Clipping based masking
 
     Parameters
     ----------
     img : np.ndarray
         The image
-    geo : pyFAI.geometry.Geometry instance
-        The detector geometry information
+    binner : BinnedStatistic1D instance
+        The binned statistics information
     alpha : float
         The number of standard deviations to clip
     tmsk : np.ndarray, optional
@@ -101,13 +103,10 @@ def binned_outlier(img, geo, alpha=3, tmsk=None, mask_method='median'):
     """
     print('start mask')
 
-    qbinned = generate_binner(geo, img.shape, mask=tmsk)
-
-    xy = qbinned.xy
-    idx = xy.argsort()
+    idx = binner.argsort_index
     vfs = img.flatten()[idx]
     pfs = np.arange(np.size(img))[idx]
-    h = np.bincount(xy)
+    h = binner.flatcount
     t = []
     i = 0
     for j, k in enumerate(h):
@@ -118,6 +117,8 @@ def binned_outlier(img, geo, alpha=3, tmsk=None, mask_method='median'):
     removals = starmap(mask_ring_dict[mask_method], t)
     np.seterr(**p_err)
     removals = [item for sublist in removals for item in sublist]
+    if tmsk is None:
+        tmsk = np.ones(img.shape, dtype=bool)
     tmsk = tmsk.ravel()
     tmsk[removals] = False
     tmsk = tmsk.reshape(img.shape)
@@ -125,12 +126,12 @@ def binned_outlier(img, geo, alpha=3, tmsk=None, mask_method='median'):
     return tmsk.astype(bool)
 
 
-def mask_img(img, geo,
+def mask_img(img, binner,
              edge=30,
              lower_thresh=0.0,
              upper_thresh=None,
              bs_width=13, tri_offset=13, v_asym=0,
-             alpha=2.5,
+             alpha=3,
              auto_type='median',
              tmsk=None):
     """
@@ -140,7 +141,7 @@ def mask_img(img, geo,
     ----------
     img: np.ndarray
         The image to be masked
-    geo: pyFAI.geometry.Geometry
+    binner: pyFAI.geometry.Geometry
         The pyFAI description of the detector orientation or any
         subclass of pyFAI.geometry.Geometry class
     edge: int, optional
@@ -190,7 +191,7 @@ def mask_img(img, geo,
     if upper_thresh:
         working_mask *= (img <= upper_thresh).astype(bool)
     if all([a is not None for a in [bs_width, tri_offset, v_asym]]):
-        center_x, center_y = [geo.getFit2D()[k] for k in
+        center_x, center_y = [binner.getFit2D()[k] for k in
                               ['centerX', 'centerY']]
         nx, ny = img.shape
         mask_verts = [(center_x - bs_width, center_y),
@@ -210,7 +211,7 @@ def mask_img(img, geo,
         working_mask *= ~grid.reshape((ny, nx))
 
     if alpha:
-        working_mask *= binned_outlier(img, geo, alpha=alpha,
+        working_mask *= binned_outlier(img, binner, alpha=alpha,
                                        tmsk=working_mask,
                                        mask_method=auto_type)
     working_mask = working_mask.astype(np.bool)
@@ -249,7 +250,7 @@ def generate_binner(geo, img_shape=None, mask=None):
     qbin_sizes = rbinned(q_dq.ravel())
     qbin_sizes = np.nan_to_num(qbin_sizes)
     qbin = np.cumsum(qbin_sizes)
-    qbin[0] = np.min(q)
+    qbin[0] = np.min(q_dq)
     if mask is not None:
         mask = mask.flatten()
     return BinnedStatistic1D(q.flatten(), bins=qbin, mask=mask)
@@ -269,13 +270,12 @@ def z_score_image(img, binner):
     ndarray :
         The z scored image
     """
-    xy = binner.xy
-    idx = xy.argsort()
+    idx = binner.argsort_index
 
     vfs = img.flatten()[idx]
 
     i = 0
-    for j, k in enumerate(np.bincount(xy)):
+    for j, k in enumerate(binner.flatcount):
         if k > 0:
             vfs[i: i + k] -= np.mean(vfs[i: i + k])
             vfs[i: i + k] /= np.std(vfs[i: i + k])

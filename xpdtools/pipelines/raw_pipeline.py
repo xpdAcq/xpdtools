@@ -10,6 +10,7 @@ from xpdtools.tools import (z_score_image, load_geo, polarization_correction,
                             mask_img, generate_binner, overlay_mask,
                             fq_getter, pdf_getter)
 
+mask_setting = {'setting': 'auto'}
 # Default kwargs
 mask_kwargs = {}
 fq_kwargs = dict(dataformat='QA', qmaxinst=28, qmax=25, rstep=np.pi / 25)
@@ -20,19 +21,22 @@ raw_foreground = Stream(stream_name='raw foreground')
 raw_foreground_dark = Stream(stream_name='raw foreground dark')
 raw_background = Stream(stream_name='raw background')
 raw_background_dark = Stream(stream_name='raw background dark')
+
+# Get the image shape for the binner
+img_shape = raw_foreground.map(np.shape).unique(history=1)
 dark_corrected_foreground = (
     raw_foreground.
-    zip_latest(raw_foreground_dark).
+    combine_latest(raw_foreground_dark, emit_on=0).
     starmap(op.sub)
 )
 dark_corrected_background = (
     raw_background.
-    zip_latest(raw_background_dark).
+    combine_latest(raw_background_dark, emit_on=0).
     starmap(op.sub)
 )
 bg_corrected_img = (
     dark_corrected_foreground.
-    zip_latest(dark_corrected_background).
+    combine_latest(dark_corrected_background, emit_on=0).
     starmap(op.sub, stream_name='background corrected img')
 )
 
@@ -44,44 +48,62 @@ is_calibration_img = Stream(stream_name='Is Calibration')
 geo_input = Stream(stream_name='geometry')
 gated_cal = (
     bg_corrected_img.
-    zip_latest(is_calibration_img).
+    combine_latest(is_calibration_img, emit_on=0).
     filter(lambda a: bool(a[1])).
     pluck(0, stream_name='Gate calibration'))
 
 gen_geo_cal = (
     gated_cal.
-    zip_latest(wavelength,
-               calibrant,
-               detector).
+    combine_latest(wavelength,
+                   calibrant,
+                   detector, emit_on=0).
     map(img_calibration)
 )
 
 gen_geo = gen_geo_cal.pluck(1)
 
 geometry = (
-    geo_input.zip_latest(is_calibration_img).
+    geo_input.combine_latest(is_calibration_img, emit_on=0).
     filter(lambda a: not bool(a[1])).
     pluck(0, stream_name='Gate calibration').
     map(load_geo).
     union(gen_geo, stream_name='Combine gen and load cal'))
 
 # Image corrections
-pol_corrected_img = (
+geometry_img_shape = geometry.zip_latest(img_shape)
+
+polarization_array = (
+    geometry_img_shape.
+    starmap(lambda geo, shape, polarization_factor: geo.polarization(
+        shape, polarization_factor), .99))
+
+pol_corrected_img_zip = (
     bg_corrected_img.
-    zip_latest(geometry).
-    starmap(polarization_correction, .99, stream_name='corrected image'))
+    combine_latest(geometry, emit_on=0)
+)
+pol_corrected_img = (bg_corrected_img
+                     .combine_latest(polarization_array, emit_on=0)
+                     .starmap(op.truediv))
+
+# Only create binner (which is expensive) when needed (new calibration)
+cal_binner = (geometry_img_shape
+              # .combine_latest(img_shape, emit_on=0)
+              .starmap(generate_binner)
+)
 
 mask = (
     pol_corrected_img.
-    zip_latest(geometry).
+    combine_latest(cal_binner).
     starmap(mask_img, stream_name='mask', **mask_kwargs))
 
 # Integration
+# TODO: try to get this to not call pyFAI again
 binner = (
     mask.
-    zip_latest(geometry).
+    combine_latest(geometry, emit_on=0).
     starmap(lambda mask, geo: generate_binner(geo, mask=mask)))
-f_img_binner = pol_corrected_img.map(np.ravel).zip_latest(binner)
+f_img_binner = pol_corrected_img.map(np.ravel).combine_latest(binner,
+                                                              emit_on=0)
 
 mean = (
     f_img_binner.
@@ -97,16 +119,23 @@ std = (
             statistic='std'))
 
 q = binner.map(getattr, 'bin_centers')
-tth = q.zip_latest(wavelength).starmap(q_to_twotheta, stream_name='tth')
+tth = (
+    q.combine_latest(wavelength, emit_on=0)
+    .starmap(q_to_twotheta, stream_name='tth'))
 
 z_score = (
     pol_corrected_img.
-    zip_latest(binner).
+    combine_latest(binner, emit_on=0).
     starmap(z_score_image, stream_name='z score').
-    zip_latest(mask).starmap(overlay_mask))
+    combine_latest(mask, emit_on=0).starmap(overlay_mask))
 
 # PDF
 composition = Stream(stream_name='composition')
-iq_comp = q.zip(mean).zip_latest(composition)
+iq_comp = (
+    q.zip(mean)
+    .combine_latest(composition, emit_on=0)
+    .map(lambda x: (x[0][0], x[0][1], x[1])))
 fq = iq_comp.starmap(fq_getter, stream_name='fq', **fq_kwargs)
 pdf = iq_comp.starmap(pdf_getter, stream_name='pdf', **pdf_kwargs)
+
+raw_foreground.visualize('/home/christopher/mystream.png', source_node=True)
