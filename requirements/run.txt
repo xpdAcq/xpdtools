@@ -6,3 +6,4 @@ pyFAI
 fire
 pims
 fabio
+numba
