@@ -136,5 +136,3 @@ iq_comp_map = (iq_comp
     .map(lambda x: (x[0][0], x[0][1], x[1])))
 fq = iq_comp_map.starmap(fq_getter, stream_name='fq', **fq_kwargs)
 pdf = iq_comp_map.starmap(pdf_getter, stream_name='pdf', **pdf_kwargs)
-
-raw_foreground.visualize('/home/christopher/mystream.png', source_node=True)
