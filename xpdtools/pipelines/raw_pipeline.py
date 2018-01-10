@@ -79,17 +79,15 @@ polarization_array = (
 
 pol_corrected_img_zip = (
     bg_corrected_img.
-    combine_latest(geometry, emit_on=0)
-)
+    combine_latest(geometry, emit_on=0))
 pol_corrected_img = (bg_corrected_img
                      .combine_latest(polarization_array, emit_on=0)
                      .starmap(op.truediv))
 
+
 # Only create binner (which is expensive) when needed (new calibration)
 cal_binner = (geometry_img_shape
-              # .combine_latest(img_shape, emit_on=0)
-              .starmap(generate_binner)
-)
+              .starmap(generate_binner))
 
 mask = (
     pol_corrected_img.
@@ -133,9 +131,10 @@ z_score = (
 composition = Stream(stream_name='composition')
 iq_comp = (
     q.zip(mean)
-    .combine_latest(composition, emit_on=0)
+    .combine_latest(composition, emit_on=0))
+iq_comp_map = (iq_comp
     .map(lambda x: (x[0][0], x[0][1], x[1])))
-fq = iq_comp.starmap(fq_getter, stream_name='fq', **fq_kwargs)
-pdf = iq_comp.starmap(pdf_getter, stream_name='pdf', **pdf_kwargs)
+fq = iq_comp_map.starmap(fq_getter, stream_name='fq', **fq_kwargs)
+pdf = iq_comp_map.starmap(pdf_getter, stream_name='pdf', **pdf_kwargs)
 
 raw_foreground.visualize('/home/christopher/mystream.png', source_node=True)

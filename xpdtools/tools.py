@@ -190,6 +190,7 @@ def mask_img(img, binner,
         working_mask *= (img >= lower_thresh).astype(bool)
     if upper_thresh:
         working_mask *= (img <= upper_thresh).astype(bool)
+    '''
     if all([a is not None for a in [bs_width, tri_offset, v_asym]]):
         center_x, center_y = [binner.getFit2D()[k] for k in
                               ['centerX', 'centerY']]
@@ -209,7 +210,7 @@ def mask_img(img, binner,
         grid = path.contains_points(points)
         # Plug msk_grid into into next (edge-mask) step in automask
         working_mask *= ~grid.reshape((ny, nx))
-
+    '''
     if alpha:
         working_mask *= binned_outlier(img, binner, alpha=alpha,
                                        tmsk=working_mask,
