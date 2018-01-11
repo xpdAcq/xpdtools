@@ -1,0 +1,21 @@
+**Added:**
+
+* Benchmark scripts for speed testing (Note that these run on local files 
+  currently)
+* Numba for median masking, giving a speedup
+
+**Changed:** 
+
+* Most ``zip_latest`` nodes have been changed to ``combine_latest`` to avoid 
+  unwanted buffering.
+* Use ``BinnedStatistics`D`` properties for masking, which reduces recomputation
+
+**Deprecated:** None
+
+**Removed:**
+
+* ``streamz`` dep, now the project depends on ``streamz_ext``
+
+**Fixed:** None
+
+**Security:** None
