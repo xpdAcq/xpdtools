@@ -7,14 +7,14 @@ import numpy as np
 import pyFAI
 from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
 from skbeam.io.save_powder_output import save_output
-from streamz import Stream
+from streamz_ext import Stream
 import matplotlib.pyplot as plt
 from matplotlib.colors import SymLogNorm
 
 from ..pipelines.raw_pipeline import (pol_corrected_img, mask, mean, q,
                                       geometry, dark_corrected_foreground,
                                       dark_corrected_background, z_score, std,
-                                      median)
+                                      median, mask_setting)
 
 
 def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
@@ -22,7 +22,8 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
          edge=20,
          lower_thresh=1.,
          upper_thresh=None,
-         alpha=3., auto_type='median'):
+         alpha=3., auto_type='median',
+         mask_settings='auto'):
     """Run the data processing protocol taking raw images to background
     subtracted I(Q) files.
 
@@ -64,6 +65,9 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     auto_type : {'median', 'mean'}, optional
         The type of automasking to use, median is faster, mean is more
         accurate. Defaults to 'median'.
+    mask_settings: {'auto', 'first', None}, optional
+        If auto mask every image, if first only mask first image, if None
+        mask no images. Defaults to None
 
     Returns
     -------
@@ -133,7 +137,7 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
                        alpha=alpha,
                        bs_width=None,
                        auto_type=auto_type)
-
+    mask_setting.update({'setting': mask_settings})
     geometry.emit(geo)
     if image_files is None:
         filenames = os.listdir('.')
@@ -146,7 +150,7 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     if bg_file is not None:
         bg = fabio.open(bg_file).data.astype(float)
 
-    for fn, img in zip(filenames, imgs):
+    for i, (fn, img) in enumerate(zip(filenames, imgs)):
         filename_source.emit(fn)
         if bg is None:
             bg = np.zeros(img.shape)

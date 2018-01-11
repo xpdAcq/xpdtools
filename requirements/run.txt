@@ -6,3 +6,5 @@ pyFAI
 fire
 pims
 fabio
+numba
+streamz_ext
