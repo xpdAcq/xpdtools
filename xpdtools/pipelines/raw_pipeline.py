@@ -6,8 +6,8 @@ from skbeam.core.utils import q_to_twotheta
 from streamz_ext import Stream
 
 from xpdtools.calib import img_calibration
-from xpdtools.tools import (z_score_image, load_geo, polarization_correction,
-                            mask_img, generate_binner, overlay_mask,
+from xpdtools.tools import (z_score_image, load_geo, mask_img, generate_binner,
+                            overlay_mask,
                             fq_getter, pdf_getter)
 
 mask_setting = {'setting': 'auto'}
@@ -132,7 +132,6 @@ composition = Stream(stream_name='composition')
 iq_comp = (
     q.zip(mean)
     .combine_latest(composition, emit_on=0))
-iq_comp_map = (iq_comp
-    .map(lambda x: (x[0][0], x[0][1], x[1])))
+iq_comp_map = (iq_comp.map(lambda x: (x[0][0], x[0][1], x[1])))
 fq = iq_comp_map.starmap(fq_getter, stream_name='fq', **fq_kwargs)
 pdf = iq_comp_map.starmap(pdf_getter, stream_name='pdf', **pdf_kwargs)

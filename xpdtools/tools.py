@@ -16,7 +16,6 @@ from itertools import starmap
 #
 ##############################################################################
 import numpy as np
-from matplotlib.path import Path
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from scipy.integrate import simps
 from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
