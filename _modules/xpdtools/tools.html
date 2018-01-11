@@ -174,11 +174,11 @@
 <span class="c1">#</span>
 <span class="c1">##############################################################################</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">matplotlib.path</span> <span class="k">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">pyFAI.azimuthalIntegrator</span> <span class="k">import</span> <span class="n">AzimuthalIntegrator</span>
 <span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="k">import</span> <span class="n">simps</span>
 <span class="kn">from</span> <span class="nn">skbeam.core.accumulators.binned_statistic</span> <span class="k">import</span> <span class="n">BinnedStatistic1D</span>
 <span class="kn">from</span> <span class="nn">skbeam.core.mask</span> <span class="k">import</span> <span class="n">margin</span>
+<span class="kn">from</span> <span class="nn">numba</span> <span class="k">import</span> <span class="n">jit</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">diffpy.pdfgetx</span> <span class="k">import</span> <span class="n">PDFGetter</span>
@@ -186,7 +186,8 @@
     <span class="kn">from</span> <span class="nn">xpdtools.shim</span> <span class="k">import</span> <span class="n">PDFGetterShim</span> <span class="k">as</span> <span class="n">PDFGetter</span>
 
 
-<div class="viewcode-block" id="mask_ring_median"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.mask_ring_median">[docs]</a><span class="k">def</span> <span class="nf">mask_ring_median</span><span class="p">(</span><span class="n">values_array</span><span class="p">,</span> <span class="n">positions_array</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+<div class="viewcode-block" id="mask_ring_median"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.mask_ring_median">[docs]</a><span class="nd">@jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nogil</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">mask_ring_median</span><span class="p">(</span><span class="n">values_array</span><span class="p">,</span> <span class="n">positions_array</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Find outlier pixels in a single ring via a single pass with the median.</span>
 
 <span class="sd">    Parameters</span>
@@ -199,7 +200,7 @@
 <span class="sd">        The threshold</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">values_array</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">values_array</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">values_array</span><span class="p">)</span>
-    <span class="n">removals</span> <span class="o">=</span> <span class="n">positions_array</span><span class="p">[</span><span class="n">z</span> <span class="o">&gt;</span> <span class="n">alpha</span><span class="p">]</span>
+    <span class="n">removals</span> <span class="o">=</span> <span class="n">positions_array</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">z</span> <span class="o">&gt;</span> <span class="n">alpha</span><span class="p">)]</span>
     <span class="k">return</span> <span class="n">removals</span></div>
 
 
@@ -235,15 +236,15 @@
 <span class="n">mask_ring_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;median&#39;</span><span class="p">:</span> <span class="n">mask_ring_median</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span> <span class="n">mask_ring_mean</span><span class="p">}</span>
 
 
-<div class="viewcode-block" id="binned_outlier"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.binned_outlier">[docs]</a><span class="k">def</span> <span class="nf">binned_outlier</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">geo</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">tmsk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask_method</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="binned_outlier"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.binned_outlier">[docs]</a><span class="k">def</span> <span class="nf">binned_outlier</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">binner</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">tmsk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask_method</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Sigma Clipping based masking</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    img : np.ndarray</span>
 <span class="sd">        The image</span>
-<span class="sd">    geo : pyFAI.geometry.Geometry instance</span>
-<span class="sd">        The detector geometry information</span>
+<span class="sd">    binner : BinnedStatistic1D instance</span>
+<span class="sd">        The binned statistics information</span>
 <span class="sd">    alpha : float</span>
 <span class="sd">        The number of standard deviations to clip</span>
 <span class="sd">    tmsk : np.ndarray, optional</span>
@@ -259,13 +260,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;start mask&#39;</span><span class="p">)</span>
 
-    <span class="n">qbinned</span> <span class="o">=</span> <span class="n">generate_binner</span><span class="p">(</span><span class="n">geo</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">tmsk</span><span class="p">)</span>
-
-    <span class="n">xy</span> <span class="o">=</span> <span class="n">qbinned</span><span class="o">.</span><span class="n">xy</span>
-    <span class="n">idx</span> <span class="o">=</span> <span class="n">xy</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">binner</span><span class="o">.</span><span class="n">argsort_index</span>
     <span class="n">vfs</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[</span><span class="n">idx</span><span class="p">]</span>
     <span class="n">pfs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">img</span><span class="p">))[</span><span class="n">idx</span><span class="p">]</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">xy</span><span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">binner</span><span class="o">.</span><span class="n">flatcount</span>
     <span class="n">t</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
@@ -276,6 +274,8 @@
     <span class="n">removals</span> <span class="o">=</span> <span class="n">starmap</span><span class="p">(</span><span class="n">mask_ring_dict</span><span class="p">[</span><span class="n">mask_method</span><span class="p">],</span> <span class="n">t</span><span class="p">)</span>
     <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="o">**</span><span class="n">p_err</span><span class="p">)</span>
     <span class="n">removals</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">removals</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">tmsk</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tmsk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
     <span class="n">tmsk</span> <span class="o">=</span> <span class="n">tmsk</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
     <span class="n">tmsk</span><span class="p">[</span><span class="n">removals</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">tmsk</span> <span class="o">=</span> <span class="n">tmsk</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
@@ -283,12 +283,12 @@
     <span class="k">return</span> <span class="n">tmsk</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="mask_img"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.mask_img">[docs]</a><span class="k">def</span> <span class="nf">mask_img</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">geo</span><span class="p">,</span>
+<div class="viewcode-block" id="mask_img"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.mask_img">[docs]</a><span class="k">def</span> <span class="nf">mask_img</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">binner</span><span class="p">,</span>
              <span class="n">edge</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
              <span class="n">lower_thresh</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
              <span class="n">upper_thresh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">bs_width</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">tri_offset</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">v_asym</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-             <span class="n">alpha</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span>
+             <span class="n">alpha</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
              <span class="n">auto_type</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">,</span>
              <span class="n">tmsk</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -298,7 +298,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    img: np.ndarray</span>
 <span class="sd">        The image to be masked</span>
-<span class="sd">    geo: pyFAI.geometry.Geometry</span>
+<span class="sd">    binner: pyFAI.geometry.Geometry</span>
 <span class="sd">        The pyFAI description of the detector orientation or any</span>
 <span class="sd">        subclass of pyFAI.geometry.Geometry class</span>
 <span class="sd">    edge: int, optional</span>
@@ -347,28 +347,29 @@
         <span class="n">working_mask</span> <span class="o">*=</span> <span class="p">(</span><span class="n">img</span> <span class="o">&gt;=</span> <span class="n">lower_thresh</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">upper_thresh</span><span class="p">:</span>
         <span class="n">working_mask</span> <span class="o">*=</span> <span class="p">(</span><span class="n">img</span> <span class="o">&lt;=</span> <span class="n">upper_thresh</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">a</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="p">[</span><span class="n">bs_width</span><span class="p">,</span> <span class="n">tri_offset</span><span class="p">,</span> <span class="n">v_asym</span><span class="p">]]):</span>
-        <span class="n">center_x</span><span class="p">,</span> <span class="n">center_y</span> <span class="o">=</span> <span class="p">[</span><span class="n">geo</span><span class="o">.</span><span class="n">getFit2D</span><span class="p">()[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span>
-                              <span class="p">[</span><span class="s1">&#39;centerX&#39;</span><span class="p">,</span> <span class="s1">&#39;centerY&#39;</span><span class="p">]]</span>
-        <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span>
-        <span class="n">mask_verts</span> <span class="o">=</span> <span class="p">[(</span><span class="n">center_x</span> <span class="o">-</span> <span class="n">bs_width</span><span class="p">,</span> <span class="n">center_y</span><span class="p">),</span>
-                      <span class="p">(</span><span class="n">center_x</span><span class="p">,</span> <span class="n">center_y</span> <span class="o">-</span> <span class="n">tri_offset</span><span class="p">),</span>
-                      <span class="p">(</span><span class="n">center_x</span> <span class="o">+</span> <span class="n">bs_width</span><span class="p">,</span> <span class="n">center_y</span><span class="p">),</span>
-                      <span class="p">(</span><span class="n">center_x</span> <span class="o">+</span> <span class="n">bs_width</span> <span class="o">+</span> <span class="n">v_asym</span><span class="p">,</span> <span class="n">ny</span><span class="p">),</span>
-                      <span class="p">(</span><span class="n">center_x</span> <span class="o">-</span> <span class="n">bs_width</span> <span class="o">-</span> <span class="n">v_asym</span><span class="p">,</span> <span class="n">ny</span><span class="p">)]</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    if all([a is not None for a in [bs_width, tri_offset, v_asym]]):</span>
+<span class="sd">        center_x, center_y = [binner.getFit2D()[k] for k in</span>
+<span class="sd">                              [&#39;centerX&#39;, &#39;centerY&#39;]]</span>
+<span class="sd">        nx, ny = img.shape</span>
+<span class="sd">        mask_verts = [(center_x - bs_width, center_y),</span>
+<span class="sd">                      (center_x, center_y - tri_offset),</span>
+<span class="sd">                      (center_x + bs_width, center_y),</span>
+<span class="sd">                      (center_x + bs_width + v_asym, ny),</span>
+<span class="sd">                      (center_x - bs_width - v_asym, ny)]</span>
 
-        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nx</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">ny</span><span class="p">))</span>
-        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="sd">        x, y = np.meshgrid(np.arange(nx), np.arange(ny))</span>
+<span class="sd">        x, y = x.flatten(), y.flatten()</span>
 
-        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+<span class="sd">        points = np.vstack((x, y)).T</span>
 
-        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">mask_verts</span><span class="p">)</span>
-        <span class="n">grid</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">contains_points</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-        <span class="c1"># Plug msk_grid into into next (edge-mask) step in automask</span>
-        <span class="n">working_mask</span> <span class="o">*=</span> <span class="o">~</span><span class="n">grid</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">))</span>
-
+<span class="sd">        path = Path(mask_verts)</span>
+<span class="sd">        grid = path.contains_points(points)</span>
+<span class="sd">        # Plug msk_grid into into next (edge-mask) step in automask</span>
+<span class="sd">        working_mask *= ~grid.reshape((ny, nx))</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="n">alpha</span><span class="p">:</span>
-        <span class="n">working_mask</span> <span class="o">*=</span> <span class="n">binned_outlier</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">geo</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+        <span class="n">working_mask</span> <span class="o">*=</span> <span class="n">binned_outlier</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">binner</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
                                        <span class="n">tmsk</span><span class="o">=</span><span class="n">working_mask</span><span class="p">,</span>
                                        <span class="n">mask_method</span><span class="o">=</span><span class="n">auto_type</span><span class="p">)</span>
     <span class="n">working_mask</span> <span class="o">=</span> <span class="n">working_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
@@ -407,7 +408,7 @@
     <span class="n">qbin_sizes</span> <span class="o">=</span> <span class="n">rbinned</span><span class="p">(</span><span class="n">q_dq</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
     <span class="n">qbin_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">qbin_sizes</span><span class="p">)</span>
     <span class="n">qbin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">qbin_sizes</span><span class="p">)</span>
-    <span class="n">qbin</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="n">qbin</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">q_dq</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">BinnedStatistic1D</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="n">qbin</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span></div>
@@ -427,13 +428,12 @@
 <span class="sd">    ndarray :</span>
 <span class="sd">        The z scored image</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">xy</span> <span class="o">=</span> <span class="n">binner</span><span class="o">.</span><span class="n">xy</span>
-    <span class="n">idx</span> <span class="o">=</span> <span class="n">xy</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">binner</span><span class="o">.</span><span class="n">argsort_index</span>
 
     <span class="n">vfs</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[</span><span class="n">idx</span><span class="p">]</span>
 
     <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">xy</span><span class="p">)):</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">binner</span><span class="o">.</span><span class="n">flatcount</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">vfs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">]</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">vfs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">])</span>
             <span class="n">vfs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">]</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">vfs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">])</span>

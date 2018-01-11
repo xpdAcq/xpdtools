@@ -187,7 +187,7 @@
 <p>Main entry point for processing images to I(Q)</p>
 <dl class="function">
 <dt id="xpdtools.cli.process_tiff.main">
-<code class="descclassname">xpdtools.cli.process_tiff.</code><code class="descname">main</code><span class="sig-paren">(</span><em>poni_file=None</em>, <em>image_files=None</em>, <em>bg_file=None</em>, <em>mask_file=None</em>, <em>polarization=0.99</em>, <em>edge=20</em>, <em>lower_thresh=1.0</em>, <em>upper_thresh=None</em>, <em>alpha=3.0</em>, <em>auto_type='median'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/cli/process_tiff.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.cli.process_tiff.main" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xpdtools.cli.process_tiff.</code><code class="descname">main</code><span class="sig-paren">(</span><em>poni_file=None</em>, <em>image_files=None</em>, <em>bg_file=None</em>, <em>mask_file=None</em>, <em>polarization=0.99</em>, <em>edge=20</em>, <em>lower_thresh=1.0</em>, <em>upper_thresh=None</em>, <em>alpha=3.0</em>, <em>auto_type='median'</em>, <em>mask_settings='auto'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/cli/process_tiff.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.cli.process_tiff.main" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the data processing protocol taking raw images to background
 subtracted I(Q) files.</p>
 <p>The data processing steps included in this protocol are:
@@ -220,6 +220,8 @@ None if None do not apply upper theshold mask</li>
 to 3. if None do not apply automated masking</li>
 <li><strong>auto_type</strong> (<em>{‘median’, ‘mean’}, optional</em>) – The type of automasking to use, median is faster, mean is more
 accurate. Defaults to ‘median’.</li>
+<li><strong>mask_settings</strong> (<em>{‘auto’, ‘first’, None}, optional</em>) – If auto mask every image, if first only mask first image, if None
+mask no images. Defaults to None</li>
 </ul>
 </td>
 </tr>
