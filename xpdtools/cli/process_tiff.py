@@ -14,7 +14,7 @@ from matplotlib.colors import SymLogNorm
 from ..pipelines.raw_pipeline import (pol_corrected_img, mask, mean, q,
                                       geometry, dark_corrected_foreground,
                                       dark_corrected_background, z_score, std,
-                                      median, image_counter, mask_setting)
+                                      median, mask_setting)
 
 
 def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
@@ -155,7 +155,6 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
         if bg is None:
             bg = np.zeros(img.shape)
             dark_corrected_background.emit(bg)
-        image_counter.emit(i)
         dark_corrected_foreground.emit(img)
     return q_l, mean_l, median_l, std_l
 
