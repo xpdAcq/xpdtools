@@ -1,5 +1,4 @@
 """Tools for x-ray scattering data processing """
-from itertools import starmap
 
 ##############################################################################
 #
@@ -16,11 +15,11 @@ from itertools import starmap
 #
 ##############################################################################
 import numpy as np
+from numba import jit, boolean
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from scipy.integrate import simps
 from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
 from skbeam.core.mask import margin
-from numba import jit
 
 try:
     from diffpy.pdfgetx import PDFGetter
@@ -46,6 +45,7 @@ def mask_ring_median(values_array, positions_array, alpha):
     return removals
 
 
+@jit(cache=True, nopython=True, nogil=True)
 def mask_ring_mean(values_array, positions_array, alpha):
     """Find outlier pixels in a single ring via a pixel by pixel method with
     the mean.
@@ -59,14 +59,19 @@ def mask_ring_mean(values_array, positions_array, alpha):
     alpha: float
         The threshold
     """
-    m = np.ones_like(positions_array, dtype=bool)
+    m = np.ones(positions_array.shape, dtype=boolean)
     removals = []
-    while len(values_array) > 0:
-        m[np.in1d(positions_array, removals)] = False
+    while True:
+        b = np.array([item in removals for item in positions_array])
+        m[b] = False
         v = values_array[m]
+        if len(v) <= 1:
+            break
         std = np.std(v)
+        if std == 0.0:
+            break
         norm_v_list = np.abs(v - np.mean(v)) / std
-        if np.all(norm_v_list < alpha) or std == 0.0:
+        if np.all(norm_v_list < alpha):
             break
         # get the index of the worst pixel
         worst_idx = np.argmax(norm_v_list)
@@ -113,7 +118,9 @@ def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median'):
             t.append((vfs[i: i + k], pfs[i: i + k], alpha))
         i += k
     p_err = np.seterr(all='ignore')
-    removals = starmap(mask_ring_dict[mask_method], t)
+    from multiprocessing.dummy import Pool
+    with Pool() as p:
+        removals = p.starmap(mask_ring_dict[mask_method], t)
     np.seterr(**p_err)
     removals = [item for sublist in removals for item in sublist]
     if tmsk is None:
