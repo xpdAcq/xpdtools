@@ -394,6 +394,37 @@ def fq_getter(x, y, composition, **kwargs):
     return res[0], res[1], pg.config
 
 
+def sq_getter(x, y, composition, **kwargs):
+    """Process the data to F(Q)
+
+    Parameters
+    ----------
+    x : ndarray
+        The q or tth values
+    y : ndarray
+        The scattered intensity
+    composition : str
+        The composition
+    kwargs: dict
+        Additional kwargs for PDFGetter
+
+    Returns
+    -------
+    q : ndarray
+        The radial values
+    fq: ndarray
+        The reduced structure function
+    config: dict
+        The PDFGetter config
+    """
+    pg = PDFGetter()
+    kwargs.update({'composition': composition})
+    args = (x, y)
+    pg(*args, **kwargs)
+    res = pg.sq
+    return res[0], res[1], pg.config
+
+
 def overlay_mask(img, mask):
     """Overlay mask on image, masked pixels are ``np.nan``"""
     img2 = img.copy()

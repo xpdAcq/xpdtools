@@ -21,7 +21,9 @@ for n in [raw_background_dark, raw_background, raw_foreground_dark]:
     n.emit(np.zeros(img.shape))
 
 
-@profile(skip=1, sort='module', entries=1000)
+@profile(skip=1,
+         # sort='module',
+         entries=1000)
 def f():
     raw_foreground.emit(img)
 
