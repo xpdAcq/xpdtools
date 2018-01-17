@@ -381,7 +381,7 @@ accurate. Defaults to median.</li>
 
 <dl class="function">
 <dt id="xpdtools.tools.mask_img">
-<code class="descclassname">xpdtools.tools.</code><code class="descname">mask_img</code><span class="sig-paren">(</span><em>img</em>, <em>binner</em>, <em>edge=30</em>, <em>lower_thresh=0.0</em>, <em>upper_thresh=None</em>, <em>bs_width=13</em>, <em>tri_offset=13</em>, <em>v_asym=0</em>, <em>alpha=3</em>, <em>auto_type='median'</em>, <em>tmsk=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#mask_img"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.mask_img" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xpdtools.tools.</code><code class="descname">mask_img</code><span class="sig-paren">(</span><em>img</em>, <em>binner</em>, <em>edge=30</em>, <em>lower_thresh=0.0</em>, <em>upper_thresh=None</em>, <em>alpha=3</em>, <em>auto_type='median'</em>, <em>tmsk=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#mask_img"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.mask_img" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mask an image based off of various methods</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -424,9 +424,9 @@ are masked out.</p>
 </table>
 </dd></dl>
 
-<dl class="function">
+<dl class="attribute">
 <dt id="xpdtools.tools.mask_ring_mean">
-<code class="descclassname">xpdtools.tools.</code><code class="descname">mask_ring_mean</code><span class="sig-paren">(</span><em>values_array</em>, <em>positions_array</em>, <em>alpha</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#mask_ring_mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.mask_ring_mean" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xpdtools.tools.</code><code class="descname">mask_ring_mean</code><a class="reference internal" href="_modules/xpdtools/tools.html#mask_ring_mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.mask_ring_mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find outlier pixels in a single ring via a pixel by pixel method with
 the mean.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -569,6 +569,34 @@ the mean.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="xpdtools.tools.sq_getter">
+<code class="descclassname">xpdtools.tools.</code><code class="descname">sq_getter</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>composition</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#sq_getter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.sq_getter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process the data to F(Q)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>ndarray</em>) – The q or tth values</li>
+<li><strong>y</strong> (<em>ndarray</em>) – The scattered intensity</li>
+<li><strong>composition</strong> (<em>str</em>) – The composition</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – Additional kwargs for PDFGetter</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>q</strong> (<em>ndarray</em>) – The radial values</li>
+<li><strong>fq</strong> (<em>ndarray</em>) – The reduced structure function</li>
+<li><strong>config</strong> (<em>dict</em>) – The PDFGetter config</li>
+</ul>
+</p>
 </td>
 </tr>
 </tbody>
