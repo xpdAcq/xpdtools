@@ -95,25 +95,22 @@ img_cal_binner = (
 
 all_mask = (
     img_cal_binner
-    .filter(lambda x, **kwargs: kwargs['setting'] == 'auto',
-            **mask_setting)
+    .filter(lambda x, **kwargs: mask_setting['setting'] == 'auto')
     .starmap(mask_img, stream_name='mask', **mask_kwargs)
 )
 img_counter = Stream()
 first_mask = (
     img_cal_binner
-    .filter(lambda x, **kwargs: kwargs['setting'] == 'first',
-            **mask_setting)
+    .filter(lambda x, **kwargs: mask_setting['setting'] == 'first')
     .zip(img_counter)
-    .filter(lambda *x: x[-1] == 1)
+    .filter(lambda x: x[1] == 1).pluck(0)
     .starmap(mask_img, stream_name='mask', **mask_kwargs)
 )
 
 no_mask = (
     img_cal_binner
-    .filter(lambda x, **kwargs: kwargs['setting'] == 'none',
-            **mask_setting)
-    .starmap(lambda img, *_: np.ones(img.shape))
+    .filter(lambda x, **kwargs: mask_setting['setting'] == 'none')
+    .starmap(lambda img, *_: np.ones(img.shape, dtype=bool))
 )
 
 mask = all_mask.union(first_mask, no_mask)
