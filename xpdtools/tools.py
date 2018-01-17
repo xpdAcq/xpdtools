@@ -1,5 +1,4 @@
 """Tools for x-ray scattering data processing """
-from itertools import starmap
 
 ##############################################################################
 #
@@ -16,11 +15,11 @@ from itertools import starmap
 #
 ##############################################################################
 import numpy as np
+from numba import jit, boolean
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from scipy.integrate import simps
 from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
 from skbeam.core.mask import margin
-from numba import jit
 
 try:
     from diffpy.pdfgetx import PDFGetter
@@ -29,7 +28,7 @@ except ImportError:
 
 
 @jit(cache=True, nopython=True, nogil=True)
-def mask_ring_median(values_array, positions_array, alpha):
+def mask_ring_median(values_array, positions_array, alpha):  # pragma: no cover
     """Find outlier pixels in a single ring via a single pass with the median.
 
     Parameters
@@ -46,7 +45,8 @@ def mask_ring_median(values_array, positions_array, alpha):
     return removals
 
 
-def mask_ring_mean(values_array, positions_array, alpha):
+@jit(cache=True, nopython=True, nogil=True)
+def mask_ring_mean(values_array, positions_array, alpha):  # pragma: no cover
     """Find outlier pixels in a single ring via a pixel by pixel method with
     the mean.
 
@@ -59,14 +59,19 @@ def mask_ring_mean(values_array, positions_array, alpha):
     alpha: float
         The threshold
     """
-    m = np.ones_like(positions_array, dtype=bool)
+    m = np.ones(positions_array.shape, dtype=boolean)
     removals = []
-    while len(values_array) > 0:
-        m[np.in1d(positions_array, removals)] = False
+    while True:
+        b = np.array([item in removals for item in positions_array])
+        m[b] = False
         v = values_array[m]
+        if len(v) <= 1:
+            break
         std = np.std(v)
+        if std == 0.0:
+            break
         norm_v_list = np.abs(v - np.mean(v)) / std
-        if np.all(norm_v_list < alpha) or std == 0.0:
+        if np.all(norm_v_list < alpha):
             break
         # get the index of the worst pixel
         worst_idx = np.argmax(norm_v_list)
@@ -113,7 +118,9 @@ def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median'):
             t.append((vfs[i: i + k], pfs[i: i + k], alpha))
         i += k
     p_err = np.seterr(all='ignore')
-    removals = starmap(mask_ring_dict[mask_method], t)
+    from multiprocessing.dummy import Pool
+    with Pool() as p:
+        removals = p.starmap(mask_ring_dict[mask_method], t)
     np.seterr(**p_err)
     removals = [item for sublist in removals for item in sublist]
     if tmsk is None:
@@ -129,7 +136,6 @@ def mask_img(img, binner,
              edge=30,
              lower_thresh=0.0,
              upper_thresh=None,
-             bs_width=13, tri_offset=13, v_asym=0,
              alpha=3,
              auto_type='median',
              tmsk=None):
@@ -189,27 +195,6 @@ def mask_img(img, binner,
         working_mask *= (img >= lower_thresh).astype(bool)
     if upper_thresh:
         working_mask *= (img <= upper_thresh).astype(bool)
-    '''
-    if all([a is not None for a in [bs_width, tri_offset, v_asym]]):
-        center_x, center_y = [binner.getFit2D()[k] for k in
-                              ['centerX', 'centerY']]
-        nx, ny = img.shape
-        mask_verts = [(center_x - bs_width, center_y),
-                      (center_x, center_y - tri_offset),
-                      (center_x + bs_width, center_y),
-                      (center_x + bs_width + v_asym, ny),
-                      (center_x - bs_width - v_asym, ny)]
-
-        x, y = np.meshgrid(np.arange(nx), np.arange(ny))
-        x, y = x.flatten(), y.flatten()
-
-        points = np.vstack((x, y)).T
-
-        path = Path(mask_verts)
-        grid = path.contains_points(points)
-        # Plug msk_grid into into next (edge-mask) step in automask
-        working_mask *= ~grid.reshape((ny, nx))
-    '''
     if alpha:
         working_mask *= binned_outlier(img, binner, alpha=alpha,
                                        tmsk=working_mask,
@@ -384,6 +369,37 @@ def fq_getter(x, y, composition, **kwargs):
     args = (x, y)
     pg(*args, **kwargs)
     res = pg.fq
+    return res[0], res[1], pg.config
+
+
+def sq_getter(x, y, composition, **kwargs):
+    """Process the data to F(Q)
+
+    Parameters
+    ----------
+    x : ndarray
+        The q or tth values
+    y : ndarray
+        The scattered intensity
+    composition : str
+        The composition
+    kwargs: dict
+        Additional kwargs for PDFGetter
+
+    Returns
+    -------
+    q : ndarray
+        The radial values
+    fq: ndarray
+        The reduced structure function
+    config: dict
+        The PDFGetter config
+    """
+    pg = PDFGetter()
+    kwargs.update({'composition': composition})
+    args = (x, y)
+    pg(*args, **kwargs)
+    res = pg.sq
     return res[0], res[1], pg.config
 
 
