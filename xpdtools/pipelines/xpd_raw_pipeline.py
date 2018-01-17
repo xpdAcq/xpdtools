@@ -89,7 +89,7 @@ pol_corrected_img = (bg_corrected_img
 cal_binner = (geometry_img_shape
               .starmap(generate_binner))
 
-img_cal_binner= (
+img_cal_binner = (
     pol_corrected_img.
     combine_latest(cal_binner))
 
