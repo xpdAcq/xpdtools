@@ -28,7 +28,7 @@ except ImportError:
 
 
 @jit(cache=True, nopython=True, nogil=True)
-def mask_ring_median(values_array, positions_array, alpha):
+def mask_ring_median(values_array, positions_array, alpha):  # pragma: no cover
     """Find outlier pixels in a single ring via a single pass with the median.
 
     Parameters
@@ -46,7 +46,7 @@ def mask_ring_median(values_array, positions_array, alpha):
 
 
 @jit(cache=True, nopython=True, nogil=True)
-def mask_ring_mean(values_array, positions_array, alpha):
+def mask_ring_mean(values_array, positions_array, alpha):  # pragma: no cover
     """Find outlier pixels in a single ring via a pixel by pixel method with
     the mean.
 
@@ -136,7 +136,6 @@ def mask_img(img, binner,
              edge=30,
              lower_thresh=0.0,
              upper_thresh=None,
-             bs_width=13, tri_offset=13, v_asym=0,
              alpha=3,
              auto_type='median',
              tmsk=None):
@@ -196,27 +195,6 @@ def mask_img(img, binner,
         working_mask *= (img >= lower_thresh).astype(bool)
     if upper_thresh:
         working_mask *= (img <= upper_thresh).astype(bool)
-    '''
-    if all([a is not None for a in [bs_width, tri_offset, v_asym]]):
-        center_x, center_y = [binner.getFit2D()[k] for k in
-                              ['centerX', 'centerY']]
-        nx, ny = img.shape
-        mask_verts = [(center_x - bs_width, center_y),
-                      (center_x, center_y - tri_offset),
-                      (center_x + bs_width, center_y),
-                      (center_x + bs_width + v_asym, ny),
-                      (center_x - bs_width - v_asym, ny)]
-
-        x, y = np.meshgrid(np.arange(nx), np.arange(ny))
-        x, y = x.flatten(), y.flatten()
-
-        points = np.vstack((x, y)).T
-
-        path = Path(mask_verts)
-        grid = path.contains_points(points)
-        # Plug msk_grid into into next (edge-mask) step in automask
-        working_mask *= ~grid.reshape((ny, nx))
-    '''
     if alpha:
         working_mask *= binned_outlier(img, binner, alpha=alpha,
                                        tmsk=working_mask,
