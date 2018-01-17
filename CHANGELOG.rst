@@ -4,6 +4,17 @@
 
 .. current developments
 
+v0.1.2
+====================
+
+**Added:**
+
+* Dedicated XPD pipeline which has the capacity to only mask the first 
+  image in a series.
+
+
+
+
 v0.1.1
 ====================
 
