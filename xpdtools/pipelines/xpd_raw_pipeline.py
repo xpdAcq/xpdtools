@@ -143,7 +143,7 @@ std = (
 q = binner.map(getattr, 'bin_centers')
 tth = (
     q.combine_latest(wavelength, emit_on=0)
-    .starmap(q_to_twotheta, stream_name='tth'))
+    .starmap(q_to_twotheta, stream_name='tth')).map(np.rad2deg)
 
 z_score = (
     pol_corrected_img.
