@@ -124,6 +124,7 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     pol_corrected_img.args = (polarization,)
     if mask_file:
         if mask_file.endswith('.msk'):
+            # TODO: may need to flip this?
             tmsk = read_fit2d_msk(mask_file)
         else:
             tmsk = np.load(mask_file)

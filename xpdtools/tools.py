@@ -311,6 +311,13 @@ def load_geo(cal_params):
     return ai
 
 
+def overlay_mask(img, mask):
+    """Overlay mask on image, masked pixels are ``np.nan``"""
+    img2 = img.copy()
+    img2[~mask] = np.nan
+    return img2
+
+
 def pdf_getter(x, y, composition, **kwargs):
     """Process the data to the PDF
 
@@ -401,13 +408,6 @@ def sq_getter(x, y, composition, **kwargs):
     pg(*args, **kwargs)
     res = pg.sq
     return res[0], res[1], pg.config
-
-
-def overlay_mask(img, mask):
-    """Overlay mask on image, masked pixels are ``np.nan``"""
-    img2 = img.copy()
-    img2[~mask] = np.nan
-    return img2
 
 
 def nu_fq_getter(q, iq, composition, **kwargs):
