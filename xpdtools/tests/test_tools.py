@@ -17,7 +17,7 @@ import pytest
 import numpy as np
 from numpy.testing import assert_equal
 
-from tests.utils import pyFAI_calib
+from xpdtools.tests.utils import pyFAI_calib
 from xpdtools.tools import (mask_ring_mean, mask_ring_median, load_geo,
                             generate_binner, mask_img, binned_outlier,
                             z_score_image, polarization_correction,
