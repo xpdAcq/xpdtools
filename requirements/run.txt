@@ -1,6 +1,5 @@
 numpy
 scipy
-scikit-beam
 pyyaml
 pyFAI
 fire
