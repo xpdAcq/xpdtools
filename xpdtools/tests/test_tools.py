@@ -67,22 +67,6 @@ def test_binned_outlier(mask_method):
     assert_equal(np.where(mask.ravel() == 0)[0], bad)
 
 
-@pytest.mark.parametrize('mask_method', ['mean', 'median'])
-def test_mask_img(mask_method):
-    b = generate_binner(geo, (2048, 2048))
-    img = np.ones((2048, 2048))
-    bad = np.unique(np.random.randint(0, 2048 * 2048, 1000))
-    urbad = np.unravel_index(bad, (2048, 2048))
-    img[urbad] = 10
-    mask = mask_img(img, b, auto_type=mask_method)
-    bad = set(bad)
-    margin_bad = np.arange(2048 * 2048).reshape((2048, 2048))
-    margin_bad = set(margin_bad[30:-30, 30:-30].ravel())
-    bad.update(margin_bad)
-
-    assert_equal(np.where(mask.ravel() == 0)[0], bad)
-
-
 def test_z_score_image():
     b = generate_binner(geo, (2048, 2048))
     img = np.ones((2048, 2048))
@@ -107,6 +91,3 @@ def test_overlay_mask():
     img[~mask] = np.nan
     assert img2 is not img
     assert_equal(img2, img)
-
-
-
