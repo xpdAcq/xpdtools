@@ -75,7 +75,7 @@ def test_z_score_image():
     img[urbad] = 10
 
     z_score = z_score_image(img, b)
-    assert all(z_score[urbad] > 3)
+    assert all(z_score[urbad] > 2)
 
 
 def test_polarization_correction():

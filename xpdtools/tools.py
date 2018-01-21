@@ -107,13 +107,16 @@ def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median'):
     """
     print('start mask')
 
-    idx = binner.argsort_index
+    # skbeam 0.0.12 doesn't have argsort_index cached
+    try:
+        idx = binner.argsort_index
+    except AttributeError:
+        idx = binner.xy.argsort()
     vfs = img.flatten()[idx]
     pfs = np.arange(np.size(img))[idx]
-    h = binner.flatcount
     t = []
     i = 0
-    for j, k in enumerate(h):
+    for k in binner.flatcount:
         if k > 0:
             t.append((vfs[i: i + k], pfs[i: i + k], alpha))
         i += k
@@ -255,12 +258,17 @@ def z_score_image(img, binner):
     ndarray :
         The z scored image
     """
-    idx = binner.argsort_index
+    try:
+        idx = binner.argsort_index
+    except AttributeError:
+        idx = binner.xy.argsort()
 
     vfs = img.flatten()[idx]
 
+    # TODO: parallelize/numbafy?
+    # TODO: numpy ignore errors
     i = 0
-    for j, k in enumerate(binner.flatcount):
+    for k in binner.flatcount:
         if k > 0:
             vfs[i: i + k] -= np.mean(vfs[i: i + k])
             vfs[i: i + k] /= np.std(vfs[i: i + k])
