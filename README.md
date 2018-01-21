@@ -8,7 +8,7 @@ Analysis Tools for XPD
 Installation
 ------------
 Note that this code is still in beta testing, so things may change. 
-Please let me know i you run into any issues.
+Please let me know if you run into any issues.
 
 1. Install [conda](https://conda.io/docs/user-guide/install/index.html)  
 
