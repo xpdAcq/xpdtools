@@ -7,3 +7,4 @@ pims
 fabio
 numba
 streamz_ext
+scikit-beam
