@@ -4,6 +4,16 @@
 
 .. current developments
 
+v0.1.4
+====================
+
+**Fixed:**
+
+* removed relative import from CLI
+
+
+
+
 v0.1.3
 ====================
 
