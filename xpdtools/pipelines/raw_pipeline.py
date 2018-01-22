@@ -80,7 +80,8 @@ polarization_array = (
 pol_corrected_img_zip = (
     bg_corrected_img.
     combine_latest(geometry, emit_on=0))
-pol_correction_combine = (bg_corrected_img
+pol_correction_combine = (
+    bg_corrected_img
     .combine_latest(polarization_array, emit_on=0))
 pol_corrected_img = pol_correction_combine.starmap(op.truediv)
 
