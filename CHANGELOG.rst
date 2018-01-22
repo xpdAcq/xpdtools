@@ -4,6 +4,27 @@
 
 .. current developments
 
+v0.1.3
+====================
+
+**Added:**
+
+* Test of the CLI (to make sure it writes out files now)
+
+* Tests of many (although not all) of the tools.
+
+* Added support for ``scikit-beam=0.0.12`` which lacks som cached data
+
+
+**Changed:**
+
+* Readme now reflects the conda package
+
+* Travis now has a display
+
+
+
+
 v0.1.2
 ====================
 
