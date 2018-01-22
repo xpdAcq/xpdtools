@@ -11,7 +11,7 @@ from streamz_ext import Stream
 import matplotlib.pyplot as plt
 from matplotlib.colors import SymLogNorm
 
-from ..pipelines.raw_pipeline import (pol_correction_combine, mask, mean, q,
+from xpdtools.pipelines.raw_pipeline import (pol_correction_combine, mask, mean, q,
                                       geometry, dark_corrected_foreground,
                                       dark_corrected_background, z_score, std,
                                       median, mask_setting)
