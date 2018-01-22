@@ -11,10 +11,13 @@ from streamz_ext import Stream
 import matplotlib.pyplot as plt
 from matplotlib.colors import SymLogNorm
 
-from xpdtools.pipelines.raw_pipeline import (pol_correction_combine, mask, mean, q,
-                                      geometry, dark_corrected_foreground,
-                                      dark_corrected_background, z_score, std,
-                                      median, mask_setting)
+from xpdtools.pipelines.raw_pipeline import (pol_correction_combine, mask,
+                                             mean, q,
+                                             geometry,
+                                             dark_corrected_foreground,
+                                             dark_corrected_background,
+                                             z_score, std,
+                                             median, mask_setting)
 
 
 def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
@@ -109,19 +112,19 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     q_l = q.sink_to_list()
 
     (mean.zip(q).zip_latest(filename_node).
-        map(lambda l: (*l[0], l[1])).
-        sink(lambda x: save_output(x[1], x[0], x[2], 'Q')))
+     map(lambda l: (*l[0], l[1])).
+     sink(lambda x: save_output(x[1], x[0], x[2], 'Q')))
     (median.zip(q).zip_latest(filename_node).
-        map(lambda l: (*l[0], l[1])).
-        sink(lambda x: save_output(x[1], x[0], x[2] + '_median', 'Q')))
+     map(lambda l: (*l[0], l[1])).
+     sink(lambda x: save_output(x[1], x[0], x[2] + '_median', 'Q')))
     (std.zip(q).zip_latest(filename_node).
-        map(lambda l: (*l[0], l[1])).
-        sink(lambda x: save_output(x[1], x[0], x[2] + '_std', 'Q')))
+     map(lambda l: (*l[0], l[1])).
+     sink(lambda x: save_output(x[1], x[0], x[2] + '_std', 'Q')))
     fig, ax = plt.subplots()
     # write out zscore
     (z_score.map(ax.imshow, norm=SymLogNorm(1.)).map(fig.colorbar).
-        zip_latest(filename_node).
-        sink(lambda x: fig.savefig(x[1] + '_zscore.png')))
+     zip_latest(filename_node).
+     sink(lambda x: fig.savefig(x[1] + '_zscore.png')))
 
     pol_correction_combine.args = (polarization,)
     if mask_file:
