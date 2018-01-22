@@ -91,3 +91,17 @@ def test_overlay_mask():
     img[~mask] = np.nan
     assert img2 is not img
     assert_equal(img2, img)
+
+
+@pytest.mark.parametrize('mask_method', ['mean', 'median'])
+def test_mask_img(mask_method):
+    b = generate_binner(geo, (2048, 2048))
+    img = np.ones((2048, 2048))
+    bad = np.unique(np.random.randint(0, 2048 * 2048, 1000))
+    urbad = np.unravel_index(bad, (2048, 2048))
+    img[urbad] = 10
+    mask = mask_img(img, b, auto_type=mask_method, edge=None,
+                    lower_thresh=None,
+                    upper_thresh=None)
+
+    assert_equal(np.where(mask.ravel() == 0)[0], bad)
