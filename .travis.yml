@@ -29,6 +29,8 @@ install:
   - source activate testenv
   - conda install --yes --file requirements/build.txt
   - conda install pip
+  - conda install xpdsim
+  - conda uninstall --force xpdsim
   - pip install -r requirements/pip.txt
   - pip install .
 
