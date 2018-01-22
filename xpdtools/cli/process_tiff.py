@@ -11,11 +11,10 @@ from streamz_ext import Stream
 import matplotlib.pyplot as plt
 from matplotlib.colors import SymLogNorm
 
-from ..pipelines.raw_pipeline import *
-# from ..pipelines.raw_pipeline import (pol_corrected_img, mask, mean, q,
-#                                       geometry, dark_corrected_foreground,
-#                                       dark_corrected_background, z_score, std,
-#                                       median, mask_setting)
+from ..pipelines.raw_pipeline import (pol_correction_combine, mask, mean, q,
+                                      geometry, dark_corrected_foreground,
+                                      dark_corrected_background, z_score, std,
+                                      median, mask_setting)
 
 
 def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
