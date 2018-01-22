@@ -26,7 +26,8 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
          lower_thresh=1.,
          upper_thresh=None,
          alpha=3., auto_type='median',
-         mask_settings='auto'):
+         mask_settings='auto',
+         flip_input_mask=True):
     """Run the data processing protocol taking raw images to background
     subtracted I(Q) files.
 
@@ -71,6 +72,9 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     mask_settings: {'auto', 'first', None}, optional
         If auto mask every image, if first only mask first image, if None
         mask no images. Defaults to None
+   flip_input_mask: bool, optional
+        If True flip the input mask up down, this helps when using fit2d
+        defaults to True.
 
     Returns
     -------
@@ -133,6 +137,8 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
             tmsk = read_fit2d_msk(mask_file)
         else:
             tmsk = np.load(mask_file)
+        if flip_input_mask:
+            tmsk = np.flipud(tmsk)
     else:
         tmsk = None
 

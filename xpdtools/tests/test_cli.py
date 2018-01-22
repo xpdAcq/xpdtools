@@ -37,4 +37,4 @@ def test_main_fit2d_mask(tmpdir):
                 '_zscore.png']:
         assert 'test' + ext in files
     msk2 = read_fit2d_msk(os.path.join(str(tmpdir), 'test.msk'))
-    assert_equal(msk, np.flipud(msk2))
+    assert_equal(msk, msk2)
