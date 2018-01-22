@@ -265,13 +265,16 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;start mask&#39;</span><span class="p">)</span>
 
-    <span class="n">idx</span> <span class="o">=</span> <span class="n">binner</span><span class="o">.</span><span class="n">argsort_index</span>
+    <span class="c1"># skbeam 0.0.12 doesn&#39;t have argsort_index cached</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">binner</span><span class="o">.</span><span class="n">argsort_index</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">binner</span><span class="o">.</span><span class="n">xy</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
     <span class="n">vfs</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[</span><span class="n">idx</span><span class="p">]</span>
     <span class="n">pfs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">img</span><span class="p">))[</span><span class="n">idx</span><span class="p">]</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="n">binner</span><span class="o">.</span><span class="n">flatcount</span>
     <span class="n">t</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">binner</span><span class="o">.</span><span class="n">flatcount</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">vfs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">],</span> <span class="n">pfs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">],</span> <span class="n">alpha</span><span class="p">))</span>
         <span class="n">i</span> <span class="o">+=</span> <span class="n">k</span>
@@ -413,12 +416,17 @@
 <span class="sd">    ndarray :</span>
 <span class="sd">        The z scored image</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">idx</span> <span class="o">=</span> <span class="n">binner</span><span class="o">.</span><span class="n">argsort_index</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">binner</span><span class="o">.</span><span class="n">argsort_index</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">binner</span><span class="o">.</span><span class="n">xy</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
 
     <span class="n">vfs</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[</span><span class="n">idx</span><span class="p">]</span>
 
+    <span class="c1"># TODO: parallelize/numbafy?</span>
+    <span class="c1"># TODO: numpy ignore errors</span>
     <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">binner</span><span class="o">.</span><span class="n">flatcount</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">binner</span><span class="o">.</span><span class="n">flatcount</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">vfs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">]</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">vfs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">])</span>
             <span class="n">vfs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">]</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">vfs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">])</span>
@@ -467,6 +475,13 @@
     <span class="n">ai</span> <span class="o">=</span> <span class="n">AzimuthalIntegrator</span><span class="p">()</span>
     <span class="n">ai</span><span class="o">.</span><span class="n">setPyFAI</span><span class="p">(</span><span class="o">**</span><span class="n">cal_params</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ai</span></div>
+
+
+<div class="viewcode-block" id="overlay_mask"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.overlay_mask">[docs]</a><span class="k">def</span> <span class="nf">overlay_mask</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overlay mask on image, masked pixels are ``np.nan``&quot;&quot;&quot;</span>
+    <span class="n">img2</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">img2</span><span class="p">[</span><span class="o">~</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">return</span> <span class="n">img2</span></div>
 
 
 <div class="viewcode-block" id="pdf_getter"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.pdf_getter">[docs]</a><span class="k">def</span> <span class="nf">pdf_getter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -559,13 +574,6 @@
     <span class="n">pg</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">sq</span>
     <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pg</span><span class="o">.</span><span class="n">config</span></div>
-
-
-<div class="viewcode-block" id="overlay_mask"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.overlay_mask">[docs]</a><span class="k">def</span> <span class="nf">overlay_mask</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Overlay mask on image, masked pixels are ``np.nan``&quot;&quot;&quot;</span>
-    <span class="n">img2</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">img2</span><span class="p">[</span><span class="o">~</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-    <span class="k">return</span> <span class="n">img2</span></div>
 
 
 <div class="viewcode-block" id="nu_fq_getter"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.nu_fq_getter">[docs]</a><span class="k">def</span> <span class="nf">nu_fq_getter</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">iq</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
