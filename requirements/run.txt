@@ -1,6 +1,5 @@
 numpy
 scipy
-scikit-beam
 pyyaml
 pyFAI
 fire
@@ -8,3 +7,5 @@ pims
 fabio
 numba
 streamz_ext
+scikit-beam
+xpdsim

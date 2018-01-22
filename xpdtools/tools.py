@@ -107,13 +107,16 @@ def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median'):
     """
     print('start mask')
 
-    idx = binner.argsort_index
+    # skbeam 0.0.12 doesn't have argsort_index cached
+    try:
+        idx = binner.argsort_index
+    except AttributeError:
+        idx = binner.xy.argsort()
     vfs = img.flatten()[idx]
     pfs = np.arange(np.size(img))[idx]
-    h = binner.flatcount
     t = []
     i = 0
-    for j, k in enumerate(h):
+    for k in binner.flatcount:
         if k > 0:
             t.append((vfs[i: i + k], pfs[i: i + k], alpha))
         i += k
@@ -255,12 +258,17 @@ def z_score_image(img, binner):
     ndarray :
         The z scored image
     """
-    idx = binner.argsort_index
+    try:
+        idx = binner.argsort_index
+    except AttributeError:
+        idx = binner.xy.argsort()
 
     vfs = img.flatten()[idx]
 
+    # TODO: parallelize/numbafy?
+    # TODO: numpy ignore errors
     i = 0
-    for j, k in enumerate(binner.flatcount):
+    for k in binner.flatcount:
         if k > 0:
             vfs[i: i + k] -= np.mean(vfs[i: i + k])
             vfs[i: i + k] /= np.std(vfs[i: i + k])
@@ -309,6 +317,13 @@ def load_geo(cal_params):
     ai = AzimuthalIntegrator()
     ai.setPyFAI(**cal_params)
     return ai
+
+
+def overlay_mask(img, mask):
+    """Overlay mask on image, masked pixels are ``np.nan``"""
+    img2 = img.copy()
+    img2[~mask] = np.nan
+    return img2
 
 
 def pdf_getter(x, y, composition, **kwargs):
@@ -401,13 +416,6 @@ def sq_getter(x, y, composition, **kwargs):
     pg(*args, **kwargs)
     res = pg.sq
     return res[0], res[1], pg.config
-
-
-def overlay_mask(img, mask):
-    """Overlay mask on image, masked pixels are ``np.nan``"""
-    img2 = img.copy()
-    img2[~mask] = np.nan
-    return img2
 
 
 def nu_fq_getter(q, iq, composition, **kwargs):

@@ -11,7 +11,7 @@ from streamz_ext import Stream
 import matplotlib.pyplot as plt
 from matplotlib.colors import SymLogNorm
 
-from ..pipelines.raw_pipeline import (pol_corrected_img, mask, mean, q,
+from ..pipelines.raw_pipeline import (pol_correction_combine, mask, mean, q,
                                       geometry, dark_corrected_foreground,
                                       dark_corrected_background, z_score, std,
                                       median, mask_setting)
@@ -88,6 +88,8 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
         else:
             poni_file = poni_file[0]
     geo = pyFAI.load(poni_file)
+    geometry.emit(geo)
+
     bg = None
     filenames = None
 
@@ -121,9 +123,10 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
         zip_latest(filename_node).
         sink(lambda x: fig.savefig(x[1] + '_zscore.png')))
 
-    pol_corrected_img.args = (polarization,)
+    pol_correction_combine.args = (polarization,)
     if mask_file:
         if mask_file.endswith('.msk'):
+            # TODO: may need to flip this?
             tmsk = read_fit2d_msk(mask_file)
         else:
             tmsk = np.load(mask_file)
@@ -135,10 +138,9 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
                        lower_thresh=lower_thresh,
                        upper_thresh=upper_thresh,
                        alpha=alpha,
-                       bs_width=None,
                        auto_type=auto_type)
     mask_setting.update({'setting': mask_settings})
-    geometry.emit(geo)
+
     if image_files is None:
         filenames = os.listdir('.')
         imgs = (fabio.open(i).data.astype(float) for i in os.listdir('.'))
@@ -156,6 +158,7 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
             bg = np.zeros(img.shape)
             dark_corrected_background.emit(bg)
         dark_corrected_foreground.emit(img)
+
     return q_l, mean_l, median_l, std_l
 
 

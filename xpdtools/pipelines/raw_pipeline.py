@@ -23,7 +23,6 @@ raw_background = Stream(stream_name='raw background')
 raw_background_dark = Stream(stream_name='raw background dark')
 
 # Get the image shape for the binner
-img_shape = raw_foreground.map(np.shape).unique(history=1)
 dark_corrected_foreground = (
     raw_foreground.
     combine_latest(raw_foreground_dark, emit_on=0).
@@ -70,6 +69,7 @@ geometry = (
     union(gen_geo, stream_name='Combine gen and load cal'))
 
 # Image corrections
+img_shape = bg_corrected_img.map(np.shape).unique(history=1)
 geometry_img_shape = geometry.zip_latest(img_shape)
 
 polarization_array = (
@@ -80,9 +80,10 @@ polarization_array = (
 pol_corrected_img_zip = (
     bg_corrected_img.
     combine_latest(geometry, emit_on=0))
-pol_corrected_img = (bg_corrected_img
-                     .combine_latest(polarization_array, emit_on=0)
-                     .starmap(op.truediv))
+pol_correction_combine = (
+    bg_corrected_img
+    .combine_latest(polarization_array, emit_on=0))
+pol_corrected_img = pol_correction_combine.starmap(op.truediv)
 
 
 # Only create binner (which is expensive) when needed (new calibration)
