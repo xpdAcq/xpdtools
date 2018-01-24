@@ -291,7 +291,7 @@ with wavlength 0.1823 angstrom</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>img</strong> (<em>np.ndarray</em>) – The image</li>
 <li><strong>binner</strong> (<em>BinnedStatistic1D instance</em>) – The binned statistics information</li>
-<li><strong>alpha</strong> (<em>float</em>) – The number of standard deviations to clip</li>
+<li><strong>alpha</strong> (<em>float, optional</em>) – The number of standard deviations to clip, defaults to 3</li>
 <li><strong>tmsk</strong> (<em>np.ndarray, optional</em>) – Prior mask. If None don’t use a prior mask, defaults to None.</li>
 <li><strong>mask_method</strong> (<em>{‘median’, ‘mean’}, optional</em>) – The method to use for creating the mask, median is faster, mean is more
 accurate. Defaults to median.</li>
@@ -398,16 +398,12 @@ Defaults to 0.0. If None, no lower threshold mask is applied</li>
 <li><strong>upper_thresh</strong> (<em>float, optional</em>) – Pixels with values greater than or equal to this threshold will be
 masked.
 Defaults to None. If None, no upper threshold mask is applied.</li>
-<li><strong>bs_width</strong> (<em>int, optional</em>) – The width of the beamstop in pixels. Defaults to 13.
-If None, no beamstop polygon mask is applied.</li>
-<li><strong>tri_offset</strong> (<em>int, optional</em>) – The triangular pixel offset to create a pointed beamstop polygon mask.
-Defaults to 13. If None, no beamstop polygon mask is applied.</li>
-<li><strong>v_asym</strong> (<em>int, optional</em>) – The vertical asymmetry of the polygon beamstop mask. Defaults to 0.
-If None, no beamstop polygon mask is applied.</li>
-<li><strong>alpha</strong> (<em>float or tuple or, 1darray, optional</em>) – Then number of acceptable standard deviations, if tuple then we use
+<li><strong>alpha</strong> (<em>float, optional</em>) – Then number of acceptable standard deviations, if tuple then we use
 a linear distribution of alphas from alpha[0] to alpha[1], if array
-then we just use that as the distribution of alphas. Defaults to 2.5.
+then we just use that as the distribution of alphas. Defaults to 3.
 If None, no outlier masking applied.</li>
+<li><strong>auto_type</strong> (<em>{‘median’, ‘mean’}, optional</em>) – The type of binned outlier masking to be done, ‘median’ is faster,
+where ‘mean’ is more accurate, defaults to ‘median’.</li>
 <li><strong>tmsk</strong> (<em>np.ndarray, optional</em>) – The starting mask to be compounded on. Defaults to None. If None mask
 generated from scratch.</li>
 </ul>
@@ -433,11 +429,17 @@ the mean.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>values_array</strong> (<em>ndarray</em>) – The ring values</li>
 <li><strong>positions_array</strong> (<em>ndarray</em>) – The positions of the values</li>
 <li><strong>alpha</strong> (<em>float</em>) – The threshold</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>removals</strong> – The positions of pixels to be removed from the data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -452,11 +454,17 @@ the mean.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>values_array</strong> (<em>ndarray</em>) – The ring values</li>
 <li><strong>positions_array</strong> (<em>ndarray</em>) – The positions of the values</li>
 <li><strong>alpha</strong> (<em>float</em>) – The threshold</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>removals</strong> – The positions of pixels to be removed from the data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -472,8 +480,8 @@ the mean.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<em>ndarray</em>) – The q or tth values</li>
-<li><strong>y</strong> (<em>ndarray</em>) – The scattered intensity</li>
+<li><strong>q</strong> (<em>ndarray</em>) – The q or tth values</li>
+<li><strong>iq</strong> (<em>ndarray</em>) – The scattered intensity</li>
 <li><strong>composition</strong> (<em>str</em>) – The composition</li>
 <li><strong>kwargs</strong> (<em>dict</em>) – Additional kwargs for PDFGetter</li>
 </ul>

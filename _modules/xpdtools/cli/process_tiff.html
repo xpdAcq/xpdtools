@@ -184,7 +184,8 @@
          <span class="n">lower_thresh</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
          <span class="n">upper_thresh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
          <span class="n">alpha</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span> <span class="n">auto_type</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">,</span>
-         <span class="n">mask_settings</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">):</span>
+         <span class="n">mask_settings</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+         <span class="n">flip_input_mask</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Run the data processing protocol taking raw images to background</span>
 <span class="sd">    subtracted I(Q) files.</span>
 
@@ -229,6 +230,9 @@
 <span class="sd">    mask_settings: {&#39;auto&#39;, &#39;first&#39;, None}, optional</span>
 <span class="sd">        If auto mask every image, if first only mask first image, if None</span>
 <span class="sd">        mask no images. Defaults to None</span>
+<span class="sd">   flip_input_mask: bool, optional</span>
+<span class="sd">        If True flip the input mask up down, this helps when using fit2d</span>
+<span class="sd">        defaults to True.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -291,6 +295,8 @@
             <span class="n">tmsk</span> <span class="o">=</span> <span class="n">read_fit2d_msk</span><span class="p">(</span><span class="n">mask_file</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">tmsk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">mask_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">flip_input_mask</span><span class="p">:</span>
+            <span class="n">tmsk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">tmsk</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">tmsk</span> <span class="o">=</span> <span class="kc">None</span>
 
