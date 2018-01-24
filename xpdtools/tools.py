@@ -39,6 +39,11 @@ def mask_ring_median(values_array, positions_array, alpha):  # pragma: no cover
         The positions of the values
     alpha: float
         The threshold
+
+    Returns
+    -------
+    removals: np.ndarray
+        The positions of pixels to be removed from the data
     """
     z = np.abs(values_array - np.median(values_array)) / np.std(values_array)
     removals = positions_array[np.where(z > alpha)]
@@ -58,6 +63,11 @@ def mask_ring_mean(values_array, positions_array, alpha):  # pragma: no cover
         The positions of the values
     alpha: float
         The threshold
+
+    Returns
+    -------
+    removals: np.ndarray
+        The positions of pixels to be removed from the data
     """
     m = np.ones(positions_array.shape, dtype=boolean)
     removals = []
@@ -92,8 +102,8 @@ def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median'):
         The image
     binner : BinnedStatistic1D instance
         The binned statistics information
-    alpha : float
-        The number of standard deviations to clip
+    alpha : float, optional
+        The number of standard deviations to clip, defaults to 3
     tmsk : np.ndarray, optional
         Prior mask. If None don't use a prior mask, defaults to None.
     mask_method : {'median', 'mean'}, optional
@@ -162,20 +172,14 @@ def mask_img(img, binner,
         Pixels with values greater than or equal to this threshold will be
         masked.
         Defaults to None. If None, no upper threshold mask is applied.
-    bs_width: int, optional
-        The width of the beamstop in pixels. Defaults to 13.
-        If None, no beamstop polygon mask is applied.
-    tri_offset: int, optional
-        The triangular pixel offset to create a pointed beamstop polygon mask.
-        Defaults to 13. If None, no beamstop polygon mask is applied.
-    v_asym: int, optional
-        The vertical asymmetry of the polygon beamstop mask. Defaults to 0.
-        If None, no beamstop polygon mask is applied.
-    alpha: float or tuple or, 1darray, optional
+    alpha: float, optional
         Then number of acceptable standard deviations, if tuple then we use
         a linear distribution of alphas from alpha[0] to alpha[1], if array
-        then we just use that as the distribution of alphas. Defaults to 2.5.
+        then we just use that as the distribution of alphas. Defaults to 3.
         If None, no outlier masking applied.
+    auto_type: {'median', 'mean'}, optional
+        The type of binned outlier masking to be done, 'median' is faster,
+        where 'mean' is more accurate, defaults to 'median'.
     tmsk: np.ndarray, optional
         The starting mask to be compounded on. Defaults to None. If None mask
         generated from scratch.
@@ -423,9 +427,9 @@ def nu_fq_getter(q, iq, composition, **kwargs):
 
     Parameters
     ----------
-    x : ndarray
+    q : ndarray
         The q or tth values
-    y : ndarray
+    iq : ndarray
         The scattered intensity
     composition : str
         The composition
