@@ -1,0 +1,15 @@
+**Added:**
+
+* Kwarg for flipping the input mask (may be needed for fit2d masks)
+
+**Changed:** None
+
+**Deprecated:** None
+
+**Removed:** None
+
+**Fixed:**
+
+* Code health badge
+
+**Security:** None
