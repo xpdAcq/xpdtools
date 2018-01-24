@@ -31,7 +31,8 @@ def test_main_fit2d_mask(tmpdir):
 
     # Copy the poni and image files to the temp dir
     main(poni_file, dest_image_file, edge=None, lower_thresh=None, alpha=None,
-         mask_file=os.path.join(str(tmpdir), 'mask_test.msk'))
+         mask_file=os.path.join(str(tmpdir), 'mask_test.msk'),
+         flip_input_mask=True)
     files = os.listdir(str(tmpdir))
     for ext in ['.msk', '_mask.npy', '.chi', '_median.chi', '_std.chi',
                 '_zscore.png']:
