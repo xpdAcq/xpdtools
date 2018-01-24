@@ -11,7 +11,7 @@ from streamz_ext import Stream
 import matplotlib.pyplot as plt
 from matplotlib.colors import SymLogNorm
 
-from xpdtools.pipelines.raw_pipeline import (pol_correction_combine, mask,
+from xpdtools.pipelines.raw_pipeline import (polarization_array, mask,
                                              mean, q,
                                              geometry,
                                              dark_corrected_foreground,
@@ -72,7 +72,7 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     mask_settings: {'auto', 'first', None}, optional
         If auto mask every image, if first only mask first image, if None
         mask no images. Defaults to None
-   flip_input_mask: bool, optional
+    flip_input_mask: bool, optional
         If True flip the input mask up down, this helps when using fit2d
         defaults to True.
 
@@ -130,7 +130,7 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
      zip_latest(filename_node).
      sink(lambda x: fig.savefig(x[1] + '_zscore.png')))
 
-    pol_correction_combine.args = (polarization,)
+    polarization_array.args = (polarization,)
     if mask_file:
         if mask_file.endswith('.msk'):
             # TODO: may need to flip this?
