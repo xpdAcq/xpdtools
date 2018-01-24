@@ -39,3 +39,15 @@ def test_main_fit2d_mask(tmpdir):
         assert 'test' + ext in files
     msk2 = read_fit2d_msk(os.path.join(str(tmpdir), 'test.msk'))
     assert_equal(msk, msk2)
+
+
+def test_main_no_ig(tmpdir):
+    poni_file = pyfai_poni
+    dest_image_file = str(tmpdir.join('test.tiff'))
+    shutil.copy(image_file, dest_image_file)
+    os.chdir(str(tmpdir))
+    main(poni_file)
+    files = os.listdir(str(tmpdir))
+    for ext in ['.msk', '_mask.npy', '.chi', '_median.chi', '_std.chi',
+                '_zscore.png']:
+        assert 'test' + ext in files

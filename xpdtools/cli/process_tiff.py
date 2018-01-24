@@ -20,6 +20,9 @@ from xpdtools.pipelines.raw_pipeline import (polarization_array, mask,
                                              median, mask_setting)
 
 
+img_extensions = {'.tiff', '.edf', '.tif'}
+
+
 def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
          polarization=.99,
          edge=20,
@@ -151,8 +154,10 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     mask_setting.update({'setting': mask_settings})
 
     if image_files is None:
-        filenames = os.listdir('.')
-        imgs = (fabio.open(i).data.astype(float) for i in os.listdir('.'))
+        filenames = (i for i in os.listdir('.') if os.path.splitext(i)[-1] in
+                     img_extensions)
+        imgs = (fabio.open(i).data.astype(float) for i in os.listdir('.') if
+                os.path.splitext(i)[-1] in img_extensions)
     else:
         if isinstance(image_files, str):
             image_files = (image_files,)
