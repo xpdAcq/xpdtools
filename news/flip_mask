@@ -6,10 +6,14 @@
 
 **Deprecated:** None
 
-**Removed:** None
+**Removed:**
+
+* Docs for beamstop mask
 
 **Fixed:**
 
 * Code health badge
+
+* Docs for ``mask_img`` ``alpha``
 
 **Security:** None
