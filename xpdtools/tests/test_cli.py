@@ -54,21 +54,17 @@ def test_main_no_img(tmpdir):
         assert 'test' + ext in files
 
 
-kwarg_combo = [{k: v} for k, v in dict(polarization=-.99,
-                                       edge=50,
-                                       lower_thresh=100.,
-                                       upper_thresh=100,
-                                       alpha=5.,
-                                       auto_type='mean',
-                                       ).items()]
+keys = ['polarization', 'edge', 'lower_thresh', 'upper_thresh', 'alpha',
+        'auto_type']
+values = [-.99, 50, 100., 100., 5., 'mean']
 
 
-@pytest.mark.parametrize('kwargs', kwarg_combo)
-def test_main_pol(tmpdir, kwargs):
+@pytest.mark.parametrize(('key', 'value'), zip(keys, values))
+def test_main_kwargs(tmpdir, key, value):
     poni_file = pyfai_poni
     dest_image_file = str(tmpdir.join('test.tiff'))
     shutil.copy(image_file, dest_image_file)
     os.chdir(str(tmpdir))
     a = main(poni_file)
-    b = main(poni_file, **kwargs)
+    b = main(poni_file, **{key: value})
     assert_raises(AssertionError, assert_array_equal, a[1][0], b[1][0])
