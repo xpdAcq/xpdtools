@@ -86,9 +86,10 @@ def test_main_no_poni(tmpdir):
 def test_main_multi_poni(tmpdir):
     poni_file = pyfai_poni
     for file, name in zip([image_file, poni_file, poni_file],
-                          ['test.tiff', 'test.poni', 'test.poni']):
+                          ['test.tiff', 'test.poni', 'test2.poni']):
         dest_image_file = str(tmpdir.join(name))
         shutil.copy(file, dest_image_file)
     os.chdir(str(tmpdir))
+    print(os.listdir('.'))
     with pytest.raises(RuntimeError):
         main()
