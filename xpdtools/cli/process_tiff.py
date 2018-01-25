@@ -11,13 +11,41 @@ from streamz_ext import Stream
 import matplotlib.pyplot as plt
 from matplotlib.colors import SymLogNorm
 
-from xpdtools.pipelines.raw_pipeline import (pol_correction_combine, mask,
+from xpdtools.pipelines.raw_pipeline import (polarization_array, mask,
                                              mean, q,
                                              geometry,
                                              dark_corrected_foreground,
                                              dark_corrected_background,
                                              z_score, std,
                                              median, mask_setting)
+
+img_extensions = {'.tiff', '.edf', '.tif'}
+# Modify graph
+# create filename nodes
+filename_source = Stream(stream_name='filename')
+filename_node = (filename_source.map(lambda x: os.path.splitext(x)[0]))
+# write out mask
+mask.zip_latest(filename_node).sink(lambda x: fit2d_save(np.flipud(x[0]),
+                                                         x[1]))
+mask.zip_latest(filename_node).sink(lambda x: np.save(x[1] + '_mask.npy',
+                                                      x[0]))
+# write out chi
+out_tup = tuple([k.sink_to_list() for k in [q, mean, median, std]])
+
+(mean.zip(q).zip_latest(filename_node).
+ map(lambda l: (*l[0], l[1])).
+ sink(lambda x: save_output(x[1], x[0], x[2], 'Q')))
+(median.zip(q).zip_latest(filename_node).
+ map(lambda l: (*l[0], l[1])).
+ sink(lambda x: save_output(x[1], x[0], x[2] + '_median', 'Q')))
+(std.zip(q).zip_latest(filename_node).
+ map(lambda l: (*l[0], l[1])).
+ sink(lambda x: save_output(x[1], x[0], x[2] + '_std', 'Q')))
+fig, ax = plt.subplots()
+# write out zscore
+(z_score.map(ax.imshow, norm=SymLogNorm(1.)).map(fig.colorbar).
+ zip_latest(filename_node).
+ sink(lambda x: fig.savefig(x[1] + '_zscore.png')))
 
 
 def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
@@ -72,7 +100,7 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     mask_settings: {'auto', 'first', None}, optional
         If auto mask every image, if first only mask first image, if None
         mask no images. Defaults to None
-   flip_input_mask: bool, optional
+    flip_input_mask: bool, optional
         If True flip the input mask up down, this helps when using fit2d
         defaults to True.
 
@@ -91,46 +119,14 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     if poni_file is None:
         poni_file = [f for f in os.listdir('.') if f.endswith('.poni')]
         if len(poni_file) != 1:
-            RuntimeError("There can only be one poni file")
+            raise RuntimeError("There can only be one poni file")
         else:
             poni_file = poni_file[0]
     geo = pyFAI.load(poni_file)
-    geometry.emit(geo)
 
     bg = None
     filenames = None
-
-    # Modify graph
-    # create filename nodes
-    filename_source = Stream(stream_name='filename')
-    filename_node = (filename_source.map(lambda x: os.path.splitext(x)[0]))
-    # write out mask
-    mask.zip_latest(filename_node).sink(lambda x: fit2d_save(np.flipud(x[0]),
-                                                             x[1]))
-    mask.zip_latest(filename_node).sink(lambda x: np.save(x[1] + '_mask.npy',
-                                                          x[0]))
-    # write out chi
-    mean_l = mean.sink_to_list()
-    median_l = median.sink_to_list()
-    std_l = std.sink_to_list()
-    q_l = q.sink_to_list()
-
-    (mean.zip(q).zip_latest(filename_node).
-     map(lambda l: (*l[0], l[1])).
-     sink(lambda x: save_output(x[1], x[0], x[2], 'Q')))
-    (median.zip(q).zip_latest(filename_node).
-     map(lambda l: (*l[0], l[1])).
-     sink(lambda x: save_output(x[1], x[0], x[2] + '_median', 'Q')))
-    (std.zip(q).zip_latest(filename_node).
-     map(lambda l: (*l[0], l[1])).
-     sink(lambda x: save_output(x[1], x[0], x[2] + '_std', 'Q')))
-    fig, ax = plt.subplots()
-    # write out zscore
-    (z_score.map(ax.imshow, norm=SymLogNorm(1.)).map(fig.colorbar).
-     zip_latest(filename_node).
-     sink(lambda x: fig.savefig(x[1] + '_zscore.png')))
-
-    pol_correction_combine.args = (polarization,)
+    polarization_array.args = (polarization,)
     if mask_file:
         if mask_file.endswith('.msk'):
             # TODO: may need to flip this?
@@ -151,8 +147,10 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     mask_setting.update({'setting': mask_settings})
 
     if image_files is None:
-        filenames = os.listdir('.')
-        imgs = (fabio.open(i).data.astype(float) for i in os.listdir('.'))
+        filenames = (i for i in os.listdir('.') if os.path.splitext(i)[-1] in
+                     img_extensions)
+        imgs = (fabio.open(i).data.astype(float) for i in os.listdir('.') if
+                os.path.splitext(i)[-1] in img_extensions)
     else:
         if isinstance(image_files, str):
             image_files = (image_files,)
@@ -161,6 +159,11 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     if bg_file is not None:
         bg = fabio.open(bg_file).data.astype(float)
 
+    for k in out_tup:
+        k.clear()
+
+    geometry.emit(geo)
+
     for i, (fn, img) in enumerate(zip(filenames, imgs)):
         filename_source.emit(fn)
         if bg is None:
@@ -168,7 +171,7 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
             dark_corrected_background.emit(bg)
         dark_corrected_foreground.emit(img)
 
-    return q_l, mean_l, median_l, std_l
+    return tuple([tuple(x) for x in out_tup])
 
 
 def run_main():

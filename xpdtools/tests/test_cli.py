@@ -2,7 +2,8 @@ import os
 import shutil
 
 import numpy as np
-from numpy.testing import assert_equal
+from numpy.testing import assert_equal, assert_raises, assert_array_equal
+import pytest
 
 from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
 from xpdsim import pyfai_poni, image_file
@@ -39,3 +40,31 @@ def test_main_fit2d_mask(tmpdir):
         assert 'test' + ext in files
     msk2 = read_fit2d_msk(os.path.join(str(tmpdir), 'test.msk'))
     assert_equal(msk, msk2)
+
+
+def test_main_no_img(tmpdir):
+    poni_file = pyfai_poni
+    dest_image_file = str(tmpdir.join('test.tiff'))
+    shutil.copy(image_file, dest_image_file)
+    os.chdir(str(tmpdir))
+    main(poni_file)
+    files = os.listdir(str(tmpdir))
+    for ext in ['.msk', '_mask.npy', '.chi', '_median.chi', '_std.chi',
+                '_zscore.png']:
+        assert 'test' + ext in files
+
+
+keys = ['polarization', 'edge', 'lower_thresh', 'upper_thresh', 'alpha',
+        'auto_type']
+values = [-.99, 50, 100., 100., 5., 'mean']
+
+
+@pytest.mark.parametrize(('key', 'value'), zip(keys, values))
+def test_main_kwargs(tmpdir, key, value):
+    poni_file = pyfai_poni
+    dest_image_file = str(tmpdir.join('test.tiff'))
+    shutil.copy(image_file, dest_image_file)
+    os.chdir(str(tmpdir))
+    a = main(poni_file)
+    b = main(poni_file, **{key: value})
+    assert_raises(AssertionError, assert_array_equal, a[1][0], b[1][0])
