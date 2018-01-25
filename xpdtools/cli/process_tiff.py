@@ -168,7 +168,7 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
         filename_source.emit(fn)
         if bg is None:
             bg = np.zeros(img.shape)
-            dark_corrected_background.emit(bg)
+        dark_corrected_background.emit(bg)
         dark_corrected_foreground.emit(img)
 
     return tuple([tuple(x) for x in out_tup])

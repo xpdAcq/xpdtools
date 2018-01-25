@@ -93,3 +93,16 @@ def test_main_multi_poni(tmpdir):
     print(os.listdir('.'))
     with pytest.raises(RuntimeError):
         main()
+
+
+def test_main_background(tmpdir):
+    poni_file = pyfai_poni
+    dest_image_file = str(tmpdir.join('test.tiff'))
+    shutil.copy(image_file, dest_image_file)
+    out = main(poni_file, dest_image_file, bg_file=dest_image_file)
+    files = os.listdir(str(tmpdir))
+    # We subtracted its own background weird stuff happens
+    assert_array_equal(out[1][0], np.zeros(out[1][0].shape) * np.nan)
+    for ext in ['.msk', '_mask.npy', '.chi', '_median.chi', '_std.chi',
+                '_zscore.png']:
+        assert 'test' + ext in files
