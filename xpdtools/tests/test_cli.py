@@ -68,3 +68,41 @@ def test_main_kwargs(tmpdir, key, value):
     a = main(poni_file)
     b = main(poni_file, **{key: value})
     assert_raises(AssertionError, assert_array_equal, a[1][0], b[1][0])
+
+
+def test_main_no_poni(tmpdir):
+    poni_file = pyfai_poni
+    for file, name in zip([image_file, poni_file], ['test.tiff', 'test.poni']):
+        dest_image_file = str(tmpdir.join(name))
+        shutil.copy(file, dest_image_file)
+    os.chdir(str(tmpdir))
+    main()
+    files = os.listdir(str(tmpdir))
+    for ext in ['.msk', '_mask.npy', '.chi', '_median.chi', '_std.chi',
+                '_zscore.png']:
+        assert 'test' + ext in files
+
+
+def test_main_multi_poni(tmpdir):
+    poni_file = pyfai_poni
+    for file, name in zip([image_file, poni_file, poni_file],
+                          ['test.tiff', 'test.poni', 'test2.poni']):
+        dest_image_file = str(tmpdir.join(name))
+        shutil.copy(file, dest_image_file)
+    os.chdir(str(tmpdir))
+    print(os.listdir('.'))
+    with pytest.raises(RuntimeError):
+        main()
+
+
+def test_main_background(tmpdir):
+    poni_file = pyfai_poni
+    dest_image_file = str(tmpdir.join('test.tiff'))
+    shutil.copy(image_file, dest_image_file)
+    out = main(poni_file, dest_image_file, bg_file=dest_image_file)
+    files = os.listdir(str(tmpdir))
+    # We subtracted its own background weird stuff happens
+    assert_array_equal(out[1][0], np.zeros(out[1][0].shape) * np.nan)
+    for ext in ['.msk', '_mask.npy', '.chi', '_median.chi', '_std.chi',
+                '_zscore.png']:
+        assert 'test' + ext in files
