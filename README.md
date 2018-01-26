@@ -6,7 +6,7 @@
 Analysis Tools for XPD
 
 Installation
-------------
+============
 Note that this code is still in beta testing, so things may change. 
 Please let me know if you run into any issues.
 
@@ -23,3 +23,11 @@ Please let me know if you run into any issues.
 
 1. Install the build requirements:
 ``conda install xpdtools``
+
+
+Quickstart
+==========
+To use the command line interface (CLI) type
+``image_to_iq <poni_file> <image_file>``.
+For more information about CLI options ``image_to_iq -- --help`` will provide
+the help information.
