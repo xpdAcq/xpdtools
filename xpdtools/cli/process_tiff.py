@@ -9,7 +9,7 @@ from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
 from skbeam.io.save_powder_output import save_output
 from streamz_ext import Stream
 import matplotlib.pyplot as plt
-from matplotlib.colors import SymLogNorm
+import tifffile
 
 from xpdtools.pipelines.raw_pipeline import (polarization_array, mask,
                                              mean, q,
@@ -41,11 +41,8 @@ out_tup = tuple([k.sink_to_list() for k in [q, mean, median, std]])
 (std.zip(q).zip_latest(filename_node).
  map(lambda l: (*l[0], l[1])).
  sink(lambda x: save_output(x[1], x[0], x[2] + '_std', 'Q')))
-fig, ax = plt.subplots()
-# write out zscore
-(z_score.map(ax.imshow, norm=SymLogNorm(1.)).map(fig.colorbar).
- zip_latest(filename_node).
- sink(lambda x: fig.savefig(x[1] + '_zscore.png')))
+(z_score.zip_latest(filename_node)
+ .starsink(lambda img, n: tifffile.imsave(n + '_zscore.tif', img)))
 
 
 def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,

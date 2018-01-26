@@ -9,6 +9,9 @@ from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
 from xpdsim import pyfai_poni, image_file
 from xpdtools.cli.process_tiff import main
 
+expected_outputs = tuple(['.msk', '_mask.npy', '.chi', '_median.chi',
+                          '_std.chi', '_zscore.tif'])
+
 
 def test_main(tmpdir):
     poni_file = pyfai_poni
@@ -16,8 +19,7 @@ def test_main(tmpdir):
     shutil.copy(image_file, dest_image_file)
     main(poni_file, dest_image_file)
     files = os.listdir(str(tmpdir))
-    for ext in ['.msk', '_mask.npy', '.chi', '_median.chi', '_std.chi',
-                '_zscore.png']:
+    for ext in expected_outputs:
         assert 'test' + ext in files
 
 
@@ -35,8 +37,7 @@ def test_main_fit2d_mask(tmpdir):
          mask_file=os.path.join(str(tmpdir), 'mask_test.msk'),
          flip_input_mask=True)
     files = os.listdir(str(tmpdir))
-    for ext in ['.msk', '_mask.npy', '.chi', '_median.chi', '_std.chi',
-                '_zscore.png']:
+    for ext in expected_outputs:
         assert 'test' + ext in files
     msk2 = read_fit2d_msk(os.path.join(str(tmpdir), 'test.msk'))
     assert_equal(msk, msk2)
@@ -49,8 +50,7 @@ def test_main_no_img(tmpdir):
     os.chdir(str(tmpdir))
     main(poni_file)
     files = os.listdir(str(tmpdir))
-    for ext in ['.msk', '_mask.npy', '.chi', '_median.chi', '_std.chi',
-                '_zscore.png']:
+    for ext in expected_outputs:
         assert 'test' + ext in files
 
 
@@ -78,8 +78,7 @@ def test_main_no_poni(tmpdir):
     os.chdir(str(tmpdir))
     main()
     files = os.listdir(str(tmpdir))
-    for ext in ['.msk', '_mask.npy', '.chi', '_median.chi', '_std.chi',
-                '_zscore.png']:
+    for ext in expected_outputs:
         assert 'test' + ext in files
 
 
@@ -103,6 +102,5 @@ def test_main_background(tmpdir):
     files = os.listdir(str(tmpdir))
     # We subtracted its own background weird stuff happens
     assert_array_equal(out[1][0], np.zeros(out[1][0].shape) * np.nan)
-    for ext in ['.msk', '_mask.npy', '.chi', '_median.chi', '_std.chi',
-                '_zscore.png']:
+    for ext in expected_outputs:
         assert 'test' + ext in files
