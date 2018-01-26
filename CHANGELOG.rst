@@ -4,6 +4,31 @@
 
 .. current developments
 
+v0.1.5
+====================
+
+**Added:**
+
+* Kwarg for flipping the input mask (may be needed for fit2d masks)
+
+
+**Removed:**
+
+* Docs for beamstop mask
+
+
+**Fixed:**
+
+* Polarization works properly
+
+* Multi image works properly
+* Code health badge
+
+* Docs for ``mask_img`` ``alpha``
+
+
+
+
 v0.1.4
 ====================
 
