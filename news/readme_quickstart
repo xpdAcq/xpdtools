@@ -10,6 +10,8 @@
 
 **Removed:** None
 
-**Fixed:** None
+**Fixed:**
+
+* All integrated values are processed with ``np.nan_to_num`` before output
 
 **Security:** None
