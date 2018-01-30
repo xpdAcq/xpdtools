@@ -5,19 +5,17 @@ import fabio
 import fire
 import numpy as np
 import pyFAI
+import tifffile
 from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
 from skbeam.io.save_powder_output import save_output
 from streamz_ext import Stream
-import matplotlib.pyplot as plt
-import tifffile
-
 from xpdtools.pipelines.raw_pipeline import (polarization_array, mask,
                                              mean, q,
                                              geometry,
                                              dark_corrected_foreground,
                                              dark_corrected_background,
                                              z_score, std,
-                                             median, mask_setting)
+                                             median)
 
 img_extensions = {'.tiff', '.edf', '.tif'}
 # Modify graph
@@ -25,10 +23,10 @@ img_extensions = {'.tiff', '.edf', '.tif'}
 filename_source = Stream(stream_name='filename')
 filename_node = (filename_source.map(lambda x: os.path.splitext(x)[0]))
 # write out mask
-mask.combine_latest(filename_node, emit_on=0).sink(lambda x: fit2d_save(np.flipud(x[0]),
-                                                         x[1]))
-mask.combine_latest(filename_node, emit_on=0).sink(lambda x: np.save(x[1] + '_mask.npy',
-                                                      x[0]))
+mask.combine_latest(filename_node, emit_on=0).sink(
+    lambda x: fit2d_save(np.flipud(x[0]), x[1]))
+mask.combine_latest(filename_node, emit_on=0).sink(
+    lambda x: np.save(x[1] + '_mask.npy', x[0]))
 # write out chi
 out_tup = tuple([k.sink_to_list() for k in [q, mean, median, std]])
 
