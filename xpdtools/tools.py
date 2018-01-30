@@ -208,13 +208,14 @@ def z_score_image(img, binner):
 
     # TODO: parallelize/numbafy?
     # TODO: numpy ignore errors
+    p_err = np.seterr(all='ignore')
     i = 0
     for k in binner.flatcount:
         if k > 0:
             vfs[i: i + k] -= np.mean(vfs[i: i + k])
             vfs[i: i + k] /= np.std(vfs[i: i + k])
         i += k
-
+    np.seterr(**p_err)
     img2 = np.empty(vfs.shape)
     img2[idx] = vfs
     img2 = np.nan_to_num(img2)
