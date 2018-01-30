@@ -4,6 +4,29 @@
 
 .. current developments
 
+v0.1.6
+====================
+
+**Added:**
+
+* Quickstart to ``Readme.md``
+
+
+**Changed:**
+
+* Save z score as ``.tif`` file
+
+* ``binned_outlier`` now uses input mask (if any) to remove pixels before
+  running the binned outlier algorithm.
+
+
+**Fixed:**
+
+* All integrated values are processed with ``np.nan_to_num`` before output.
+
+
+
+
 v0.1.5
 ====================
 
