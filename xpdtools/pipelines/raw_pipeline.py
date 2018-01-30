@@ -77,22 +77,18 @@ polarization_array = (
     starmap(lambda geo, shape, polarization_factor: geo.polarization(
         shape, polarization_factor), .99))
 
-pol_corrected_img_zip = (
-    bg_corrected_img.
-    combine_latest(geometry, emit_on=0))
 pol_correction_combine = (
     bg_corrected_img
-    .combine_latest(polarization_array, emit_on=0))
+    .combine_latest(polarization_array, emit_on=bg_corrected_img))
 pol_corrected_img = pol_correction_combine.starmap(op.truediv)
 
 
 # Only create binner (which is expensive) when needed (new calibration)
-cal_binner = (geometry_img_shape
-              .starmap(generate_binner))
+cal_binner = (geometry_img_shape.starmap(generate_binner))
 
 mask = (
     pol_corrected_img.
-    combine_latest(cal_binner).
+    combine_latest(cal_binner, emit_on=0).
     starmap(mask_img, stream_name='mask', **mask_kwargs))
 
 # Integration
@@ -107,15 +103,15 @@ f_img_binner = pol_corrected_img.map(np.ravel).combine_latest(binner,
 mean = (
     f_img_binner.
     starmap(lambda img, binner, **kwargs: binner(img, **kwargs),
-            statistic='mean'))
+            statistic='mean').map(np.nan_to_num))
 median = (
     f_img_binner.
     starmap(lambda img, binner, **kwargs: binner(img, **kwargs),
-            statistic='median'))
+            statistic='median').map(np.nan_to_num))
 std = (
     f_img_binner.
     starmap(lambda img, binner, **kwargs: binner(img, **kwargs),
-            statistic='std'))
+            statistic='std').map(np.nan_to_num))
 
 q = binner.map(getattr, 'bin_centers')
 tth = (

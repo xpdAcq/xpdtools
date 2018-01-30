@@ -5,19 +5,17 @@ import fabio
 import fire
 import numpy as np
 import pyFAI
+import tifffile
 from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
 from skbeam.io.save_powder_output import save_output
 from streamz_ext import Stream
-import matplotlib.pyplot as plt
-from matplotlib.colors import SymLogNorm
-
 from xpdtools.pipelines.raw_pipeline import (polarization_array, mask,
                                              mean, q,
                                              geometry,
                                              dark_corrected_foreground,
                                              dark_corrected_background,
                                              z_score, std,
-                                             median, mask_setting)
+                                             median)
 
 img_extensions = {'.tiff', '.edf', '.tif'}
 # Modify graph
@@ -25,27 +23,24 @@ img_extensions = {'.tiff', '.edf', '.tif'}
 filename_source = Stream(stream_name='filename')
 filename_node = (filename_source.map(lambda x: os.path.splitext(x)[0]))
 # write out mask
-mask.zip_latest(filename_node).sink(lambda x: fit2d_save(np.flipud(x[0]),
-                                                         x[1]))
-mask.zip_latest(filename_node).sink(lambda x: np.save(x[1] + '_mask.npy',
-                                                      x[0]))
+mask.combine_latest(filename_node, emit_on=0).sink(
+    lambda x: fit2d_save(np.flipud(x[0]), x[1]))
+mask.combine_latest(filename_node, emit_on=0).sink(
+    lambda x: np.save(x[1] + '_mask.npy', x[0]))
 # write out chi
 out_tup = tuple([k.sink_to_list() for k in [q, mean, median, std]])
 
-(mean.zip(q).zip_latest(filename_node).
+(mean.zip(q).combine_latest(filename_node, emit_on=0).
  map(lambda l: (*l[0], l[1])).
  sink(lambda x: save_output(x[1], x[0], x[2], 'Q')))
-(median.zip(q).zip_latest(filename_node).
+(median.zip(q).combine_latest(filename_node, emit_on=0).
  map(lambda l: (*l[0], l[1])).
  sink(lambda x: save_output(x[1], x[0], x[2] + '_median', 'Q')))
-(std.zip(q).zip_latest(filename_node).
+(std.zip(q).combine_latest(filename_node, emit_on=0).
  map(lambda l: (*l[0], l[1])).
  sink(lambda x: save_output(x[1], x[0], x[2] + '_std', 'Q')))
-fig, ax = plt.subplots()
-# write out zscore
-(z_score.map(ax.imshow, norm=SymLogNorm(1.)).map(fig.colorbar).
- zip_latest(filename_node).
- sink(lambda x: fig.savefig(x[1] + '_zscore.png')))
+(z_score.combine_latest(filename_node, emit_on=0)
+ .starsink(lambda img, n: tifffile.imsave(n + '_zscore.tif', img)))
 
 
 def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
@@ -115,17 +110,6 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     std_l : list of ndarrays
         The list of standard deviation values
     """
-    # Load calibration
-    if poni_file is None:
-        poni_file = [f for f in os.listdir('.') if f.endswith('.poni')]
-        if len(poni_file) != 1:
-            raise RuntimeError("There can only be one poni file")
-        else:
-            poni_file = poni_file[0]
-    geo = pyFAI.load(poni_file)
-
-    bg = None
-    filenames = None
     polarization_array.args = (polarization,)
     if mask_file:
         if mask_file.endswith('.msk'):
@@ -144,18 +128,36 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
                        upper_thresh=upper_thresh,
                        alpha=alpha,
                        auto_type=auto_type)
-    mask_setting.update({'setting': mask_settings})
+    print(mask.kwargs)
+    # Load calibration
+    if poni_file is None:
+        poni_file = [f for f in os.listdir('.') if f.endswith('.poni')]
+        if len(poni_file) != 1:
+            raise RuntimeError("There can only be one poni file")
+        else:
+            poni_file = poni_file[0]
+    geo = pyFAI.load(poni_file)
+
+    bg = None
+    img_filenames = None
 
     if image_files is None:
-        filenames = (i for i in os.listdir('.') if os.path.splitext(i)[-1] in
-                     img_extensions)
-        imgs = (fabio.open(i).data.astype(float) for i in os.listdir('.') if
-                os.path.splitext(i)[-1] in img_extensions)
+        img_filenames = [i for i in os.listdir('.') if
+                         os.path.splitext(i)[-1] in img_extensions]
+        # TODO: Test non tiff files
+        if all([f.endswith('.tiff') or f.endswith('.tif') for f in
+                img_filenames]):
+            imgs = (tifffile.imread(i) for i in img_filenames)
+        else:
+            imgs = (fabio.open(i).data.astype(float) for i in
+                    os.listdir('.') if
+                    os.path.splitext(i)[-1] in img_extensions)
     else:
         if isinstance(image_files, str):
             image_files = (image_files,)
-            filenames = image_files
+            img_filenames = image_files
         imgs = (fabio.open(i).data.astype(float) for i in image_files)
+
     if bg_file is not None:
         bg = fabio.open(bg_file).data.astype(float)
 
@@ -164,7 +166,7 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
 
     geometry.emit(geo)
 
-    for i, (fn, img) in enumerate(zip(filenames, imgs)):
+    for i, (fn, img) in enumerate(zip(img_filenames, imgs)):
         filename_source.emit(fn)
         if bg is None:
             bg = np.zeros(img.shape)

@@ -1,5 +1,4 @@
 """Tools for x-ray scattering data processing """
-
 ##############################################################################
 #
 # xpdtools            by Billinge Group
@@ -15,80 +14,16 @@
 #
 ##############################################################################
 import numpy as np
-from numba import jit, boolean
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from scipy.integrate import simps
 from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
 from skbeam.core.mask import margin
+from xpdtools.jit_tools import mask_ring_median, mask_ring_mean
 
 try:
     from diffpy.pdfgetx import PDFGetter
 except ImportError:
     from xpdtools.shim import PDFGetterShim as PDFGetter
-
-
-@jit(cache=True, nopython=True, nogil=True)
-def mask_ring_median(values_array, positions_array, alpha):  # pragma: no cover
-    """Find outlier pixels in a single ring via a single pass with the median.
-
-    Parameters
-    ----------
-    values_array : ndarray
-        The ring values
-    positions_array : ndarray
-        The positions of the values
-    alpha: float
-        The threshold
-
-    Returns
-    -------
-    removals: np.ndarray
-        The positions of pixels to be removed from the data
-    """
-    z = np.abs(values_array - np.median(values_array)) / np.std(values_array)
-    removals = positions_array[np.where(z > alpha)]
-    return removals
-
-
-@jit(cache=True, nopython=True, nogil=True)
-def mask_ring_mean(values_array, positions_array, alpha):  # pragma: no cover
-    """Find outlier pixels in a single ring via a pixel by pixel method with
-    the mean.
-
-    Parameters
-    ----------
-    values_array : ndarray
-        The ring values
-    positions_array : ndarray
-        The positions of the values
-    alpha: float
-        The threshold
-
-    Returns
-    -------
-    removals: np.ndarray
-        The positions of pixels to be removed from the data
-    """
-    m = np.ones(positions_array.shape, dtype=boolean)
-    removals = []
-    while True:
-        b = np.array([item in removals for item in positions_array])
-        m[b] = False
-        v = values_array[m]
-        if len(v) <= 1:
-            break
-        std = np.std(v)
-        if std == 0.0:
-            break
-        norm_v_list = np.abs(v - np.mean(v)) / std
-        if np.all(norm_v_list < alpha):
-            break
-        # get the index of the worst pixel
-        worst_idx = np.argmax(norm_v_list)
-        # add the worst position to the mask
-        removals.append(positions_array[m][worst_idx])
-    return removals
-
 
 mask_ring_dict = {'median': mask_ring_median, 'mean': mask_ring_mean}
 
@@ -115,20 +50,25 @@ def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median'):
     np.ndarray:
         The mask
     """
-    print('start mask')
+    print('start auto mask')
 
     # skbeam 0.0.12 doesn't have argsort_index cached
     try:
         idx = binner.argsort_index
     except AttributeError:
         idx = binner.xy.argsort()
+    if tmsk is None:
+        tmsk = np.ones(img.shape, dtype=bool)
+    tmsk = tmsk.ravel()
     vfs = img.flatten()[idx]
     pfs = np.arange(np.size(img))[idx]
     t = []
     i = 0
     for k in binner.flatcount:
-        if k > 0:
-            t.append((vfs[i: i + k], pfs[i: i + k], alpha))
+        m = tmsk[i: i + k]
+        vm = vfs[i: i + k][m]
+        if k > 0 and len(vm) > 0:
+            t.append((vm, (pfs[i: i + k][m]), alpha))
         i += k
     p_err = np.seterr(all='ignore')
     from multiprocessing.dummy import Pool
@@ -136,12 +76,9 @@ def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median'):
         removals = p.starmap(mask_ring_dict[mask_method], t)
     np.seterr(**p_err)
     removals = [item for sublist in removals for item in sublist]
-    if tmsk is None:
-        tmsk = np.ones(img.shape, dtype=bool)
-    tmsk = tmsk.ravel()
     tmsk[removals] = False
     tmsk = tmsk.reshape(img.shape)
-    print('finished mask')
+    print('finished auto mask')
     return tmsk.astype(bool)
 
 
@@ -271,13 +208,14 @@ def z_score_image(img, binner):
 
     # TODO: parallelize/numbafy?
     # TODO: numpy ignore errors
+    p_err = np.seterr(all='ignore')
     i = 0
     for k in binner.flatcount:
         if k > 0:
             vfs[i: i + k] -= np.mean(vfs[i: i + k])
             vfs[i: i + k] /= np.std(vfs[i: i + k])
         i += k
-
+    np.seterr(**p_err)
     img2 = np.empty(vfs.shape)
     img2[idx] = vfs
     img2 = np.nan_to_num(img2)
