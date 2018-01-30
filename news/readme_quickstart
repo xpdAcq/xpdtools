@@ -6,12 +6,15 @@
 
 * Save z score as ``.tif`` file
 
+* ``binned_outlier`` now uses input mask (if any) to remove pixels before
+  running the binned outlier algorithm.
+
 **Deprecated:** None
 
 **Removed:** None
 
 **Fixed:**
 
-* All integrated values are processed with ``np.nan_to_num`` before output
+* All integrated values are processed with ``np.nan_to_num`` before output.
 
 **Security:** None

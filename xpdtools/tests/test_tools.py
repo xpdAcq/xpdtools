@@ -18,10 +18,11 @@ import numpy as np
 from numpy.testing import assert_equal
 
 from xpdtools.tests.utils import pyFAI_calib
-from xpdtools.tools import (mask_ring_mean, mask_ring_median, load_geo,
+from xpdtools.tools import (load_geo,
                             generate_binner, mask_img, binned_outlier,
                             z_score_image, polarization_correction,
                             overlay_mask)
+from xpdtools.jit_tools import mask_ring_median, mask_ring_mean
 
 geo = load_geo(pyFAI_calib)
 
