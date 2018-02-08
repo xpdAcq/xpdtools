@@ -42,9 +42,10 @@ out_sinks = tuple([k.sink(L.append) for k, L in zip(outs, out_tup)])
 (std.zip(q).combine_latest(filename_node, emit_on=0).
  map(lambda l: (*l[0], l[1])).
  sink(lambda x: save_output(x[1], x[0], x[2] + '_std', 'Q')))
-(z_score.map(lambda x: x.astype('float16'))
+(z_score
  .combine_latest(filename_node, emit_on=0)
- .starsink(lambda img, n: tifffile.imsave(n + '_zscore.tif', img)))
+ .starsink(lambda img, n: tifffile.imsave(n + '_zscore.tif',
+                                          data=img.astype(np.float32))))
 
 
 def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
