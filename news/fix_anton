@@ -12,4 +12,6 @@
 
 * Command line interface destroys sinks so it shouldn't blow up memory
 
+* ``generate_binner`` now has max q of the max q
+
 **Security:** None
