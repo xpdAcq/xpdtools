@@ -27,8 +27,11 @@ mask.combine_latest(filename_node, emit_on=0).sink(
     lambda x: fit2d_save(np.flipud(x[0]), x[1]))
 mask.combine_latest(filename_node, emit_on=0).sink(
     lambda x: np.save(x[1] + '_mask.npy', x[0]))
+
 # write out chi
-out_tup = tuple([k.sink_to_list() for k in [q, mean, median, std]])
+outs = [q, mean, median, std]
+out_tup = tuple([[] for _ in outs])
+out_sinks = tuple([k.sink(L.append) for k, L in zip(outs, out_tup)])
 
 (mean.zip(q).combine_latest(filename_node, emit_on=0).
  map(lambda l: (*l[0], l[1])).
@@ -39,7 +42,8 @@ out_tup = tuple([k.sink_to_list() for k in [q, mean, median, std]])
 (std.zip(q).combine_latest(filename_node, emit_on=0).
  map(lambda l: (*l[0], l[1])).
  sink(lambda x: save_output(x[1], x[0], x[2] + '_std', 'Q')))
-(z_score.combine_latest(filename_node, emit_on=0)
+(z_score.map(lambda x: x.astype('float16'))
+ .combine_latest(filename_node, emit_on=0)
  .starsink(lambda img, n: tifffile.imsave(n + '_zscore.tif', img)))
 
 
@@ -177,6 +181,9 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
 
 
 def run_main():
+    # If running from a terminal don't output stuff into lists (too much mem)
+    for s in out_sinks:
+        s.destroy()
     fire.Fire(main)
 
 
