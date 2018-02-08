@@ -180,6 +180,8 @@ def generate_binner(geo, img_shape=None, mask=None):
     qbin_sizes = np.nan_to_num(qbin_sizes)
     qbin = np.cumsum(qbin_sizes)
     qbin[0] = np.min(q_dq)
+    if np.max(q) > qbin[-1]:
+        qbin[-1] = np.max(q)
     if mask is not None:
         mask = mask.flatten()
     return BinnedStatistic1D(q.flatten(), bins=qbin, mask=mask)
