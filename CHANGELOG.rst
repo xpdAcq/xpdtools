@@ -4,6 +4,23 @@
 
 .. current developments
 
+v0.1.7
+====================
+
+**Changed:**
+
+* Zscore is now turned into ``float16`` before saving to reduce size on disk
+
+
+**Fixed:**
+
+* Command line interface destroys sinks so it shouldn't blow up memory
+
+* ``generate_binner`` now has max q of the max q
+
+
+
+
 v0.1.6
 ====================
 
