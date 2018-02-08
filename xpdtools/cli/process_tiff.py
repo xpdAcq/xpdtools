@@ -181,7 +181,7 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     return tuple([tuple(x) for x in out_tup])
 
 
-def run_main():
+def run_main():  # pragma: no cover
     # If running from a terminal don't output stuff into lists (too much mem)
     for s in out_sinks:
         s.destroy()
