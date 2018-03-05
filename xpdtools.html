@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>xpdtools package &mdash; xpdtools 0.1.6 documentation</title>
+  <title>xpdtools package &mdash; xpdtools 0.1.7 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="xpdtools 0.1.6 documentation" href="index.html"/>
+    <link rel="top" title="xpdtools 0.1.7 documentation" href="index.html"/>
         <link rel="next" title="xpdtools.cli package" href="xpdtools.cli.html"/>
         <link rel="prev" title="Welcome to xpdtools’s documentation!" href="index.html"/> 
 
@@ -235,22 +235,22 @@ images directly.</p>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<p>calib Ni image with pyFAI default <code class="docutils literal"><span class="pre">Ni.D</span></code> d-spacing
+<p>calib Ni image with pyFAI default <code class="docutils literal notranslate"><span class="pre">Ni.D</span></code> d-spacing
 with wavlength 0.1823 angstrom</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">tifffile</span> <span class="k">as</span> <span class="nn">tif</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">tifffile</span> <span class="k">as</span> <span class="nn">tif</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ni_img</span> <span class="o">=</span> <span class="n">tif</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;&lt;path_to_img_file&gt;&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ai</span> <span class="o">=</span> <span class="n">img_calibration</span><span class="p">(</span><span class="n">ni_img</span><span class="p">,</span> <span class="mf">0.1823</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>calib Ni image with pyFAI customized <code class="docutils literal"><span class="pre">myNi.D</span></code> d-spacing
+<p>calib Ni image with pyFAI customized <code class="docutils literal notranslate"><span class="pre">myNi.D</span></code> d-spacing
 with wavlength 0.1823 angstrom</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">tifffile</span> <span class="k">as</span> <span class="nn">tif</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">tifffile</span> <span class="k">as</span> <span class="nn">tif</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ni_img</span> <span class="o">=</span> <span class="n">tif</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;&lt;path_to_img_file&gt;&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ai</span> <span class="o">=</span> <span class="n">img_calibration</span><span class="p">(</span><span class="n">ni_img</span><span class="p">,</span> <span class="mf">0.1823</span><span class="p">,</span> <span class="s1">&#39;path/to/myNi.D&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>integrate image right after calibration</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">npt</span> <span class="o">=</span> <span class="mi">1482</span> <span class="c1"># just a number for demonstration</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">Iq</span> <span class="o">=</span> <span class="n">ai</span><span class="o">.</span><span class="n">integrate1d</span><span class="p">(</span><span class="n">ni_img</span><span class="p">,</span> <span class="n">npt</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;q_nm^-1&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">Iq</span><span class="p">)</span>
@@ -272,7 +272,7 @@ with wavlength 0.1823 angstrom</p>
 <dl class="class">
 <dt id="xpdtools.shim.PDFGetterShim">
 <em class="property">class </em><code class="descclassname">xpdtools.shim.</code><code class="descname">PDFGetterShim</code><a class="reference internal" href="_modules/xpdtools/shim.html#PDFGetterShim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.shim.PDFGetterShim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Shim for PDFGetX3</p>
 </dd></dl>
 
@@ -476,7 +476,7 @@ are masked out.</p>
 <dl class="function">
 <dt id="xpdtools.tools.overlay_mask">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">overlay_mask</code><span class="sig-paren">(</span><em>img</em>, <em>mask</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#overlay_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.overlay_mask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overlay mask on image, masked pixels are <code class="docutils literal"><span class="pre">np.nan</span></code></p>
+<dd><p>Overlay mask on image, masked pixels are <code class="docutils literal notranslate"><span class="pre">np.nan</span></code></p>
 </dd></dl>
 
 <dl class="function">
@@ -634,7 +634,7 @@ are masked out.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1.6',
+            VERSION:'0.1.7',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>xpdtools.cli.process_tiff &mdash; xpdtools 0.1.6 documentation</title>
+  <title>xpdtools.cli.process_tiff &mdash; xpdtools 0.1.7 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="xpdtools 0.1.6 documentation" href="../../../index.html"/>
+    <link rel="top" title="xpdtools 0.1.7 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -335,15 +335,15 @@
             <span class="n">bg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
         <span class="n">dark_corrected_background</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">bg</span><span class="p">)</span>
         <span class="n">dark_corrected_foreground</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">out_tup</span><span class="p">])</span></div>
+</div>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">out_tup</span><span class="p">])</span>
 
 
 <div class="viewcode-block" id="run_main"><a class="viewcode-back" href="../../../xpdtools.cli.html#xpdtools.cli.process_tiff.run_main">[docs]</a><span class="k">def</span> <span class="nf">run_main</span><span class="p">():</span>  <span class="c1"># pragma: no cover</span>
     <span class="c1"># If running from a terminal don&#39;t output stuff into lists (too much mem)</span>
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">out_sinks</span><span class="p">:</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
-    <span class="n">fire</span><span class="o">.</span><span class="n">Fire</span><span class="p">(</span><span class="n">main</span><span class="p">)</span></div>
+        <span class="n">s</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span></div>
+    <span class="n">fire</span><span class="o">.</span><span class="n">Fire</span><span class="p">(</span><span class="n">main</span><span class="p">)</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
@@ -384,7 +384,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.1.6',
+            VERSION:'0.1.7',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
