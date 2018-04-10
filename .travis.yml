@@ -21,8 +21,8 @@ before_install:
   - ./miniconda.sh -b -p ~/mc
   - export PATH=~/mc/bin:$PATH
   - conda config --set always_yes yes --set changeps1 no --set quiet true
-  - conda update conda --yes
   - conda config --add channels conda-forge
+  - conda update conda --yes
 
 
 install:
