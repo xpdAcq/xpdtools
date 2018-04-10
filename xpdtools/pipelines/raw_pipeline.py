@@ -8,20 +8,17 @@ from streamz_ext import Stream
 from xpdtools.calib import img_calibration
 from xpdtools.tools import (z_score_image, load_geo, mask_img, generate_binner,
                             overlay_mask,
-                            fq_getter, pdf_getter)
+                            fq_getter, pdf_getter, sq_getter)
 
 mask_setting = {'setting': 'auto'}
-# Default kwargs
-mask_kwargs = {}
-fq_kwargs = dict(dataformat='QA', qmaxinst=28, qmax=25, rstep=np.pi / 25)
-pdf_kwargs = dict(dataformat='QA', qmaxinst=28, qmax=22, rstep=np.pi / 22)
-
-# Detector corrections
 raw_foreground = Stream(stream_name='raw foreground')
 raw_foreground_dark = Stream(stream_name='raw foreground dark')
 raw_background = Stream(stream_name='raw background')
 raw_background_dark = Stream(stream_name='raw background dark')
-
+img_shape = (raw_foreground.
+             union(raw_foreground_dark, raw_background, raw_background_dark).
+             map(np.shape).
+             unique(history=1))
 # Get the image shape for the binner
 dark_corrected_foreground = (
     raw_foreground.
@@ -69,7 +66,6 @@ geometry = (
     union(gen_geo, stream_name='Combine gen and load cal'))
 
 # Image corrections
-img_shape = bg_corrected_img.map(np.shape).unique(history=1)
 geometry_img_shape = geometry.zip_latest(img_shape)
 
 polarization_array = (
@@ -84,12 +80,39 @@ pol_corrected_img = pol_correction_combine.starmap(op.truediv)
 
 
 # Only create binner (which is expensive) when needed (new calibration)
-cal_binner = (geometry_img_shape.starmap(generate_binner))
+cal_binner = (geometry_img_shape
+              .starmap(generate_binner))
 
-mask = (
+img_cal_binner = (
     pol_corrected_img.
-    combine_latest(cal_binner, emit_on=0).
-    starmap(mask_img, stream_name='mask', **mask_kwargs))
+    combine_latest(cal_binner))
+
+all_mask = (
+    img_cal_binner
+    .filter(lambda x, **kwargs: mask_setting['setting'] == 'auto')
+    .starmap(mask_img, stream_name='mask', **{})
+)
+img_counter = Stream()
+first_mask = (
+    img_cal_binner
+    .filter(lambda x, **kwargs: mask_setting['setting'] == 'first')
+    .zip(img_counter)
+    .filter(lambda x: x[1] == 1).pluck(0)
+    .starmap(mask_img, stream_name='mask', **{})
+)
+
+no_mask = (
+    img_cal_binner
+    .filter(lambda x, **kwargs: mask_setting['setting'] == 'none')
+    .starmap(lambda img, *_: np.ones(img.shape, dtype=bool))
+)
+
+mask = all_mask.union(first_mask, no_mask)
+
+# Tie all the kwargs together (so changes in one node change the rest
+mask_kwargs = all_mask.kwargs
+first_mask.kwargs = mask_kwargs
+no_mask.kwargs = mask_kwargs
 
 # Integration
 # TODO: try to get this to not call pyFAI again
@@ -130,5 +153,12 @@ iq_comp = (
     q.zip(mean)
     .combine_latest(composition, emit_on=0))
 iq_comp_map = (iq_comp.map(lambda x: (x[0][0], x[0][1], x[1])))
-fq = iq_comp_map.starmap(fq_getter, stream_name='fq', **fq_kwargs)
-pdf = iq_comp_map.starmap(pdf_getter, stream_name='pdf', **pdf_kwargs)
+sq = iq_comp_map.starmap(sq_getter, stream_name='sq', **(
+    dict(dataformat='QA', qmaxinst=28, qmax=25, rstep=np.pi / 25)))
+fq = iq_comp_map.starmap(fq_getter, stream_name='fq', **(
+    dict(dataformat='QA', qmaxinst=28, qmax=25, rstep=np.pi / 25)))
+fq_kwargs = fq.kwargs
+sq.kwargs = fq_kwargs
+pdf = iq_comp_map.starmap(pdf_getter, stream_name='pdf', **(
+    dict(dataformat='QA', qmaxinst=28, qmax=22, rstep=np.pi / 22)))
+pdf_kwargs = pdf.kwargs
