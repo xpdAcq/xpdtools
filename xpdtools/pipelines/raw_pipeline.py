@@ -109,11 +109,6 @@ no_mask = (
 
 mask = all_mask.union(first_mask, no_mask)
 
-# Tie all the kwargs together (so changes in one node change the rest
-mask_kwargs = all_mask.kwargs
-first_mask.kwargs = mask_kwargs
-no_mask.kwargs = mask_kwargs
-
 # Integration
 # TODO: try to get this to not call pyFAI again
 binner = (
@@ -157,8 +152,16 @@ sq = iq_comp_map.starmap(sq_getter, stream_name='sq', **(
     dict(dataformat='QA', qmaxinst=28, qmax=25, rstep=np.pi / 25)))
 fq = iq_comp_map.starmap(fq_getter, stream_name='fq', **(
     dict(dataformat='QA', qmaxinst=28, qmax=25, rstep=np.pi / 25)))
-fq_kwargs = fq.kwargs
-sq.kwargs = fq_kwargs
 pdf = iq_comp_map.starmap(pdf_getter, stream_name='pdf', **(
     dict(dataformat='QA', qmaxinst=28, qmax=22, rstep=np.pi / 22)))
+
+# All the kwargs
+
+# Tie all the kwargs together (so changes in one node change the rest)
+mask_kwargs = all_mask.kwargs
+first_mask.kwargs = mask_kwargs
+no_mask.kwargs = mask_kwargs
+
+fq_kwargs = fq.kwargs
+sq.kwargs = fq_kwargs
 pdf_kwargs = pdf.kwargs

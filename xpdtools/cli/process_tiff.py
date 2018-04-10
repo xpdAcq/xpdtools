@@ -15,7 +15,11 @@ from xpdtools.pipelines.raw_pipeline import (polarization_array, mask,
                                              dark_corrected_foreground,
                                              dark_corrected_background,
                                              z_score, std,
-                                             median)
+                                             median,
+                                             mask_kwargs,
+                                             fq_kwargs,
+                                             pdf_kwargs,
+                                             mask_setting)
 
 img_extensions = {'.tiff', '.edf', '.tif'}
 # Modify graph
@@ -127,13 +131,16 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     else:
         tmsk = None
 
-    mask.kwargs.update(tmsk=tmsk,
+    # update all the kwargs
+    mask_kwargs.update(tmsk=tmsk,
                        edge=edge,
                        lower_thresh=lower_thresh,
                        upper_thresh=upper_thresh,
                        alpha=alpha,
                        auto_type=auto_type)
     print(mask.kwargs)
+    mask_setting.update(setting=mask_settings)
+
     # Load calibration
     if poni_file is None:
         poni_file = [f for f in os.listdir('.') if f.endswith('.poni')]
