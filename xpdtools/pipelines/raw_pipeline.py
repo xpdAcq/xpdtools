@@ -15,10 +15,7 @@ raw_foreground = Stream(stream_name='raw foreground')
 raw_foreground_dark = Stream(stream_name='raw foreground dark')
 raw_background = Stream(stream_name='raw background')
 raw_background_dark = Stream(stream_name='raw background dark')
-img_shape = (raw_foreground.
-             union(raw_foreground_dark, raw_background, raw_background_dark).
-             map(np.shape).
-             unique(history=1))
+
 # Get the image shape for the binner
 dark_corrected_foreground = (
     raw_foreground.
@@ -66,6 +63,9 @@ geometry = (
     union(gen_geo, stream_name='Combine gen and load cal'))
 
 # Image corrections
+img_shape = (bg_corrected_img.
+             map(np.shape).
+             unique(history=1))
 geometry_img_shape = geometry.zip_latest(img_shape)
 
 polarization_array = (
