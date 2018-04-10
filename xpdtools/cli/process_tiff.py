@@ -138,7 +138,7 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
                        upper_thresh=upper_thresh,
                        alpha=alpha,
                        auto_type=auto_type)
-    print(mask.kwargs)
+    print(mask_kwargs)
     mask_setting.update(setting=mask_settings)
 
     # Load calibration
