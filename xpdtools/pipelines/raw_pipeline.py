@@ -83,9 +83,11 @@ pol_corrected_img = pol_correction_combine.starmap(op.truediv)
 cal_binner = (geometry_img_shape
               .starmap(generate_binner))
 
+# emit on img so we don't propagate old image data
 img_cal_binner = (
     pol_corrected_img.
-    combine_latest(cal_binner))
+    combine_latest(cal_binner,
+                   emit_on=pol_corrected_img))
 
 all_mask = (
     img_cal_binner
