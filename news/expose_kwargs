@@ -1,0 +1,18 @@
+**Added:** None
+
+**Changed:** 
+
+* Merged xpd and standard pipelines into one pipeline
+
+* Exposed the mask, fq, and pdf kwargs to the user better.
+  Now the kwarg dicts are from the nodes and can be updated.
+
+**Deprecated:**
+
+* xpd pipeline (it is now in the standard pipeline)
+
+**Removed:** None
+
+**Fixed:** None
+
+**Security:** None
