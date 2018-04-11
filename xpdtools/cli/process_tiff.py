@@ -174,9 +174,7 @@ def main(poni_file=None, image_files=None, bg_file=None, mask_file=None,
     for k in out_tup:
         k.clear()
 
-    print('geo')
     geometry.emit(geo)
-    print('finish geo')
 
     for i, (fn, img) in enumerate(zip(img_filenames, imgs)):
         filename_source.emit(fn)
