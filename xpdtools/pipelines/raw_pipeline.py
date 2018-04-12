@@ -84,6 +84,9 @@ cal_binner = (geometry_img_shape
               .starmap(generate_binner))
 
 # emit on img so we don't propagate old image data
+# note that the pol_corrected_img has touched the geometry and so always comes
+# after the geometry itself, so we never have a condition where  we fail to
+# emit because pol_corrected_img comes down first
 img_cal_binner = (
     pol_corrected_img.
     combine_latest(cal_binner,
