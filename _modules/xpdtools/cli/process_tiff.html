@@ -25,25 +25,17 @@
   
 
   
-  
     <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../../genindex.html"/>
-        <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="xpdtools 0.1.8 documentation" href="../../../index.html"/>
-        <link rel="up" title="Module code" href="../../index.html"/> 
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
 
   
   <script src="../../../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -103,7 +95,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../../index.html">xpdtools</a>
@@ -111,9 +103,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -143,8 +136,6 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
-        
       </li>
     
   </ul>
@@ -173,7 +164,9 @@
                                              <span class="n">dark_corrected_foreground</span><span class="p">,</span>
                                              <span class="n">dark_corrected_background</span><span class="p">,</span>
                                              <span class="n">z_score</span><span class="p">,</span> <span class="n">std</span><span class="p">,</span>
-                                             <span class="n">median</span><span class="p">)</span>
+                                             <span class="n">median</span><span class="p">,</span>
+                                             <span class="n">mask_kwargs</span><span class="p">,</span>
+                                             <span class="n">mask_setting</span><span class="p">)</span>
 
 <span class="n">img_extensions</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;.tiff&#39;</span><span class="p">,</span> <span class="s1">&#39;.edf&#39;</span><span class="p">,</span> <span class="s1">&#39;.tif&#39;</span><span class="p">}</span>
 <span class="c1"># Modify graph</span>
@@ -285,13 +278,16 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">tmsk</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="n">mask</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">tmsk</span><span class="o">=</span><span class="n">tmsk</span><span class="p">,</span>
+    <span class="c1"># update all the kwargs</span>
+    <span class="n">mask_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">tmsk</span><span class="o">=</span><span class="n">tmsk</span><span class="p">,</span>
                        <span class="n">edge</span><span class="o">=</span><span class="n">edge</span><span class="p">,</span>
                        <span class="n">lower_thresh</span><span class="o">=</span><span class="n">lower_thresh</span><span class="p">,</span>
                        <span class="n">upper_thresh</span><span class="o">=</span><span class="n">upper_thresh</span><span class="p">,</span>
                        <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
                        <span class="n">auto_type</span><span class="o">=</span><span class="n">auto_type</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mask_kwargs</span><span class="p">)</span>
+    <span class="n">mask_setting</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">setting</span><span class="o">=</span><span class="n">mask_settings</span><span class="p">)</span>
+
     <span class="c1"># Load calibration</span>
     <span class="k">if</span> <span class="n">poni_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">poni_file</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.poni&#39;</span><span class="p">)]</span>
@@ -335,15 +331,15 @@
             <span class="n">bg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
         <span class="n">dark_corrected_background</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">bg</span><span class="p">)</span>
         <span class="n">dark_corrected_foreground</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
-</div>
-    <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">out_tup</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">out_tup</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="run_main"><a class="viewcode-back" href="../../../xpdtools.cli.html#xpdtools.cli.process_tiff.run_main">[docs]</a><span class="k">def</span> <span class="nf">run_main</span><span class="p">():</span>  <span class="c1"># pragma: no cover</span>
     <span class="c1"># If running from a terminal don&#39;t output stuff into lists (too much mem)</span>
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">out_sinks</span><span class="p">:</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span></div>
-    <span class="n">fire</span><span class="o">.</span><span class="n">Fire</span><span class="p">(</span><span class="n">main</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+    <span class="n">fire</span><span class="o">.</span><span class="n">Fire</span><span class="p">(</span><span class="n">main</span><span class="p">)</span></div>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
@@ -351,9 +347,7 @@
 </pre></div>
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -366,7 +360,7 @@
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -385,6 +379,7 @@
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
             VERSION:'0.1.8',
+            LANGUAGE:'en',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -402,14 +397,13 @@
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
   
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

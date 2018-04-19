@@ -25,25 +25,17 @@
   
 
   
-  
     <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../genindex.html"/>
-        <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="xpdtools 0.1.8 documentation" href="../../index.html"/>
-        <link rel="up" title="Module code" href="../index.html"/> 
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -103,7 +95,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">xpdtools</a>
@@ -111,9 +103,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -142,8 +135,6 @@
     
     
       <li class="wy-breadcrumbs-aside">
-        
-            
         
       </li>
     
@@ -236,8 +227,8 @@
     <span class="n">removals</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">removals</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
     <span class="n">tmsk</span><span class="p">[</span><span class="n">removals</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">tmsk</span> <span class="o">=</span> <span class="n">tmsk</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;finished auto mask&#39;</span><span class="p">)</span></div>
-    <span class="k">return</span> <span class="n">tmsk</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;finished auto mask&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tmsk</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="mask_img"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.mask_img">[docs]</a><span class="k">def</span> <span class="nf">mask_img</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">binner</span><span class="p">,</span>
@@ -301,8 +292,8 @@
         <span class="n">working_mask</span> <span class="o">*=</span> <span class="n">binned_outlier</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">binner</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
                                        <span class="n">tmsk</span><span class="o">=</span><span class="n">working_mask</span><span class="p">,</span>
                                        <span class="n">mask_method</span><span class="o">=</span><span class="n">auto_type</span><span class="p">)</span>
-    <span class="n">working_mask</span> <span class="o">=</span> <span class="n">working_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span></div>
-    <span class="k">return</span> <span class="n">working_mask</span>
+    <span class="n">working_mask</span> <span class="o">=</span> <span class="n">working_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">working_mask</span></div>
 
 
 <div class="viewcode-block" id="generate_binner"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.generate_binner">[docs]</a><span class="k">def</span> <span class="nf">generate_binner</span><span class="p">(</span><span class="n">geo</span><span class="p">,</span> <span class="n">img_shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -341,8 +332,8 @@
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">qbin</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
         <span class="n">qbin</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span></div>
-    <span class="k">return</span> <span class="n">BinnedStatistic1D</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="n">qbin</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">BinnedStatistic1D</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="n">qbin</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="z_score_image"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.z_score_image">[docs]</a><span class="k">def</span> <span class="nf">z_score_image</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">binner</span><span class="p">):</span>
@@ -379,8 +370,8 @@
     <span class="n">img2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">vfs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
     <span class="n">img2</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">vfs</span>
     <span class="n">img2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">img2</span><span class="p">)</span>
-</div>
-    <span class="k">return</span> <span class="n">img2</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">img2</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="polarization_correction"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.polarization_correction">[docs]</a><span class="k">def</span> <span class="nf">polarization_correction</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">geo</span><span class="p">,</span> <span class="n">polarization_factor</span><span class="o">=.</span><span class="mi">99</span><span class="p">):</span>
@@ -399,8 +390,8 @@
 <span class="sd">    -------</span>
 <span class="sd">    ndarray :</span>
 <span class="sd">        The corrected image</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
-    <span class="k">return</span> <span class="n">img</span> <span class="o">/</span> <span class="n">geo</span><span class="o">.</span><span class="n">polarization</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">polarization_factor</span><span class="p">)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">img</span> <span class="o">/</span> <span class="n">geo</span><span class="o">.</span><span class="n">polarization</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">polarization_factor</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="load_geo"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.load_geo">[docs]</a><span class="k">def</span> <span class="nf">load_geo</span><span class="p">(</span><span class="n">cal_params</span><span class="p">):</span>
@@ -417,15 +408,15 @@
 <span class="sd">        The calibrate azimuthal integrator (which inherits from the geometry)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ai</span> <span class="o">=</span> <span class="n">AzimuthalIntegrator</span><span class="p">()</span>
-    <span class="n">ai</span><span class="o">.</span><span class="n">setPyFAI</span><span class="p">(</span><span class="o">**</span><span class="n">cal_params</span><span class="p">)</span></div>
-    <span class="k">return</span> <span class="n">ai</span>
+    <span class="n">ai</span><span class="o">.</span><span class="n">setPyFAI</span><span class="p">(</span><span class="o">**</span><span class="n">cal_params</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ai</span></div>
 
 
 <div class="viewcode-block" id="overlay_mask"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.overlay_mask">[docs]</a><span class="k">def</span> <span class="nf">overlay_mask</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Overlay mask on image, masked pixels are ``np.nan``&quot;&quot;&quot;</span>
     <span class="n">img2</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">img2</span><span class="p">[</span><span class="o">~</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span></div>
-    <span class="k">return</span> <span class="n">img2</span>
+    <span class="n">img2</span><span class="p">[</span><span class="o">~</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">return</span> <span class="n">img2</span></div>
 
 
 <div class="viewcode-block" id="pdf_getter"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.pdf_getter">[docs]</a><span class="k">def</span> <span class="nf">pdf_getter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -454,8 +445,8 @@
     <span class="n">pg</span> <span class="o">=</span> <span class="n">PDFGetter</span><span class="p">()</span>
     <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;composition&#39;</span><span class="p">:</span> <span class="n">composition</span><span class="p">})</span>
     <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">pg</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-    <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pg</span><span class="o">.</span><span class="n">config</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">pg</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pg</span><span class="o">.</span><span class="n">config</span></div>
 
 
 <div class="viewcode-block" id="fq_getter"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.fq_getter">[docs]</a><span class="k">def</span> <span class="nf">fq_getter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -485,8 +476,8 @@
     <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;composition&#39;</span><span class="p">:</span> <span class="n">composition</span><span class="p">})</span>
     <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
     <span class="n">pg</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">fq</span></div>
-    <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pg</span><span class="o">.</span><span class="n">config</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">fq</span>
+    <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pg</span><span class="o">.</span><span class="n">config</span></div>
 
 
 <div class="viewcode-block" id="sq_getter"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.sq_getter">[docs]</a><span class="k">def</span> <span class="nf">sq_getter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -516,8 +507,8 @@
     <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;composition&#39;</span><span class="p">:</span> <span class="n">composition</span><span class="p">})</span>
     <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
     <span class="n">pg</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">sq</span></div>
-    <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pg</span><span class="o">.</span><span class="n">config</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">sq</span>
+    <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pg</span><span class="o">.</span><span class="n">config</span></div>
 
 
 <div class="viewcode-block" id="nu_fq_getter"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.nu_fq_getter">[docs]</a><span class="k">def</span> <span class="nf">nu_fq_getter</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">iq</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -551,8 +542,8 @@
     <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
         <span class="n">pg</span><span class="o">.</span><span class="n">transformations</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
     <span class="n">pg</span><span class="p">(</span><span class="n">q</span><span class="p">[</span><span class="n">truth_values</span><span class="p">],</span> <span class="n">iq</span><span class="p">[</span><span class="n">truth_values</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">fq</span></div>
-    <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pg</span><span class="o">.</span><span class="n">config</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">fq</span>
+    <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pg</span><span class="o">.</span><span class="n">config</span></div>
 
 
 <div class="viewcode-block" id="nu_pdf_getter"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.nu_pdf_getter">[docs]</a><span class="k">def</span> <span class="nf">nu_pdf_getter</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">fq</span><span class="p">):</span>
@@ -574,14 +565,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">rgrid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">30.01</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">q</span><span class="p">))</span>
     <span class="n">dgr</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">fq</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">q</span> <span class="o">*</span> <span class="n">rgrid</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span>
-    <span class="n">gr</span> <span class="o">=</span> <span class="n">simps</span><span class="p">(</span><span class="n">dgr</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span></div>
-    <span class="k">return</span> <span class="n">rgrid</span><span class="p">,</span> <span class="n">gr</span>
+    <span class="n">gr</span> <span class="o">=</span> <span class="n">simps</span><span class="p">(</span><span class="n">dgr</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rgrid</span><span class="p">,</span> <span class="n">gr</span></div>
 </pre></div>
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -594,7 +583,7 @@
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -613,6 +602,7 @@
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
             VERSION:'0.1.8',
+            LANGUAGE:'en',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -630,14 +620,13 @@
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
   
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>
