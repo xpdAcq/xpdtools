@@ -27,6 +27,14 @@ def test_main(fast_tmpdir):
 
 
 def test_main2(fast_tmpdir):
+    """Test burn in problems associated with data in existing graph
+
+    Some failures associated with this test:
+    - Data is already in the graph so when data is emitted into the geometry
+    node the graph is triggered, causing the pipeline to try to use
+    old data to save into an old dir. This was resolved by emitting on the
+    polarization corrected image when combining with the calibrated binner.
+    """
     print(fast_tmpdir)
     poni_file = pyfai_poni
     dest_image_file = str(os.path.join(fast_tmpdir, 'test.tiff'))
