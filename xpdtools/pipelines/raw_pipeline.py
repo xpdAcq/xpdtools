@@ -120,6 +120,11 @@ binner = (
     mask.
     combine_latest(geometry, emit_on=0).
     starmap(lambda mask, geo: generate_binner(geo, mask=mask)))
+q = binner.map(getattr, 'bin_centers')
+tth = (
+    q.combine_latest(wavelength, emit_on=0)
+    .starmap(q_to_twotheta, stream_name='tth'))
+
 f_img_binner = pol_corrected_img.map(np.ravel).combine_latest(binner,
                                                               emit_on=0)
 
@@ -136,11 +141,6 @@ std = (
     starmap(lambda img, binner, **kwargs: binner(img, **kwargs),
             statistic='std').map(np.nan_to_num))
 
-q = binner.map(getattr, 'bin_centers')
-tth = (
-    q.combine_latest(wavelength, emit_on=0)
-    .starmap(q_to_twotheta, stream_name='tth'))
-
 z_score = (
     pol_corrected_img.
     combine_latest(binner, emit_on=0).
@@ -150,7 +150,7 @@ z_score = (
 # PDF
 composition = Stream(stream_name='composition')
 iq_comp = (
-    q.zip(mean)
+    q.combine_latest(mean, emit_on=1)
     .combine_latest(composition, emit_on=0))
 iq_comp_map = (iq_comp.map(lambda x: (x[0][0], x[0][1], x[1])))
 sq = iq_comp_map.starmap(sq_getter, stream_name='sq', **(

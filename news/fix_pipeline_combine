@@ -1,0 +1,13 @@
+**Added:** None
+
+**Changed:** None
+
+**Deprecated:** None
+
+**Removed:** None
+
+**Fixed:**
+
+* ``iq_comp`` now is combined via a ``combine_latest`` rather than a zip
+
+**Security:** None
