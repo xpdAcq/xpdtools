@@ -5,7 +5,6 @@ import pyFAI
 from xpdtools.pipelines.raw_pipeline import *
 from profilehooks import profile
 
-mask.kwargs['bs_width'] = None
 # dark_corrected_background.sink(print)
 # pol_corrected_img_zip.sink(print)
 # mask.sink(print)
