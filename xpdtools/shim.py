@@ -7,6 +7,7 @@ class PDFGetterShim:
     def __init__(self):
         self.config = {'qmax': 'testing'}
         self.fq = np.ones(10), np.ones(10)
+        self.sq = np.ones(10), np.ones(10)
 
     def __call__(self, *args, **kwargs):
         print("This is a testing shim for PDFgetx.\n"
