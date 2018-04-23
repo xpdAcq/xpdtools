@@ -4,6 +4,29 @@
 
 .. current developments
 
+v0.1.9
+====================
+
+**Changed:**
+
+* Merged xpd and standard pipelines into one pipeline
+
+* Exposed the mask, fq, and pdf kwargs to the user better.
+  Now the kwarg dicts are from the nodes and can be updated.
+
+
+**Deprecated:**
+
+* xpd pipeline (it is now in the standard pipeline)
+
+
+**Fixed:**
+
+* ``iq_comp`` now is combined via a ``combine_latest`` rather than a zip
+
+
+
+
 v0.1.8
 ====================
 
