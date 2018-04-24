@@ -80,3 +80,9 @@ def mask_ring_mean(values_array, positions_array, alpha):  # pragma: no cover
         # add the worst position to the mask
         removals.append(positions_array[m][worst_idx])
     return removals
+
+
+@jit(cache=True, nopython=True, nogil=True)
+def ring_zscore(ring):
+    ring -= np.mean(ring)
+    ring /= np.std(ring)
