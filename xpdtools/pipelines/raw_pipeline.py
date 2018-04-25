@@ -6,8 +6,7 @@ from skbeam.core.utils import q_to_twotheta
 from streamz_ext import Stream
 
 from xpdtools.calib import img_calibration
-from xpdtools.tools import (z_score_image, load_geo, mask_img, generate_binner,
-                            overlay_mask,
+from xpdtools.tools import (load_geo, mask_img, generate_binner,
                             fq_getter, pdf_getter, sq_getter)
 
 mask_setting = {'setting': 'auto'}
@@ -132,20 +131,6 @@ mean = (
     f_img_binner.
     starmap(lambda img, binner, **kwargs: binner(img, **kwargs),
             statistic='mean').map(np.nan_to_num))
-median = (
-    f_img_binner.
-    starmap(lambda img, binner, **kwargs: binner(img, **kwargs),
-            statistic='median').map(np.nan_to_num))
-std = (
-    f_img_binner.
-    starmap(lambda img, binner, **kwargs: binner(img, **kwargs),
-            statistic='std').map(np.nan_to_num))
-
-z_score = (
-    pol_corrected_img.
-    combine_latest(binner, emit_on=0).
-    starmap(z_score_image, stream_name='z score').
-    combine_latest(mask, emit_on=0).starmap(overlay_mask))
 
 # PDF
 composition = Stream(stream_name='composition')
