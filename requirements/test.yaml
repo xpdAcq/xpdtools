@@ -1,0 +1,8 @@
+flake8:
+  default: {conda: flake8}
+nose:
+  default: {conda: nose}
+pytest:
+  default: {conda: pytest}
+xpdsim:
+  default: {conda: xpdsim}
