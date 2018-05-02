@@ -14,10 +14,9 @@ from xpdtools.pipelines.raw_pipeline import (polarization_array, mask,
                                              geometry,
                                              dark_corrected_foreground,
                                              dark_corrected_background,
-                                             z_score, std,
-                                             median,
                                              mask_kwargs,
                                              mask_setting)
+from xpdtools.pipelines.extra import median, std, z_score
 
 img_extensions = {'.tiff', '.edf', '.tif'}
 # Modify graph

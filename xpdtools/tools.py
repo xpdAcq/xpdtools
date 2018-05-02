@@ -18,7 +18,7 @@ from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from scipy.integrate import simps
 from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
 from skbeam.core.mask import margin
-from xpdtools.jit_tools import mask_ring_median, mask_ring_mean
+from xpdtools.jit_tools import mask_ring_median, mask_ring_mean, ring_zscore
 
 try:
     from diffpy.pdfgetx import PDFGetter
@@ -58,7 +58,7 @@ def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median'):
     except AttributeError:
         idx = binner.xy.argsort()
     if tmsk is None:
-        tmsk = np.ones(img.shape, dtype=bool)
+        tmsk = np.ones(np.shape(img), dtype=bool)
     tmsk = tmsk.ravel()
     vfs = img.flatten()[idx]
     pfs = np.arange(np.size(img))[idx]
@@ -77,7 +77,7 @@ def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median'):
     np.seterr(**p_err)
     removals = [item for sublist in removals for item in sublist]
     tmsk[removals] = False
-    tmsk = tmsk.reshape(img.shape)
+    tmsk = tmsk.reshape(np.shape(img))
     print('finished auto mask')
     return tmsk.astype(bool)
 
@@ -130,11 +130,11 @@ def mask_img(img, binner,
     """
 
     if tmsk is None:
-        working_mask = np.ones(img.shape).astype(bool)
+        working_mask = np.ones(np.shape(img)).astype(bool)
     else:
         working_mask = tmsk.copy()
     if edge:
-        working_mask *= margin(img.shape, edge)
+        working_mask *= margin(np.shape(img), edge)
     if lower_thresh:
         working_mask *= (img >= lower_thresh).astype(bool)
     if upper_thresh:
@@ -165,7 +165,7 @@ def generate_binner(geo, img_shape=None, mask=None):
         The configured instance of the binner.
     """
     if img_shape is None:
-        img_shape = mask.shape
+        img_shape = np.shape(mask)
     r = geo.rArray(img_shape)
     q = geo.qArray(img_shape) / 10  # type: np.ndarray
     q_dq = geo.deltaQ(img_shape) / 10  # type: np.ndarray
@@ -173,7 +173,6 @@ def generate_binner(geo, img_shape=None, mask=None):
     pixel_size = [getattr(geo, a) for a in ['pixel1', 'pixel2']]
     rres = np.hypot(*pixel_size)
     rbins = np.arange(np.min(r) - rres / 2., np.max(r) + rres / 2., rres / 2.)
-    # This is only called once, use the function version`
     rbinned = BinnedStatistic1D(r.ravel(), statistic=np.max, bins=rbins, )
 
     qbin_sizes = rbinned(q_dq.ravel())
@@ -209,20 +208,21 @@ def z_score_image(img, binner):
     vfs = img.flatten()[idx]
 
     # TODO: parallelize/numbafy?
-    # TODO: numpy ignore errors
+    # TODO: use integrated data
     p_err = np.seterr(all='ignore')
     i = 0
+    t = []
     for k in binner.flatcount:
         if k > 0:
-            vfs[i: i + k] -= np.mean(vfs[i: i + k])
-            vfs[i: i + k] /= np.std(vfs[i: i + k])
+            t.append(vfs[i: i + k])
         i += k
+    list(map(ring_zscore, t))
     np.seterr(**p_err)
-    img2 = np.empty(vfs.shape)
+    img2 = np.empty(np.shape(vfs))
     img2[idx] = vfs
     img2 = np.nan_to_num(img2)
 
-    return img2.reshape(img.shape)
+    return img2.reshape(np.shape(img))
 
 
 def polarization_correction(img, geo, polarization_factor=.99):
@@ -242,7 +242,7 @@ def polarization_correction(img, geo, polarization_factor=.99):
     ndarray :
         The corrected image
     """
-    return img / geo.polarization(img.shape, polarization_factor)
+    return img / geo.polarization(np.shape(img), polarization_factor)
 
 
 def load_geo(cal_params):
