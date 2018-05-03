@@ -4,6 +4,30 @@
 
 .. current developments
 
+v0.2.0
+====================
+
+**Added:**
+
+* ``pipelines.extra`` module which holds extra nodes (zscore, median, etc)
+
+* numba compiled ``zscore`` for faster zscore computation
+
+
+**Changed:**
+
+* removed zscore, median, and std from the base pipeline
+
+* use ``map`` rather than for loop for zscore
+
+
+**Removed:**
+
+* ``xpd_raw_pipeline`` module
+
+
+
+
 v0.1.9
 ====================
 
