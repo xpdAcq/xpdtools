@@ -1,0 +1,13 @@
+**Added:** None
+
+**Changed:** 
+
+* Run release before conda forge so we use the self generated tarballs
+
+**Deprecated:** None
+
+**Removed:** None
+
+**Fixed:** None
+
+**Security:** None
