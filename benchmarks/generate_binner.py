@@ -1,11 +1,17 @@
 from tifffile import imread
-from xpdtools.tools import generate_binner
+from xpdtools.tools import generate_binner, generate_map_bin
 from profilehooks import profile
 import pyFAI
+
 geo = pyFAI.load('test.poni')
 img = imread('test.tiff')
 
-bo = profile(generate_binner)
+
+def total(geo, img_shape):
+    return generate_binner(*generate_map_bin(geo, img_shape))
+
+
+bo = profile(total)
 
 binner = bo(geo, img.shape)
 binner = bo(geo, img.shape)

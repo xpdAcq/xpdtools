@@ -21,7 +21,7 @@ from xpdtools.tests.utils import pyFAI_calib
 from xpdtools.tools import (load_geo,
                             generate_binner, mask_img, binned_outlier,
                             z_score_image, polarization_correction,
-                            overlay_mask)
+                            overlay_mask, generate_map_bin)
 from xpdtools.jit_tools import mask_ring_median, mask_ring_mean
 
 geo = load_geo(pyFAI_calib)
@@ -45,20 +45,20 @@ def test_load_geo():
 
 
 def test_generate_binner():
-    b = generate_binner(geo, (2048, 2048))
+    b = generate_binner(*generate_map_bin(geo, (2048, 2048)))
     assert b
 
 
 def test_generate_binner_mask():
     b = generate_binner(
-        geo, (2048, 2048),
+        *generate_map_bin(geo, (2048, 2048)),
         np.random.randint(0, 2, 2048 * 2048, dtype=bool).reshape((2048, 2048)))
     assert b
 
 
 @pytest.mark.parametrize('mask_method', ['mean', 'median'])
 def test_binned_outlier(mask_method):
-    b = generate_binner(geo, (2048, 2048))
+    b = generate_binner(*generate_map_bin(geo, (2048, 2048)))
     img = np.ones((2048, 2048))
     bad = np.unique(np.random.randint(0, 2048 * 2048, 1000))
     urbad = np.unravel_index(bad, (2048, 2048))
@@ -69,7 +69,7 @@ def test_binned_outlier(mask_method):
 
 
 def test_z_score_image():
-    b = generate_binner(geo, (2048, 2048))
+    b = generate_binner(*generate_map_bin(geo, (2048, 2048)))
     img = np.ones((2048, 2048))
     bad = np.unique(np.random.randint(0, 2048 * 2048, 1000))
     urbad = np.unravel_index(bad, (2048, 2048))
@@ -96,7 +96,7 @@ def test_overlay_mask():
 
 @pytest.mark.parametrize('mask_method', ['mean', 'median'])
 def test_mask_img(mask_method):
-    b = generate_binner(geo, (2048, 2048))
+    b = generate_binner(*generate_map_bin(geo, (2048, 2048)))
     img = np.ones((2048, 2048))
     bad = np.unique(np.random.randint(0, 2048 * 2048, 1000))
     urbad = np.unravel_index(bad, (2048, 2048))

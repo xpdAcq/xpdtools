@@ -7,7 +7,7 @@ from streamz_ext import Stream
 
 from xpdtools.calib import img_calibration
 from xpdtools.tools import (load_geo, mask_img, generate_binner,
-                            fq_getter, pdf_getter, sq_getter)
+                            fq_getter, pdf_getter, sq_getter, generate_map_bin)
 
 mask_setting = {'setting': 'auto'}
 raw_foreground = Stream(stream_name='raw foreground')
@@ -67,6 +67,10 @@ img_shape = (bg_corrected_img.
              unique(history=1))
 geometry_img_shape = geometry.zip_latest(img_shape)
 
+# Only create map and bins (which is expensive) when needed (new calibration)
+map_res = geometry_img_shape.starmap(generate_map_bin)
+cal_binner = (map_res.starmap(generate_binner))
+
 polarization_array = (
     geometry_img_shape.
     starmap(lambda geo, shape, polarization_factor: geo.polarization(
@@ -76,11 +80,6 @@ pol_correction_combine = (
     bg_corrected_img
     .combine_latest(polarization_array, emit_on=bg_corrected_img))
 pol_corrected_img = pol_correction_combine.starmap(op.truediv)
-
-
-# Only create binner (which is expensive) when needed (new calibration)
-cal_binner = (geometry_img_shape
-              .starmap(generate_binner))
 
 # emit on img so we don't propagate old image data
 # note that the pol_corrected_img has touched the geometry and so always comes
@@ -96,7 +95,7 @@ all_mask = (
     .filter(lambda x, **kwargs: mask_setting['setting'] == 'auto')
     .starmap(mask_img, stream_name='mask', **{})
 )
-img_counter = Stream()
+img_counter = Stream(stream_name='img counter')
 first_mask = (
     img_cal_binner
     .filter(lambda x, **kwargs: mask_setting['setting'] == 'first')
@@ -114,12 +113,12 @@ no_mask = (
 mask = all_mask.union(first_mask, no_mask)
 
 # Integration
-# TODO: try to get this to not call pyFAI again
 binner = (
-    mask.
-    combine_latest(geometry, emit_on=0).
-    starmap(lambda mask, geo: generate_binner(geo, mask=mask)))
-q = binner.map(getattr, 'bin_centers')
+    map_res
+    .combine_latest(mask, emit_on=1)
+    .map(lambda x: (x[0][0], x[0][1], x[1]))
+    .starmap(generate_binner))
+q = binner.map(getattr, 'bin_centers', stream_name='Q')
 tth = (
     q.combine_latest(wavelength, emit_on=0)
     .starmap(q_to_twotheta, stream_name='tth'))
@@ -130,7 +129,7 @@ f_img_binner = pol_corrected_img.map(np.ravel).combine_latest(binner,
 mean = (
     f_img_binner.
     starmap(lambda img, binner, **kwargs: binner(img, **kwargs),
-            statistic='mean').map(np.nan_to_num))
+            statistic='mean', stream_name='Mean IQ').map(np.nan_to_num))
 
 # PDF
 composition = Stream(stream_name='composition')
