@@ -7,13 +7,15 @@ geo = pyFAI.load('test.poni')
 img = imread('test.tiff')
 
 
+@profile(
+    # skip=1,
+    # sort='module',
+    entries=20)
 def total(geo, img_shape):
-    return generate_binner(*generate_map_bin(geo, img_shape))
+    return generate_map_bin(geo, img_shape)
 
 
-bo = profile(total)
-
-binner = bo(geo, img.shape)
-binner = bo(geo, img.shape)
-# 1 call 1.930
-# 2 call 2.675
+for i in range(10):
+    binner = total(geo, img.shape)
+# 8.453 for 10 calls of generate_binner and generate_map_bin
+# 6.548 for 10 calls of generate_map_bin
