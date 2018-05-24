@@ -31,5 +31,8 @@ def f(i):
     raw_foreground.emit(img)
 
 
-for i in range(10):
+for i in range(11):
     f(i+1)
+
+# all masked 5.358 11 calls skip first
+# first masked .572 11 calls skip first

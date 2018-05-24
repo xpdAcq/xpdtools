@@ -147,8 +147,8 @@ def mask_img(img, binner,
     return working_mask
 
 
-def generate_binner(geo, img_shape=None, mask=None):
-    """Create a pixel resolution BinnedStats1D instance
+def generate_map_bin(geo, img_shape):
+    """Create a q map and the pixel resolution bins
 
     Parameters
     ----------
@@ -156,16 +156,14 @@ def generate_binner(geo, img_shape=None, mask=None):
         The calibrated geometry
     img_shape : tuple, optional
         The shape of the image, if None pull from the mask. Defaults to None.
-    mask : ndarray, optional
-        The mask to be applied, if None no mask is applied. Defaults to None.
 
     Returns
     -------
-    BinnedStatistic1D :
-        The configured instance of the binner.
+    q : ndarray
+        The q map
+    qbin : ndarray
+        The pixel resolution bins
     """
-    if img_shape is None:
-        img_shape = np.shape(mask)
     r = geo.rArray(img_shape)
     q = geo.qArray(img_shape) / 10  # type: np.ndarray
     q_dq = geo.deltaQ(img_shape) / 10  # type: np.ndarray
@@ -181,9 +179,50 @@ def generate_binner(geo, img_shape=None, mask=None):
     qbin[0] = np.min(q_dq)
     if np.max(q) > qbin[-1]:
         qbin[-1] = np.max(q)
+    return q, qbin
+
+
+def map_to_binner(pixel_map, bins, mask=None):
+    """Transforms pixel map and bins into a binner
+
+    Parameters
+    ----------
+    pixel_map: np.ndarray
+        The map between pixels and values
+    bins: np.ndarray
+        The bins to use in the binner
+    mask: np.ndarray, optional
+        The mask for the pixel map
+
+    Returns
+    -------
+    BinnedStatistic1D:
+        The binner
+
+    """
     if mask is not None:
         mask = mask.flatten()
-    return BinnedStatistic1D(q.flatten(), bins=qbin, mask=mask)
+    return BinnedStatistic1D(pixel_map.flatten(), bins=bins, mask=mask)
+
+
+def generate_binner(geo, img_shape, mask=None):
+    """Create a pixel resolution BinnedStats1D instance
+
+    Parameters
+    ----------
+    geo : pyFAI.geometry.Geometry instance
+        The calibrated geometry
+    img_shape : tuple, optional
+        The shape of the image, if None pull from the mask. Defaults to None.
+    mask : np.ndarray, optional
+        The mask to be applied, if None no mask is applied. Defaults to None.
+    Returns
+    -------
+    BinnedStatistic1D :
+        The configured instance of the binner.
+    """
+
+    return map_to_binner(*generate_map_bin(geo, img_shape), mask=mask)
 
 
 def z_score_image(img, binner):

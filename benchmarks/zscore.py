@@ -14,7 +14,7 @@ from profilehooks import profile
 geo = pyFAI.load('test.poni')
 img = imread('test.tiff')
 
-binner = generate_binner(geo, img.shape)
+binner = map_to_binner(geo, img.shape)
 
 @profile(skip=1,
          # sort='module',

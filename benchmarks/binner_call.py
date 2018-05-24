@@ -1,5 +1,5 @@
 from tifffile import imread
-from xpdtools.tools import generate_binner
+from xpdtools.tools import map_to_binner, generate_map_bin
 from profilehooks import profile
 import pyFAI
 from numba import jit
@@ -8,9 +8,9 @@ import numpy as np
 geo = pyFAI.load('test.poni')
 img = imread('test.tiff')
 
-bo = generate_binner
+bo = map_to_binner
 
-binner = bo(geo, img.shape)
+binner = bo(*generate_map_bin(geo, img.shape))
 f = profile(binner.__call__)
 a = binner.xy_argsort
 
