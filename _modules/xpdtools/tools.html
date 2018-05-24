@@ -296,8 +296,8 @@
     <span class="k">return</span> <span class="n">working_mask</span></div>
 
 
-<div class="viewcode-block" id="generate_binner"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.generate_binner">[docs]</a><span class="k">def</span> <span class="nf">generate_binner</span><span class="p">(</span><span class="n">geo</span><span class="p">,</span> <span class="n">img_shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Create a pixel resolution BinnedStats1D instance</span>
+<div class="viewcode-block" id="generate_map_bin"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.generate_map_bin">[docs]</a><span class="k">def</span> <span class="nf">generate_map_bin</span><span class="p">(</span><span class="n">geo</span><span class="p">,</span> <span class="n">img_shape</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create a q map and the pixel resolution bins</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -305,16 +305,14 @@
 <span class="sd">        The calibrated geometry</span>
 <span class="sd">    img_shape : tuple, optional</span>
 <span class="sd">        The shape of the image, if None pull from the mask. Defaults to None.</span>
-<span class="sd">    mask : ndarray, optional</span>
-<span class="sd">        The mask to be applied, if None no mask is applied. Defaults to None.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    BinnedStatistic1D :</span>
-<span class="sd">        The configured instance of the binner.</span>
+<span class="sd">    q : ndarray</span>
+<span class="sd">        The q map</span>
+<span class="sd">    qbin : ndarray</span>
+<span class="sd">        The pixel resolution bins</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">img_shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">img_shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">geo</span><span class="o">.</span><span class="n">rArray</span><span class="p">(</span><span class="n">img_shape</span><span class="p">)</span>
     <span class="n">q</span> <span class="o">=</span> <span class="n">geo</span><span class="o">.</span><span class="n">qArray</span><span class="p">(</span><span class="n">img_shape</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span>  <span class="c1"># type: np.ndarray</span>
     <span class="n">q_dq</span> <span class="o">=</span> <span class="n">geo</span><span class="o">.</span><span class="n">deltaQ</span><span class="p">(</span><span class="n">img_shape</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span>  <span class="c1"># type: np.ndarray</span>
@@ -330,9 +328,50 @@
     <span class="n">qbin</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">q_dq</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">qbin</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
         <span class="n">qbin</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">q</span><span class="p">,</span> <span class="n">qbin</span></div>
+
+
+<div class="viewcode-block" id="map_to_binner"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.map_to_binner">[docs]</a><span class="k">def</span> <span class="nf">map_to_binner</span><span class="p">(</span><span class="n">pixel_map</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Transforms pixel map and bins into a binner</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pixel_map: np.ndarray</span>
+<span class="sd">        The map between pixels and values</span>
+<span class="sd">    bins: np.ndarray</span>
+<span class="sd">        The bins to use in the binner</span>
+<span class="sd">    mask: np.ndarray, optional</span>
+<span class="sd">        The mask for the pixel map</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    BinnedStatistic1D:</span>
+<span class="sd">        The binner</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">BinnedStatistic1D</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="n">qbin</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">BinnedStatistic1D</span><span class="p">(</span><span class="n">pixel_map</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="generate_binner"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.generate_binner">[docs]</a><span class="k">def</span> <span class="nf">generate_binner</span><span class="p">(</span><span class="n">geo</span><span class="p">,</span> <span class="n">img_shape</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create a pixel resolution BinnedStats1D instance</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geo : pyFAI.geometry.Geometry instance</span>
+<span class="sd">        The calibrated geometry</span>
+<span class="sd">    img_shape : tuple, optional</span>
+<span class="sd">        The shape of the image, if None pull from the mask. Defaults to None.</span>
+<span class="sd">    mask : np.ndarray, optional</span>
+<span class="sd">        The mask to be applied, if None no mask is applied. Defaults to None.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    BinnedStatistic1D :</span>
+<span class="sd">        The configured instance of the binner.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">map_to_binner</span><span class="p">(</span><span class="o">*</span><span class="n">generate_map_bin</span><span class="p">(</span><span class="n">geo</span><span class="p">,</span> <span class="n">img_shape</span><span class="p">),</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="z_score_image"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.z_score_image">[docs]</a><span class="k">def</span> <span class="nf">z_score_image</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">binner</span><span class="p">):</span>
@@ -622,9 +661,7 @@
 
   <script type="text/javascript">
       jQuery(function () {
-          
-          SphinxRtdTheme.Navigation.enableSticky();
-          
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script> 
 
