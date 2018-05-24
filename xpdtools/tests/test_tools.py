@@ -21,7 +21,7 @@ from xpdtools.tests.utils import pyFAI_calib
 from xpdtools.tools import (load_geo,
                             map_to_binner, mask_img, binned_outlier,
                             z_score_image, polarization_correction,
-                            overlay_mask, generate_map_bin)
+                            overlay_mask, generate_map_bin, generate_binner)
 from xpdtools.jit_tools import mask_ring_median, mask_ring_mean
 
 geo = load_geo(pyFAI_calib)
@@ -45,8 +45,11 @@ def test_load_geo():
 
 
 def test_generate_binner():
+    a = generate_binner(geo, (2048, 2048))
     b = map_to_binner(*generate_map_bin(geo, (2048, 2048)))
+    assert a
     assert b
+    assert_equal(a.flatcount, b.flatcount)
 
 
 def test_generate_binner_mask():
