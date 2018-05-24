@@ -6,7 +6,7 @@ from skbeam.core.utils import q_to_twotheta
 from streamz_ext import Stream
 
 from xpdtools.calib import img_calibration
-from xpdtools.tools import (load_geo, mask_img, generate_binner,
+from xpdtools.tools import (load_geo, mask_img, map_to_binner,
                             fq_getter, pdf_getter, sq_getter, generate_map_bin)
 
 mask_setting = {'setting': 'auto'}
@@ -69,7 +69,7 @@ geometry_img_shape = geometry.zip_latest(img_shape)
 
 # Only create map and bins (which is expensive) when needed (new calibration)
 map_res = geometry_img_shape.starmap(generate_map_bin)
-cal_binner = (map_res.starmap(generate_binner))
+cal_binner = (map_res.starmap(map_to_binner))
 
 polarization_array = (
     geometry_img_shape.
@@ -117,7 +117,7 @@ binner = (
     map_res
     .combine_latest(mask, emit_on=1)
     .map(lambda x: (x[0][0], x[0][1], x[1]))
-    .starmap(generate_binner))
+    .starmap(map_to_binner))
 q = binner.map(getattr, 'bin_centers', stream_name='Q')
 tth = (
     q.combine_latest(wavelength, emit_on=0)

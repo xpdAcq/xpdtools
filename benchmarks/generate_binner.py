@@ -1,5 +1,5 @@
 from tifffile import imread
-from xpdtools.tools import generate_binner, generate_map_bin
+from xpdtools.tools import map_to_binner, generate_map_bin
 from profilehooks import profile
 import pyFAI
 
