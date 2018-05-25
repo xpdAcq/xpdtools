@@ -38,20 +38,17 @@ run:
     default: {conda: pims}
 test:
   pytest:
-    default:
-      conda: pytest
+    default: {conda: pytest}
   flake8:
-    default:
-      conda: flake8
+    default: {conda: flake8}
   codecov:
-    default:
-      conda: codecov
+    default: {conda: codecov}
   coverage:
-    default:
-      conda: coverage
+    default: {conda: coverage}
   pytest-env:
-    default:
-      conda: pytest-env
+    default: {conda: pytest-env}
+  nose:
+    default: {conda: nose}
 docs:
   doctr:
     default: {conda: doctr}
