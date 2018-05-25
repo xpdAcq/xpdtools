@@ -27,25 +27,16 @@ before_install:
 
 install:
   - export GIT_FULL_HASH=`git rev-parse HEAD`
-  - conda create --yes -n testenv python=$TRAVIS_PYTHON_VERSION
+  - conda create --yes -n testenv python=$TRAVIS_PYTHON_VERSION orch
   - source activate testenv
-  - conda install --yes --file requirements/build.txt
-  - conda install pip
-  - pip install -r requirements/pip.txt
-  - pip install .
-
+  - orch score.yaml
 script:
   - set -e
-  - conda install --yes --file requirements/run.txt
-  - conda install --yes --file requirements/test.txt
-  - pip install codecov pytest-env
   - coverage run run_tests.py
   - coverage report -m
   - codecov
   - image_to_iq -- --help
   - flake8 xpdtools
-  - conda install --yes --file requirements/docs.txt
-  - pip install git+git://github.com/drdoctr/doctr.git
   - cd docs
   - make html
   - cd ..
