@@ -137,6 +137,8 @@ iq_comp = (
     q.combine_latest(mean, emit_on=1)
     .combine_latest(composition, emit_on=0))
 iq_comp_map = (iq_comp.map(lambda x: (x[0][0], x[0][1], x[1])))
+
+# TODO: split these all up into their components
 sq = iq_comp_map.starmap(sq_getter, stream_name='sq', **(
     dict(dataformat='QA', qmaxinst=28, qmax=25, rstep=np.pi / 25)))
 fq = iq_comp_map.starmap(fq_getter, stream_name='fq', **(
