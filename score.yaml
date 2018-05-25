@@ -1,0 +1,58 @@
+section_order:
+  - build
+  - install
+  - run
+  - test
+  - docs
+install: pip install .
+build:
+  pip:
+    default:
+      conda: setuptools
+  python:
+    default:
+      conda: python
+run:
+  numpy:
+    default: {conda: numpy}
+  pyfai:
+    default: {conda: pyfai}
+  scikit-beam:
+    default: {conda: scikit-beam}
+  scipy:
+    default: {conda: scipy}
+  streamz_ext:
+    default: {conda: streamz_ext}
+    bleeding: {orch: 'https://github.com/xpdAcq/streamz_ext.git'}
+  xpdsim:
+    default: {conda: xpdsim}
+  numba:
+    default: {conda: numba}
+  fabio:
+    default: {conda: fabio}
+  pyyaml:
+    default: {conda: pyyaml}
+  fire:
+    default: {conda: fire}
+  pims:
+    default: {conda: pims}
+test:
+  pytest:
+    default: {conda: pytest}
+  flake8:
+    default: {conda: flake8}
+  codecov:
+    default: {conda: codecov}
+  coverage:
+    default: {conda: coverage}
+  pytest-env:
+    default: {conda: pytest-env}
+  nose:
+    default: {conda: nose}
+docs:
+  doctr:
+    default: {conda: doctr}
+  sphinx:
+    default: {conda: sphinx}
+  sphinx_rtd_theme:
+    default: {conda: sphinx_rtd_theme}

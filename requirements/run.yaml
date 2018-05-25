@@ -1,0 +1,25 @@
+fabio:
+  default: {conda: fabio}
+fire:
+  default: {conda: fire}
+numba:
+  default: {conda: numba}
+numpy:
+  default: {conda: numpy}
+pims:
+  default: {conda: pims}
+pyFAI:
+  default: {conda: pyFAI}
+pyyaml:
+  default: {conda: pyyaml}
+scikit-beam:
+  default: {conda: scikit-beam}
+  exp: {pip: 'git+git@github.com:scikit-beam/scikit-beam.git#egg=scikit-beam'}
+scipy:
+  default: {conda: scipy}
+streamz_ext:
+  default: {conda: streamz_ext}
+  exp: {pip: 'git+git@github.com:xpdAcq/streamz_ext.git#egg=streamz_ext'}
+xpdsim:
+  default: {conda: xpdsim}
+  exp: {pip: 'git+git@github.com:xpdAcq/xpdsim.git#egg=xpdsim'}
