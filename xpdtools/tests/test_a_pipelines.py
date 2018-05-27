@@ -47,7 +47,6 @@ def test_qoi_pipeline():
     for s in [raw_background_dark, raw_background, raw_foreground_dark]:
         s.emit(np.zeros(img.shape))
     composition.emit('Au')
-    raw_foreground.visualize('raw_stream.png', source_node=True)
     raw_foreground.emit(img)
     for sl in sls:
         print(sl)
