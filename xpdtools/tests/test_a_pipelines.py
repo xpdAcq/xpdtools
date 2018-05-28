@@ -51,7 +51,7 @@ def test_qoi_pipeline():
     for sl in sls:
         print(sl)
         assert len(sl) == 1
-    assert pdf_argrelmax_kwargs == {'order': 10}
+    assert pdf_argrelmax_kwargs == {'order': 5}
     assert mean_argrelmax_kwargs == {'order': 20}
 
 

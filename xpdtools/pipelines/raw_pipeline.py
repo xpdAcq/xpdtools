@@ -121,7 +121,7 @@ binner = (
 q = binner.map(getattr, 'bin_centers', stream_name='Q')
 tth = (
     q.combine_latest(wavelength, emit_on=0)
-    .starmap(q_to_twotheta, stream_name='tth'))
+    .starmap(q_to_twotheta, stream_name='tth').map(np.rad2deg))
 
 f_img_binner = pol_corrected_img.map(np.ravel).combine_latest(binner,
                                                               emit_on=0)
