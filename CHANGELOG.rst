@@ -4,6 +4,27 @@
 
 .. current developments
 
+v0.3.0
+====================
+
+**Added:**
+
+* Quantity of interest support
+
+
+**Changed:**
+
+* tth reported in degrees
+* Run release before conda forge so we use the self generated tarballs
+
+
+**Fixed:**
+
+* Don't break API with ``generate_binner``
+
+
+
+
 v0.2.0
 ====================
 
