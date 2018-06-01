@@ -4,6 +4,17 @@
 
 .. current developments
 
+v0.3.1
+====================
+
+**Fixed:**
+
+* ``starmap`` into ``img_calibration`` rather than just ``map`` which gives
+  correct alignment between the inputs and expected arguments
+
+
+
+
 v0.3.0
 ====================
 
