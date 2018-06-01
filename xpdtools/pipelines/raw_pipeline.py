@@ -93,7 +93,13 @@ img_cal_binner = (
 all_mask = (
     img_cal_binner
     .filter(lambda x, **kwargs: mask_setting['setting'] == 'auto')
-    .starmap(mask_img, stream_name='mask', **{})
+    .starmap(mask_img, stream_name='mask',
+             **dict(edge=30,
+                    lower_thresh=0.0,
+                    upper_thresh=None,
+                    alpha=3,
+                    auto_type='median',
+                    tmsk=None))
 )
 img_counter = Stream(stream_name='img counter')
 first_mask = (

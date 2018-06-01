@@ -1,0 +1,13 @@
+**Added:** None
+
+**Changed:**
+
+* Added default mask kwargs to ``mask_kwargs`` for usability
+
+**Deprecated:** None
+
+**Removed:** None
+
+**Fixed:** None
+
+**Security:** None
