@@ -49,7 +49,7 @@ gen_geo_cal = (
     combine_latest(wavelength,
                    calibrant,
                    detector, emit_on=0).
-    map(img_calibration)
+    starmap(img_calibration)
 )
 
 gen_geo = gen_geo_cal.pluck(1)

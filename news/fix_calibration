@@ -1,0 +1,14 @@
+**Added:** None
+
+**Changed:** None
+
+**Deprecated:** None
+
+**Removed:** None
+
+**Fixed:**
+
+* ``starmap`` into ``img_calibration`` rather than just ``map`` which gives
+  correct alignment between the inputs and expected arguments
+
+**Security:** None
