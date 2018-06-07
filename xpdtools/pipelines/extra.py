@@ -1,6 +1,6 @@
 import numpy as np
-from xpdtools.pipelines.raw_pipeline import (f_img_binner, pol_corrected_img,
-                                             binner, mask)
+from xpdtools.pipelines.raw_pipeline import (f_img_binner, binner, mask)
+from xpdtools.pipelines.scattering_correction import pol_corrected_img
 from xpdtools.tools import z_score_image, overlay_mask
 
 median = (

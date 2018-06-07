@@ -3,12 +3,10 @@ import tifffile
 import pyFAI
 
 from xpdsim import pyfai_poni, image_file
-from xpdtools.pipelines.raw_pipeline import (raw_foreground,
-                                             raw_foreground_dark,
-                                             raw_background,
-                                             raw_background_dark,
-                                             geometry, pdf, composition)
-
+from xpdtools.pipelines.raw_pipeline import (pdf, composition)
+from xpdtools.pipelines.calibration import geometry
+from xpdtools.pipelines.image_preprocess import raw_foreground, \
+    raw_foreground_dark, raw_background, raw_background_dark
 
 img = tifffile.imread(image_file)
 geo = pyFAI.load(pyfai_poni)

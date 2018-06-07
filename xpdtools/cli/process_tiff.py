@@ -9,13 +9,14 @@ import tifffile
 from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
 from skbeam.io.save_powder_output import save_output
 from streamz_ext import Stream
-from xpdtools.pipelines.raw_pipeline import (polarization_array, mask,
+from xpdtools.pipelines.raw_pipeline import (mask,
                                              mean, q,
-                                             geometry,
-                                             dark_corrected_foreground,
-                                             dark_corrected_background,
                                              mask_kwargs,
                                              mask_setting)
+from xpdtools.pipelines.scattering_correction import polarization_array
+from xpdtools.pipelines.calibration import geometry
+from xpdtools.pipelines.image_preprocess import dark_corrected_foreground, \
+    dark_corrected_background
 from xpdtools.pipelines.extra import median, std, z_score
 
 img_extensions = {'.tiff', '.edf', '.tif'}
