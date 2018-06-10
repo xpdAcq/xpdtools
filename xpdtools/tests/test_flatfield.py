@@ -1,7 +1,11 @@
 import numpy as np
 from pyFAI.geometry import Geometry
 
-from xpdtools.pipelines.flatfield import *
+from xpdtools.pipelines.flatfield import (ave_ff, mask_setting,
+                                          raw_foreground_dark,
+                                          raw_background_dark, raw_background,
+                                          is_calibration_img, geo_input,
+                                          motors, img_counter, raw_foreground)
 
 
 def test_flatfield_pipeline():

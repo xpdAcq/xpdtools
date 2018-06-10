@@ -40,10 +40,10 @@ detector = Stream(stream_name='detector')
 is_calibration_img = Stream(stream_name='Is Calibration')
 geo_input = Stream(stream_name='geometry')
 gated_cal = (
-    bg_corrected_img.
-        combine_latest(is_calibration_img, emit_on=0).
-        filter(lambda a: bool(a[1])).
-        pluck(0, stream_name='Gate calibration'))
+    bg_corrected_img
+    .combine_latest(is_calibration_img, emit_on=0)
+    .filter(lambda a: bool(a[1]))
+    .pluck(0, stream_name='Gate calibration'))
 
 gen_geo_cal = (
     gated_cal
@@ -83,14 +83,14 @@ bins = (cal_binner
         .starmap(lambda x, y: x.binmap.reshape(y)))
 
 polarization_array = (
-    geometry_img_shape.
-        starmap(lambda geo, shape, polarization_factor: geo.polarization(
+    geometry_img_shape
+    .starmap(lambda geo, shape, polarization_factor: geo.polarization(
         shape, polarization_factor), .99)
 )
 
 pol_correction_combine = (
     bg_corrected_img
-        .combine_latest(polarization_array, emit_on=bg_corrected_img))
+    .combine_latest(polarization_array, emit_on=bg_corrected_img))
 pol_corrected_img = pol_correction_combine.pluck(0)  # .starmap(op.truediv)
 
 # emit on img so we don't propagate old image data
@@ -99,33 +99,33 @@ pol_corrected_img = pol_correction_combine.pluck(0)  # .starmap(op.truediv)
 # emit because pol_corrected_img comes down first
 img_cal_binner = (
     pol_corrected_img.
-        combine_latest(cal_binner,
-                       emit_on=pol_corrected_img))
+    combine_latest(cal_binner,
+                   emit_on=pol_corrected_img))
 
 all_mask = (
     img_cal_binner
-        .filter(lambda x, **kwargs: mask_setting['setting'] == 'auto')
-        .starmap(mask_img, stream_name='mask',
-                 **dict(edge=30,
-                        lower_thresh=0.0,
-                        upper_thresh=None,
-                        alpha=3,
-                        auto_type='median',
-                        tmsk=None))
+    .filter(lambda x, **kwargs: mask_setting['setting'] == 'auto')
+    .starmap(mask_img, stream_name='mask',
+             **dict(edge=30,
+                    lower_thresh=0.0,
+                    upper_thresh=None,
+                    alpha=3,
+                    auto_type='median',
+                    tmsk=None))
 )
 img_counter = Stream(stream_name='img counter')
 first_mask = (
     img_cal_binner
-        .filter(lambda x, **kwargs: mask_setting['setting'] == 'first')
-        .zip(img_counter)
-        .filter(lambda x: x[1] == 1).pluck(0)
-        .starmap(mask_img, stream_name='mask', **{})
+    .filter(lambda x, **kwargs: mask_setting['setting'] == 'first')
+    .zip(img_counter)
+    .filter(lambda x: x[1] == 1).pluck(0)
+    .starmap(mask_img, stream_name='mask', **{})
 )
 
 no_mask = (
     img_cal_binner
-        .filter(lambda x, **kwargs: mask_setting['setting'] == 'none')
-        .starmap(lambda img, *_, **kwargs: None)
+    .filter(lambda x, **kwargs: mask_setting['setting'] == 'none')
+    .starmap(lambda img, *_, **kwargs: None)
 )
 
 mask = all_mask.union(first_mask, no_mask)
@@ -133,9 +133,9 @@ mask = all_mask.union(first_mask, no_mask)
 # Integration
 binner = (
     map_res
-        .combine_latest(mask, emit_on=1)
-        .map(lambda x: (x[0][0], x[0][1], x[1]))
-        .starmap(map_to_binner))
+    .combine_latest(mask, emit_on=1)
+    .map(lambda x: (x[0][0], x[0][1], x[1]))
+    .starmap(map_to_binner))
 q = binner.map(getattr, 'bin_centers', stream_name='Q')
 f_img_binner = pol_corrected_img.map(np.ravel).combine_latest(binner,
                                                               emit_on=0)
