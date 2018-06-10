@@ -4,6 +4,21 @@
 
 .. current developments
 
+v0.4.0
+====================
+
+**Added:**
+
+* Pipeline and tools for flatfield correction measurements
+
+
+**Changed:**
+
+* Added default mask kwargs to ``mask_kwargs`` for usability
+
+
+
+
 v0.3.1
 ====================
 
