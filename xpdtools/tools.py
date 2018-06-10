@@ -13,6 +13,8 @@
 # See LICENSE.txt for license information.
 #
 ##############################################################################
+import copy
+
 import numpy as np
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from scipy.integrate import simps
@@ -457,3 +459,24 @@ def nu_pdf_getter(q, fq):
     dgr = 2 / np.pi * fq * np.sin(q * rgrid[:, np.newaxis])
     gr = simps(dgr, q)
     return rgrid, gr
+
+
+def move_center(motors, geometry):
+    """Move the PONI for pyFAI based off of a diffx/diffy motor move
+
+    Parameters
+    ----------
+    motors : tuple
+        X, Y diff from geometry position
+    geometry : pyFAI.geometry.Geometry
+
+    Returns
+    -------
+
+    """
+    g2 = copy.deepcopy(geometry)
+    # TODO: check the xy alignment of the motors and pyFAI
+    # TODO: check that these additions actually do something
+    g2.poni1 += motors[0]
+    g2.poni2 += motors[1]
+    return g2
