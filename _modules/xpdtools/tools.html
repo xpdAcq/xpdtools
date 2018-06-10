@@ -24,8 +24,7 @@
 
   
 
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -162,6 +161,8 @@
 <span class="c1"># See LICENSE.txt for license information.</span>
 <span class="c1">#</span>
 <span class="c1">##############################################################################</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">pyFAI.azimuthalIntegrator</span> <span class="k">import</span> <span class="n">AzimuthalIntegrator</span>
 <span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="k">import</span> <span class="n">simps</span>
@@ -606,6 +607,27 @@
     <span class="n">dgr</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">fq</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">q</span> <span class="o">*</span> <span class="n">rgrid</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span>
     <span class="n">gr</span> <span class="o">=</span> <span class="n">simps</span><span class="p">(</span><span class="n">dgr</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">rgrid</span><span class="p">,</span> <span class="n">gr</span></div>
+
+
+<div class="viewcode-block" id="move_center"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.move_center">[docs]</a><span class="k">def</span> <span class="nf">move_center</span><span class="p">(</span><span class="n">motors</span><span class="p">,</span> <span class="n">geometry</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Move the PONI for pyFAI based off of a diffx/diffy motor move</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    motors : tuple</span>
+<span class="sd">        X, Y diff from geometry position</span>
+<span class="sd">    geometry : pyFAI.geometry.Geometry</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">g2</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
+    <span class="c1"># TODO: check the xy alignment of the motors and pyFAI</span>
+    <span class="c1"># TODO: check that these additions actually do something</span>
+    <span class="n">g2</span><span class="o">.</span><span class="n">poni1</span> <span class="o">+=</span> <span class="n">motors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">g2</span><span class="o">.</span><span class="n">poni2</span> <span class="o">+=</span> <span class="n">motors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">g2</span></div>
 </pre></div>
 
            </div>
@@ -654,10 +676,7 @@
 
   
 
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {
