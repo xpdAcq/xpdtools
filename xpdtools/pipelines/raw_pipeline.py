@@ -25,7 +25,6 @@ def make_pipeline():
 
 
 pipeline = make_pipeline()
-print(pipeline)
 # Tie all the kwargs together (so changes in one node change the rest)
 mask_kwargs = pipeline['all_mask'].kwargs
 
