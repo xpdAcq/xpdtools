@@ -9,15 +9,23 @@ import tifffile
 from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
 from skbeam.io.save_powder_output import save_output
 from streamz_ext import Stream
-from xpdtools.pipelines.raw_pipeline import (mask,
-                                             mean, q,
-                                             mask_kwargs,
-                                             mask_setting)
-from xpdtools.pipelines.scattering_correction import polarization_array
-from xpdtools.pipelines.calibration import geometry
-from xpdtools.pipelines.image_preprocess import dark_corrected_foreground, \
-    dark_corrected_background
-from xpdtools.pipelines.extra import median, std, z_score
+from streamz_ext.link import link
+
+from xpdtools.pipelines.raw_pipeline import make_pipeline, mask_setting
+from xpdtools.pipelines.extra import make_zscore, make_median, make_std
+
+pipeline = link(make_pipeline(),make_median(), make_zscore(), make_std())
+mask = pipeline['mask']
+q = pipeline['q']
+mean = pipeline['mean']
+median = pipeline['median']
+std = pipeline['std']
+z_score = pipeline['z_score']
+polarization_array = pipeline['polarization_array']
+mask_kwargs = pipeline['create_mask'].kwargs
+geometry = pipeline['geometry']
+dark_corrected_background = pipeline['dark_corrected_background']
+dark_corrected_foreground = pipeline['dark_corrected_foreground']
 
 img_extensions = {'.tiff', '.edf', '.tif'}
 # Modify graph
