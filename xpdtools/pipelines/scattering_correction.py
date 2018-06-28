@@ -3,6 +3,7 @@ import operator as op
 
 
 def make_pipeline():
+    """Make pipeline for scattering (polarization) corrections"""
     geometry_img_shape = Stream()
     bg_corrected_img = Stream()
 

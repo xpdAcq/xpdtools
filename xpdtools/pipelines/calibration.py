@@ -3,7 +3,8 @@ from xpdtools.calib import img_calibration
 from xpdtools.tools import load_geo, generate_map_bin, map_to_binner
 
 
-def cali():
+def make_pipeline():
+    """Make the pipeline for x-ray scattering detector calibration"""
     bg_corrected_img = Stream()
     img_shape = Stream()
     # Calibration management

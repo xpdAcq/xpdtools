@@ -7,6 +7,7 @@ mask_setting = {"setting": "auto"}
 
 
 def make_pipeline():
+    """Make pipeline for automatic masking"""
     pol_corrected_img = Stream()
     cal_binner = Stream()
     # emit on img so we don't propagate old image data

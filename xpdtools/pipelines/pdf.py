@@ -4,6 +4,7 @@ from xpdtools.tools import sq_getter, fq_getter, pdf_getter
 
 
 def make_pipeline():
+    """Make pipeline for S(Q), F(Q) and PDF generation"""
     mean = Stream()
     q = Stream()
     # PDF

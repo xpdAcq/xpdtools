@@ -5,7 +5,7 @@ from streamz import Stream
 
 
 def make_pipeline():
-    """
+    """Make pipeline for image pre-processing
 
     Returns
     -------

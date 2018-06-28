@@ -1,3 +1,6 @@
+"""
+Pipelines for integration
+"""
 import numpy as np
 from skbeam.core.utils import q_to_twotheta
 from streamz_ext import Stream
@@ -7,7 +10,8 @@ from streamz_ext import Stream
 from xpdtools.tools import map_to_binner
 
 
-def binner_pipeline():
+def make_pipeline():
+    """Make pipeline for mean integration"""
     map_res = Stream()
     mask = Stream()
     pol_corrected_img = Stream()

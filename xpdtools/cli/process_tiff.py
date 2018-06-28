@@ -14,7 +14,7 @@ from streamz_ext.link import link
 from xpdtools.pipelines.raw_pipeline import make_pipeline, mask_setting
 from xpdtools.pipelines.extra import make_zscore, make_median, make_std
 
-pipeline = link(make_pipeline(),make_median(), make_zscore(), make_std())
+pipeline = link(make_pipeline(), make_median(), make_zscore(), make_std())
 mask = pipeline['mask']
 q = pipeline['q']
 mean = pipeline['mean']
