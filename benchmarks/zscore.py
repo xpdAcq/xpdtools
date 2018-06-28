@@ -11,17 +11,20 @@ from profilehooks import profile
 # binner.sink(print)
 # mean.sink(print)
 
-geo = pyFAI.load('test.poni')
-img = imread('test.tiff')
+geo = pyFAI.load("test.poni")
+img = imread("test.tiff")
 
 binner = map_to_binner(geo, img.shape)
 
-@profile(skip=1,
-         # sort='module',
-         entries=100)
+
+@profile(
+    skip=1,
+    # sort='module',
+    entries=100,
+)
 def f(i):
     z_score_image(img, binner)
 
 
 for i in range(10):
-    f(i+1)
+    f(i + 1)

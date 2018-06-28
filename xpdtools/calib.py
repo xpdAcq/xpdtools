@@ -37,25 +37,26 @@ def _save_calib_param(calib_c, timestr, calib_yml_fp):
         filepath to the yml file which stores calibration param
     """
     # save glbl attribute for xpdAcq
-    calibrant_name = calib_c.calibrant.__repr__().split(' ')[0]
+    calibrant_name = calib_c.calibrant.__repr__().split(" ")[0]
     calib_config_dict = calib_c.geoRef.getPyFAI()
     calib_config_dict.update(calib_c.geoRef.getFit2D())
-    calib_config_dict.update({'poni_file_name':
-                              calib_c.basename + '.poni'})
-    calib_config_dict.update({'time': timestr})
-    calib_config_dict.update({'dSpacing':
-                              calib_c.calibrant.dSpacing})
-    calib_config_dict.update({'calibrant_name':
-                              calibrant_name})
+    calib_config_dict.update({"poni_file_name": calib_c.basename + ".poni"})
+    calib_config_dict.update({"time": timestr})
+    calib_config_dict.update({"dSpacing": calib_c.calibrant.dSpacing})
+    calib_config_dict.update({"calibrant_name": calibrant_name})
 
     # save yaml dict used for xpdAcq
-    with open(os.path.expanduser(calib_yml_fp), 'w') as f:
+    with open(os.path.expanduser(calib_yml_fp), "w") as f:
         yaml.dump(calib_config_dict, f)
-    print("INFO: End of calibration process. This set of calibration "
-          "will be injected as metadata to subsequent scans until you "
-          "perform this process again\n")
-    print("INFO: you can also use:\n>>> show_calib()\ncommand to check"
-          " current calibration parameters")
+    print(
+        "INFO: End of calibration process. This set of calibration "
+        "will be injected as metadata to subsequent scans until you "
+        "perform this process again\n"
+    )
+    print(
+        "INFO: you can also use:\n>>> show_calib()\ncommand to check"
+        " current calibration parameters"
+    )
     return calib_config_dict
 
 
@@ -77,10 +78,17 @@ def _calibration(img, calibration, calib_ref_fp=None, **kwargs):
         additional keyword argument for calibration. please refer to
         pyFAI documentation for all options.
     """
-    print('{:=^20}'.format("INFO: you are able to perform calibration, "
-                           "please refer to pictorial guide here:\n"))
-    print('{:^20}'
-          .format("http://xpdacq.github.io/usb_Running.html#calib-manual\n"))
+    print(
+        "{:=^20}".format(
+            "INFO: you are able to perform calibration, "
+            "please refer to pictorial guide here:\n"
+        )
+    )
+    print(
+        "{:^20}".format(
+            "http://xpdacq.github.io/usb_Running.html#calib-manual\n"
+        )
+    )
     # default params
     interactive = True
     # calibration
@@ -92,16 +100,19 @@ def _calibration(img, calibration, calib_ref_fp=None, **kwargs):
     if calib_ref_fp is None:
         _is_tmp_dir = True
         td = TemporaryDirectory()
-        calib_ref_fp = os.path.join(td.name, 'from_calib_func')
+        calib_ref_fp = os.path.join(td.name, "from_calib_func")
     basename, ext = os.path.splitext(calib_ref_fp)
     poni_fn = basename + ".npt"
     c.basename = basename
     c.pointfile = poni_fn
-    c.peakPicker = PeakPicker(img, reconst=True,
-                              pointfile=c.pointfile,
-                              calibrant=c.calibrant,
-                              wavelength=c.wavelength,
-                              **kwargs)
+    c.peakPicker = PeakPicker(
+        img,
+        reconst=True,
+        pointfile=c.pointfile,
+        calibrant=c.calibrant,
+        wavelength=c.wavelength,
+        **kwargs
+    )
     c.peakPicker.gui(log=True, maximize=True, pick=True)
     update_fig(c.peakPicker.fig)
     c.gui_peakPicker()
@@ -114,8 +125,14 @@ def _calibration(img, calibration, calib_ref_fp=None, **kwargs):
     return c, timestr
 
 
-def img_calibration(img, wavelength, calibrant='Ni',
-                    detector='perkin_elmer', calib_ref_fp=None, **kwargs):
+def img_calibration(
+    img,
+    wavelength,
+    calibrant="Ni",
+    detector="perkin_elmer",
+    calib_ref_fp=None,
+    **kwargs
+):
     """Function to calibrate experimental geometry for an image
 
     Parameters
@@ -178,12 +195,13 @@ def img_calibration(img, wavelength, calibrant='Ni',
     pyFAI documentation:
     http://pyfai.readthedocs.io/en/latest/
     """
-    wavelength *= 10**-10
+    wavelength *= 10 ** -10
     if isinstance(calibrant, list):
         calibrant = Calibrant(dSpacing=calibrant, wavelength=wavelength)
     # configure calibration instance
-    c = Calibration(calibrant=calibrant, detector=detector,
-                    wavelength=wavelength)
+    c = Calibration(
+        calibrant=calibrant, detector=detector, wavelength=wavelength
+    )
     # pyFAI calibration
     calib_c, timestr = _calibration(img, c, calib_ref_fp, **kwargs)
     # TODO: apply polarization correction and recalibrate?

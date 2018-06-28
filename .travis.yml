@@ -8,6 +8,10 @@ env:
     - PRECEDENCE='default'
     - PRECEDENCE='default bleeding'
 
+matrix:
+  allow_failures:
+    - env: PRECEDENCE='default'
+
 cache:
   directories:
     - $HOME/.cache/pip

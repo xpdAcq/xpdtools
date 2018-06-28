@@ -1,0 +1,15 @@
+**Added:** None
+
+**Changed:**
+
+* Pipeline generation has been broken up into chunks. This allows us to have
+  multiple pipelines at once and they won't interfere. Additionally this
+  allows for better mixing and matching of pipeline pieces.
+
+**Deprecated:** None
+
+**Removed:** None
+
+**Fixed:** None
+
+**Security:** None
