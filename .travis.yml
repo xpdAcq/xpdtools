@@ -7,8 +7,10 @@ env:
   matrix:
     - PRECEDENCE='default'
     - PRECEDENCE='default bleeding'
-    allow_failures:
-      - env: PRECEDENCE='default' TRAVIS_TAG=false
+
+matrix:
+  allow_failures:
+    - env: PRECEDENCE='default'
 
 cache:
   directories:
