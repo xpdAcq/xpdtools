@@ -10,7 +10,7 @@ env:
 
 matrix:
   allow_failures:
-    - env: PRECEDENCE='default' TRAVIS_TAG=False
+    - env: PRECEDENCE='default' TRAVIS_TAG=false
 
 cache:
   directories:
