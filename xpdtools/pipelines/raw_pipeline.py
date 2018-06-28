@@ -11,14 +11,5 @@ from xpdtools.pipelines.scattering_correction import make_pipeline as scat_cor
 
 def make_pipeline():
     # The process of making a pipeline is gluing pieces together
-    pipeline_dict = link(
-        *[
-            ipmp(),
-            cal_mp(),
-            scat_cor(),
-            mp(),
-            bp(),
-            pdfp()
-        ]
-    )
+    pipeline_dict = link(*[ipmp(), cal_mp(), scat_cor(), mp(), bp(), pdfp()])
     return pipeline_dict

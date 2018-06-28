@@ -3,14 +3,15 @@ from xpdtools.tools import map_to_binner, generate_map_bin
 from profilehooks import profile
 import pyFAI
 
-geo = pyFAI.load('test.poni')
-img = imread('test.tiff')
+geo = pyFAI.load("test.poni")
+img = imread("test.tiff")
 
 
 @profile(
     # skip=1,
     # sort='module',
-    entries=20)
+    entries=20
+)
 def total(geo, img_shape):
     return generate_map_bin(geo, img_shape)
 

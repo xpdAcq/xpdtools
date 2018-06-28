@@ -27,10 +27,10 @@ try:
 except ImportError:
     from xpdtools.shim import PDFGetterShim as PDFGetter
 
-mask_ring_dict = {'median': mask_ring_median, 'mean': mask_ring_mean}
+mask_ring_dict = {"median": mask_ring_median, "mean": mask_ring_mean}
 
 
-def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median'):
+def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method="median"):
     """Sigma Clipping based masking
 
     Parameters
@@ -52,7 +52,7 @@ def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median'):
     np.ndarray:
         The mask
     """
-    print('start auto mask')
+    print("start auto mask")
 
     # skbeam 0.0.12 doesn't have argsort_index cached
     try:
@@ -67,30 +67,34 @@ def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median'):
     t = []
     i = 0
     for k in binner.flatcount:
-        m = tmsk[i: i + k]
-        vm = vfs[i: i + k][m]
+        m = tmsk[i : i + k]
+        vm = vfs[i : i + k][m]
         if k > 0 and len(vm) > 0:
-            t.append((vm, (pfs[i: i + k][m]), alpha))
+            t.append((vm, (pfs[i : i + k][m]), alpha))
         i += k
-    p_err = np.seterr(all='ignore')
+    p_err = np.seterr(all="ignore")
     from multiprocessing.dummy import Pool
+
     with Pool() as p:
         removals = p.starmap(mask_ring_dict[mask_method], t)
     np.seterr(**p_err)
     removals = [item for sublist in removals for item in sublist]
     tmsk[removals] = False
     tmsk = tmsk.reshape(np.shape(img))
-    print('finished auto mask')
+    print("finished auto mask")
     return tmsk.astype(bool)
 
 
-def mask_img(img, binner,
-             edge=30,
-             lower_thresh=0.0,
-             upper_thresh=None,
-             alpha=3,
-             auto_type='median',
-             tmsk=None):
+def mask_img(
+    img,
+    binner,
+    edge=30,
+    lower_thresh=0.0,
+    upper_thresh=None,
+    alpha=3,
+    auto_type="median",
+    tmsk=None,
+):
     """
     Mask an image based off of various methods
 
@@ -142,9 +146,9 @@ def mask_img(img, binner,
     if upper_thresh:
         working_mask *= (img <= upper_thresh).astype(bool)
     if alpha:
-        working_mask *= binned_outlier(img, binner, alpha=alpha,
-                                       tmsk=working_mask,
-                                       mask_method=auto_type)
+        working_mask *= binned_outlier(
+            img, binner, alpha=alpha, tmsk=working_mask, mask_method=auto_type
+        )
     working_mask = working_mask.astype(np.bool)
     return working_mask
 
@@ -170,10 +174,10 @@ def generate_map_bin(geo, img_shape):
     q = geo.qArray(img_shape) / 10  # type: np.ndarray
     q_dq = geo.deltaQ(img_shape) / 10  # type: np.ndarray
 
-    pixel_size = [getattr(geo, a) for a in ['pixel1', 'pixel2']]
+    pixel_size = [getattr(geo, a) for a in ["pixel1", "pixel2"]]
     rres = np.hypot(*pixel_size)
     rbins = np.arange(np.min(r) - rres / 2., np.max(r) + rres / 2., rres / 2.)
-    rbinned = BinnedStatistic1D(r.ravel(), statistic=np.max, bins=rbins, )
+    rbinned = BinnedStatistic1D(r.ravel(), statistic=np.max, bins=rbins)
 
     qbin_sizes = rbinned(q_dq.ravel())
     qbin_sizes = np.nan_to_num(qbin_sizes)
@@ -250,12 +254,12 @@ def z_score_image(img, binner):
 
     # TODO: parallelize/numbafy?
     # TODO: use integrated data
-    p_err = np.seterr(all='ignore')
+    p_err = np.seterr(all="ignore")
     i = 0
     t = []
     for k in binner.flatcount:
         if k > 0:
-            t.append(vfs[i: i + k])
+            t.append(vfs[i : i + k])
         i += k
     list(map(ring_zscore, t))
     np.seterr(**p_err)
@@ -335,7 +339,7 @@ def pdf_getter(x, y, composition, **kwargs):
         The PDFGetter config
     """
     pg = PDFGetter()
-    kwargs.update({'composition': composition})
+    kwargs.update({"composition": composition})
     args = (x, y)
     res = pg(*args, **kwargs)
     return res[0], res[1], pg.config
@@ -365,7 +369,7 @@ def fq_getter(x, y, composition, **kwargs):
         The PDFGetter config
     """
     pg = PDFGetter()
-    kwargs.update({'composition': composition})
+    kwargs.update({"composition": composition})
     args = (x, y)
     pg(*args, **kwargs)
     res = pg.fq
@@ -396,7 +400,7 @@ def sq_getter(x, y, composition, **kwargs):
         The PDFGetter config
     """
     pg = PDFGetter()
-    kwargs.update({'composition': composition})
+    kwargs.update({"composition": composition})
     args = (x, y)
     pg(*args, **kwargs)
     res = pg.sq
@@ -426,9 +430,9 @@ def nu_fq_getter(q, iq, composition, **kwargs):
     config: dict
         The PDFGetter config
     """
-    kwargs.update({'composition': composition})
+    kwargs.update({"composition": composition})
     # explicit qmin/qmaxinst cutting
-    truth_values = np.where((kwargs['qmaxinst'] > q) & (q > kwargs['qmin']))
+    truth_values = np.where((kwargs["qmaxinst"] > q) & (q > kwargs["qmin"]))
     pg = PDFGetter()
     # remove resampling transformations (and bg sub)
     for t in [7, 6, 1]:

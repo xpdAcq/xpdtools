@@ -1,4 +1,4 @@
-'''
+"""
 from streamz_ext import Stream
 import scipy.signal as sig
 
@@ -36,4 +36,4 @@ def make_qoi():
                 break
         s.downstreams.data._od.move_to_end(n, last=True)
         del n
-'''
+"""

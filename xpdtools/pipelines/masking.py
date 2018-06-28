@@ -57,5 +57,5 @@ def make_pipeline():
         "first_mask": first_mask,
         "no_mask": no_mask,
         "mask": mask,
-        'create_mask': create_mask
+        "create_mask": create_mask,
     }
