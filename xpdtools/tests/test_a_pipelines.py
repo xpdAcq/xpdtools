@@ -67,7 +67,8 @@ def test_extra_pipeline():
 
 # def test_qoi_pipeline2():
 #     from xpdtools.pipelines.qoi import (r_peak_pos, q_peak_pos,
-#                                         mean_peaks, mean_intensity, pdf_peaks,
+#                                         mean_peaks, mean_intensity,
+#                                         pdf_peaks,
 #                                         pdf_intensity,
 #                                         pdf_argrelmax_kwargs,
 #                                         mean_argrelmax_kwargs)
