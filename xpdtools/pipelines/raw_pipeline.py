@@ -8,11 +8,16 @@ from xpdtools.pipelines.masking import (  # noqa: F401
     make_pipeline as mp,
     mask_setting,
 )
-from xpdtools.pipelines.pdf import make_pipeline as pdfp
+# from xpdtools.pipelines.pdf import make_pipeline as pdfp
 from xpdtools.pipelines.scattering_correction import make_pipeline as scat_cor
 
 
 def make_pipeline():
     # The process of making a pipeline is gluing pieces together
-    pipeline_dict = link(*[ipmp(), cal_mp(), scat_cor(), mp(), bp(), pdfp()])
+    pipeline_dict = link(*[ipmp(), cal_mp(), scat_cor(), mp(), bp(),
+                           # pdfp()
+                           ])
     return pipeline_dict
+
+mp2 = make_pipeline()
+mp2.node['raw foreground']['node'].visualize(source_node=True)
