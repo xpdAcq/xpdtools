@@ -16,6 +16,11 @@ def make_pipeline():
     raw_foreground_dark = Stream(stream_name="raw foreground dark")
     raw_background = Stream(stream_name="raw background")
     raw_background_dark = Stream(stream_name="raw background dark")
+
+    start_docs = Stream()
+    for s in [raw_background_dark, raw_background, raw_foreground_dark]:
+        start_docs.map(lambda x: 0.0).connect(s)
+
     dark_corrected_foreground = raw_foreground.combine_latest(
         raw_foreground_dark, emit_on=0
     ).starmap(op.sub)
@@ -35,4 +40,5 @@ def make_pipeline():
         dark_corrected_background=dark_corrected_background,
         bg_corrected_img=bg_corrected_img,
         img_shape=img_shape,
+        start_docs=start_docs
     )

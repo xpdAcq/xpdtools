@@ -1,5 +1,6 @@
 import numpy as np
 from streamz_ext import Stream
+from streamz_ext.utils import clear_combine_latest
 from xpdtools.tools import sq_getter, fq_getter, pdf_getter
 
 
@@ -12,6 +13,8 @@ def make_pipeline():
     iq_comp = q.combine_latest(mean, emit_on=1).combine_latest(
         composition, emit_on=0
     )
+    start_docs = Stream()
+    start_docs.sink(lambda x: clear_combine_latest(iq_comp, 1))
     iq_comp_map = iq_comp.map(lambda x: (x[0][0], x[0][1], x[1]))
 
     # TODO: split these all up into their components ((r, pdf), (q, fq)...)
@@ -39,4 +42,5 @@ def make_pipeline():
         "sq": sq,
         "fq": fq,
         "pdf": pdf,
+        'start_docs': start_docs
     }

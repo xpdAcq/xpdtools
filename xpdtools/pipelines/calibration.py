@@ -30,6 +30,10 @@ def make_pipeline():
         .union(gen_geo, stream_name="Combine gen and load cal")
     )
     geometry_img_shape = geometry.zip_latest(img_shape)
+
+    unique_geo = Stream(stream_name='Clear the geometry')
+    unique_geo.sink(lambda x: geometry_img_shape.lossless_buffer.clear())
+
     # Only create map and bins (which is expensive) when needed
     # (new calibration)
     map_res = geometry_img_shape.starmap(generate_map_bin)
@@ -49,4 +53,5 @@ def make_pipeline():
         "geometry_img_shape": geometry_img_shape,
         "map_res": map_res,
         "cal_binner": cal_binner,
+        'unique_geo': unique_geo
     }
