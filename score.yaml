@@ -36,6 +36,8 @@ run:
     default: {conda: fire}
   pims:
     default: {conda: pims}
+  tqdm:
+    default: {conda: tqdm}
 test:
   pytest:
     default: {conda: pytest}

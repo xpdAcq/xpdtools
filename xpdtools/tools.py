@@ -44,7 +44,7 @@ def progress_decorator(func, progress=None):
 
 
 def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median',
-                   pool=ThreadPoolExecutor(max_workers=20)):
+                   pool=None):
     """Sigma Clipping based masking
 
     Parameters
@@ -69,7 +69,8 @@ def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median',
         The mask
     """
     print('start auto mask')
-
+    if pool is None:
+        pool = ThreadPoolExecutor(max_workers=20)
     # skbeam 0.0.12 doesn't have argsort_index cached
     try:
         idx = binner.argsort_index
@@ -118,7 +119,7 @@ def mask_img(img, binner,
              alpha=3,
              auto_type='median',
              tmsk=None,
-             pool=ThreadPoolExecutor(max_workers=20)):
+             pool=None):
     """
     Mask an image based off of various methods
 
