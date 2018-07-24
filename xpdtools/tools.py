@@ -60,14 +60,15 @@ def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median'):
     except AttributeError:
         idx = binner.xy.argsort()
     if tmsk is None:
-        tmsk = np.ones(np.shape(img), dtype=bool)
-    tmsk = tmsk.ravel()
+        tmsk = np.ones(np.shape(img), dtype=np.bool)
+    tmsk = tmsk.flatten()
+    tmsk2 = tmsk[idx]
     vfs = img.flatten()[idx]
     pfs = np.arange(np.size(img))[idx]
     t = []
     i = 0
     for k in binner.flatcount:
-        m = tmsk[i: i + k]
+        m = tmsk2[i: i + k]
         vm = vfs[i: i + k][m]
         if k > 0 and len(vm) > 0:
             t.append((vm, (pfs[i: i + k][m]), alpha))
