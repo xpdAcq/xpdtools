@@ -22,6 +22,8 @@ from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
 from skbeam.core.mask import margin
 from xpdtools.jit_tools import mask_ring_median, mask_ring_mean, ring_zscore
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 try:
     from diffpy.pdfgetx import PDFGetter
 except ImportError:
@@ -30,7 +32,19 @@ except ImportError:
 mask_ring_dict = {'median': mask_ring_median, 'mean': mask_ring_mean}
 
 
-def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median'):
+def progress_decorator(func, progress=None):
+    if not progress:
+        inner = func
+    else:
+        def inner(*args, **kwargs):
+            out = func(*args, **kwargs)
+            progress()
+            return out
+    return inner
+
+
+def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median',
+                   pool=ThreadPoolExecutor(max_workers=20)):
     """Sigma Clipping based masking
 
     Parameters
@@ -46,6 +60,8 @@ def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median'):
     mask_method : {'median', 'mean'}, optional
         The method to use for creating the mask, median is faster, mean is more
         accurate. Defaults to median.
+    pool : Executor instance
+        A pool against which jobs can be submitted for parallel processing
 
     Returns
     -------
@@ -74,11 +90,21 @@ def binned_outlier(img, binner, alpha=3, tmsk=None, mask_method='median'):
             t.append((vm, (pfs[i: i + k][m]), alpha))
         i += k
     p_err = np.seterr(all='ignore')
-    from multiprocessing.dummy import Pool
-    with Pool() as p:
-        removals = p.starmap(mask_ring_dict[mask_method], t)
+    # only run tqdm on mean since it is slow
+    if mask_method:
+        import tqdm
+        progress = tqdm.tqdm(total=len(t))
+        pu = progress.update
+    else:
+        pu = None
+    with pool as p:
+        futures = [p.submit(progress_decorator(mask_ring_dict[mask_method],
+                                               pu), *x)
+                   for x in t]
+    removals = []
+    for f in as_completed(futures):
+        removals.extend(f.result())
     np.seterr(**p_err)
-    removals = [item for sublist in removals for item in sublist]
     tmsk[removals] = False
     tmsk = tmsk.reshape(np.shape(img))
     print('finished auto mask')
@@ -91,7 +117,8 @@ def mask_img(img, binner,
              upper_thresh=None,
              alpha=3,
              auto_type='median',
-             tmsk=None):
+             tmsk=None,
+             pool=ThreadPoolExecutor(max_workers=20)):
     """
     Mask an image based off of various methods
 
@@ -123,6 +150,8 @@ def mask_img(img, binner,
     tmsk: np.ndarray, optional
         The starting mask to be compounded on. Defaults to None. If None mask
         generated from scratch.
+    pool : Executor instance
+        A pool against which jobs can be submitted for parallel processing
 
     Returns
     -------
@@ -145,7 +174,8 @@ def mask_img(img, binner,
     if alpha:
         working_mask *= binned_outlier(img, binner, alpha=alpha,
                                        tmsk=working_mask,
-                                       mask_method=auto_type)
+                                       mask_method=auto_type,
+                                       pool=pool)
     working_mask = working_mask.astype(np.bool)
     return working_mask
 
