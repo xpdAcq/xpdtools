@@ -18,38 +18,60 @@ quad = np.ones((2048, 2048))
 quad[1024:, 1024:] *= .5
 ff *= quad
 ff = np.abs(ff)
-mask_setting['setting'] = 'none'
+mask_setting["setting"] = "none"
 # '''
 # '''
 k = 5
-geo = Geometry(wavelength=.18e-10, detector='perkin', dist=.18,
-               poni1=.1024 * 2,
-               poni2=.1024 * 2,
-               rot1=0, rot2=0, rot3=0)
+geo = Geometry(
+    wavelength=.18e-10,
+    detector="perkin",
+    dist=.18,
+    poni1=.1024 * 2,
+    poni2=.1024 * 2,
+    rot1=0,
+    rot2=0,
+    rot3=0,
+)
 raw_foreground_dark.emit(0.0)
 raw_background_dark.emit(0.0)
 raw_background.emit(0.0)
 
 ave_ff.map(lambda x: ((ff / x) - 1) * 100).map(np.nan_to_num).sink(
-    LiveImage('image', cmap='viridis',
-              limit_func=lambda x: (np.nanpercentile(x, .1),
-                                    np.nanpercentile(x, 99.9)),
-              #                   norm=SymLogNorm(.1),
-              window_title='percent off').update)
-(mean_array.map(np.nan_to_num)
- .sink(LiveImage('image', cmap='viridis',
-                 window_title='predicted flat field',
-                 limit_func=lambda x: (
-                     np.nanpercentile(x, .1),
-                     np.nanpercentile(x, 99.9))
-                 ).update))
-raw_foreground.map(np.nan_to_num).sink(LiveImage('image',
-                                                 cmap='viridis',
-                                                 window_title='w/o flat field',
-                                                 limit_func=lambda x: (
-                                                     np.nanpercentile(x, .1),
-                                                     np.nanpercentile(x, 99.9))
-                                                 ).update)
+    LiveImage(
+        "image",
+        cmap="viridis",
+        limit_func=lambda x: (
+            np.nanpercentile(x, .1),
+            np.nanpercentile(x, 99.9),
+        ),
+        #                   norm=SymLogNorm(.1),
+        window_title="percent off",
+    ).update
+)
+(
+    mean_array.map(np.nan_to_num).sink(
+        LiveImage(
+            "image",
+            cmap="viridis",
+            window_title="predicted flat field",
+            limit_func=lambda x: (
+                np.nanpercentile(x, .1),
+                np.nanpercentile(x, 99.9),
+            ),
+        ).update
+    )
+)
+raw_foreground.map(np.nan_to_num).sink(
+    LiveImage(
+        "image",
+        cmap="viridis",
+        window_title="w/o flat field",
+        limit_func=lambda x: (
+            np.nanpercentile(x, .1),
+            np.nanpercentile(x, 99.9),
+        ),
+    ).update
+)
 is_calibration_img.emit(False)
 geo_input.emit(geo.getPyFAI())
 

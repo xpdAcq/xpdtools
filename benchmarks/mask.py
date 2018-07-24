@@ -2,8 +2,9 @@ from tifffile import imread
 from xpdtools.tools import binned_outlier, map_to_binner, mask_img
 from profilehooks import profile
 import pyFAI
-geo = pyFAI.load('test.poni')
-img = imread('test.tiff')
+
+geo = pyFAI.load("test.poni")
+img = imread("test.tiff")
 
 bo = profile(binned_outlier, skip=1)
 # bo = binned_outlier
@@ -13,10 +14,12 @@ a = binner.argsort_index
 b = binner.flatcount
 
 for i in range(2):
-    bo(img, binner,
-       # bs_width=None,
-       mask_method='mean',
-       )
+    bo(
+        img,
+        binner,
+        # bs_width=None,
+        mask_method="mean",
+    )
 
 # Median
 # binned outlier
