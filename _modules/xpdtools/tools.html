@@ -170,15 +170,32 @@
 <span class="kn">from</span> <span class="nn">skbeam.core.mask</span> <span class="k">import</span> <span class="n">margin</span>
 <span class="kn">from</span> <span class="nn">xpdtools.jit_tools</span> <span class="k">import</span> <span class="n">mask_ring_median</span><span class="p">,</span> <span class="n">mask_ring_mean</span><span class="p">,</span> <span class="n">ring_zscore</span>
 
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="k">import</span> <span class="n">ThreadPoolExecutor</span><span class="p">,</span> <span class="n">as_completed</span>
+
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">diffpy.pdfgetx</span> <span class="k">import</span> <span class="n">PDFGetter</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">xpdtools.shim</span> <span class="k">import</span> <span class="n">PDFGetterShim</span> <span class="k">as</span> <span class="n">PDFGetter</span>
 
-<span class="n">mask_ring_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;median&#39;</span><span class="p">:</span> <span class="n">mask_ring_median</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span> <span class="n">mask_ring_mean</span><span class="p">}</span>
+<span class="n">mask_ring_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;median&quot;</span><span class="p">:</span> <span class="n">mask_ring_median</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">mask_ring_mean</span><span class="p">}</span>
 
 
-<div class="viewcode-block" id="binned_outlier"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.binned_outlier">[docs]</a><span class="k">def</span> <span class="nf">binned_outlier</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">binner</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">tmsk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask_method</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="progress_decorator"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.progress_decorator">[docs]</a><span class="k">def</span> <span class="nf">progress_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">progress</span><span class="p">:</span>
+        <span class="n">inner</span> <span class="o">=</span> <span class="n">func</span>
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">progress</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">out</span>
+
+    <span class="k">return</span> <span class="n">inner</span></div>
+
+
+<div class="viewcode-block" id="binned_outlier"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.binned_outlier">[docs]</a><span class="k">def</span> <span class="nf">binned_outlier</span><span class="p">(</span>
+    <span class="n">img</span><span class="p">,</span> <span class="n">binner</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">tmsk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask_method</span><span class="o">=</span><span class="s2">&quot;median&quot;</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Sigma Clipping based masking</span>
 
 <span class="sd">    Parameters</span>
@@ -194,51 +211,71 @@
 <span class="sd">    mask_method : {&#39;median&#39;, &#39;mean&#39;}, optional</span>
 <span class="sd">        The method to use for creating the mask, median is faster, mean is more</span>
 <span class="sd">        accurate. Defaults to median.</span>
+<span class="sd">    pool : Executor instance</span>
+<span class="sd">        A pool against which jobs can be submitted for parallel processing</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    np.ndarray:</span>
 <span class="sd">        The mask</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;start auto mask&#39;</span><span class="p">)</span>
-
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;start auto mask&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pool</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
     <span class="c1"># skbeam 0.0.12 doesn&#39;t have argsort_index cached</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="n">binner</span><span class="o">.</span><span class="n">argsort_index</span>
     <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="n">binner</span><span class="o">.</span><span class="n">xy</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">tmsk</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">tmsk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">img</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
-    <span class="n">tmsk</span> <span class="o">=</span> <span class="n">tmsk</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="n">tmsk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">img</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+    <span class="n">tmsk</span> <span class="o">=</span> <span class="n">tmsk</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">tmsk2</span> <span class="o">=</span> <span class="n">tmsk</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
     <span class="n">vfs</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[</span><span class="n">idx</span><span class="p">]</span>
     <span class="n">pfs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">img</span><span class="p">))[</span><span class="n">idx</span><span class="p">]</span>
     <span class="n">t</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">binner</span><span class="o">.</span><span class="n">flatcount</span><span class="p">:</span>
-        <span class="n">m</span> <span class="o">=</span> <span class="n">tmsk</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">]</span>
-        <span class="n">vm</span> <span class="o">=</span> <span class="n">vfs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">][</span><span class="n">m</span><span class="p">]</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">tmsk2</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">]</span>
+        <span class="n">vm</span> <span class="o">=</span> <span class="n">vfs</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">][</span><span class="n">m</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">vm</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">vm</span><span class="p">,</span> <span class="p">(</span><span class="n">pfs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">][</span><span class="n">m</span><span class="p">]),</span> <span class="n">alpha</span><span class="p">))</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">vm</span><span class="p">,</span> <span class="p">(</span><span class="n">pfs</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">][</span><span class="n">m</span><span class="p">]),</span> <span class="n">alpha</span><span class="p">))</span>
         <span class="n">i</span> <span class="o">+=</span> <span class="n">k</span>
-    <span class="n">p_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">multiprocessing.dummy</span> <span class="k">import</span> <span class="n">Pool</span>
-    <span class="k">with</span> <span class="n">Pool</span><span class="p">()</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
-        <span class="n">removals</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">mask_ring_dict</span><span class="p">[</span><span class="n">mask_method</span><span class="p">],</span> <span class="n">t</span><span class="p">)</span>
+    <span class="n">p_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+    <span class="c1"># only run tqdm on mean since it is slow</span>
+    <span class="k">if</span> <span class="n">mask_method</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">tqdm</span>
+
+        <span class="n">progress</span> <span class="o">=</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+        <span class="n">pu</span> <span class="o">=</span> <span class="n">progress</span><span class="o">.</span><span class="n">update</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pu</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">with</span> <span class="n">pool</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+        <span class="n">futures</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">progress_decorator</span><span class="p">(</span><span class="n">mask_ring_dict</span><span class="p">[</span><span class="n">mask_method</span><span class="p">],</span> <span class="n">pu</span><span class="p">),</span> <span class="o">*</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">t</span>
+        <span class="p">]</span>
+    <span class="n">removals</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">as_completed</span><span class="p">(</span><span class="n">futures</span><span class="p">):</span>
+        <span class="n">removals</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
     <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="o">**</span><span class="n">p_err</span><span class="p">)</span>
-    <span class="n">removals</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">removals</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
     <span class="n">tmsk</span><span class="p">[</span><span class="n">removals</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">tmsk</span> <span class="o">=</span> <span class="n">tmsk</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">img</span><span class="p">))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;finished auto mask&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;finished auto mask&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">tmsk</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="mask_img"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.mask_img">[docs]</a><span class="k">def</span> <span class="nf">mask_img</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">binner</span><span class="p">,</span>
-             <span class="n">edge</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
-             <span class="n">lower_thresh</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-             <span class="n">upper_thresh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-             <span class="n">alpha</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-             <span class="n">auto_type</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">,</span>
-             <span class="n">tmsk</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="mask_img"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.mask_img">[docs]</a><span class="k">def</span> <span class="nf">mask_img</span><span class="p">(</span>
+    <span class="n">img</span><span class="p">,</span>
+    <span class="n">binner</span><span class="p">,</span>
+    <span class="n">edge</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">lower_thresh</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">upper_thresh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">auto_type</span><span class="o">=</span><span class="s2">&quot;median&quot;</span><span class="p">,</span>
+    <span class="n">tmsk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">pool</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Mask an image based off of various methods</span>
 
@@ -270,6 +307,8 @@
 <span class="sd">    tmsk: np.ndarray, optional</span>
 <span class="sd">        The starting mask to be compounded on. Defaults to None. If None mask</span>
 <span class="sd">        generated from scratch.</span>
+<span class="sd">    pool : Executor instance</span>
+<span class="sd">        A pool against which jobs can be submitted for parallel processing</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -290,9 +329,14 @@
     <span class="k">if</span> <span class="n">upper_thresh</span><span class="p">:</span>
         <span class="n">working_mask</span> <span class="o">*=</span> <span class="p">(</span><span class="n">img</span> <span class="o">&lt;=</span> <span class="n">upper_thresh</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">alpha</span><span class="p">:</span>
-        <span class="n">working_mask</span> <span class="o">*=</span> <span class="n">binned_outlier</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">binner</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
-                                       <span class="n">tmsk</span><span class="o">=</span><span class="n">working_mask</span><span class="p">,</span>
-                                       <span class="n">mask_method</span><span class="o">=</span><span class="n">auto_type</span><span class="p">)</span>
+        <span class="n">working_mask</span> <span class="o">*=</span> <span class="n">binned_outlier</span><span class="p">(</span>
+            <span class="n">img</span><span class="p">,</span>
+            <span class="n">binner</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+            <span class="n">tmsk</span><span class="o">=</span><span class="n">working_mask</span><span class="p">,</span>
+            <span class="n">mask_method</span><span class="o">=</span><span class="n">auto_type</span><span class="p">,</span>
+            <span class="n">pool</span><span class="o">=</span><span class="n">pool</span><span class="p">,</span>
+        <span class="p">)</span>
     <span class="n">working_mask</span> <span class="o">=</span> <span class="n">working_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">working_mask</span></div>
 
@@ -318,10 +362,10 @@
     <span class="n">q</span> <span class="o">=</span> <span class="n">geo</span><span class="o">.</span><span class="n">qArray</span><span class="p">(</span><span class="n">img_shape</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span>  <span class="c1"># type: np.ndarray</span>
     <span class="n">q_dq</span> <span class="o">=</span> <span class="n">geo</span><span class="o">.</span><span class="n">deltaQ</span><span class="p">(</span><span class="n">img_shape</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span>  <span class="c1"># type: np.ndarray</span>
 
-    <span class="n">pixel_size</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">geo</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pixel1&#39;</span><span class="p">,</span> <span class="s1">&#39;pixel2&#39;</span><span class="p">]]</span>
+    <span class="n">pixel_size</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">geo</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;pixel1&quot;</span><span class="p">,</span> <span class="s2">&quot;pixel2&quot;</span><span class="p">]]</span>
     <span class="n">rres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="o">*</span><span class="n">pixel_size</span><span class="p">)</span>
     <span class="n">rbins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">-</span> <span class="n">rres</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">+</span> <span class="n">rres</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="n">rres</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span>
-    <span class="n">rbinned</span> <span class="o">=</span> <span class="n">BinnedStatistic1D</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">statistic</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">rbins</span><span class="p">,</span> <span class="p">)</span>
+    <span class="n">rbinned</span> <span class="o">=</span> <span class="n">BinnedStatistic1D</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">statistic</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">rbins</span><span class="p">)</span>
 
     <span class="n">qbin_sizes</span> <span class="o">=</span> <span class="n">rbinned</span><span class="p">(</span><span class="n">q_dq</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
     <span class="n">qbin_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">qbin_sizes</span><span class="p">)</span>
@@ -398,12 +442,12 @@
 
     <span class="c1"># TODO: parallelize/numbafy?</span>
     <span class="c1"># TODO: use integrated data</span>
-    <span class="n">p_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+    <span class="n">p_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
     <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">t</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">binner</span><span class="o">.</span><span class="n">flatcount</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vfs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">])</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vfs</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">])</span>
         <span class="n">i</span> <span class="o">+=</span> <span class="n">k</span>
     <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">ring_zscore</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
     <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="o">**</span><span class="n">p_err</span><span class="p">)</span>
@@ -483,7 +527,7 @@
 <span class="sd">        The PDFGetter config</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">pg</span> <span class="o">=</span> <span class="n">PDFGetter</span><span class="p">()</span>
-    <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;composition&#39;</span><span class="p">:</span> <span class="n">composition</span><span class="p">})</span>
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;composition&quot;</span><span class="p">:</span> <span class="n">composition</span><span class="p">})</span>
     <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">pg</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pg</span><span class="o">.</span><span class="n">config</span></div>
@@ -513,7 +557,7 @@
 <span class="sd">        The PDFGetter config</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">pg</span> <span class="o">=</span> <span class="n">PDFGetter</span><span class="p">()</span>
-    <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;composition&#39;</span><span class="p">:</span> <span class="n">composition</span><span class="p">})</span>
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;composition&quot;</span><span class="p">:</span> <span class="n">composition</span><span class="p">})</span>
     <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
     <span class="n">pg</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">fq</span>
@@ -544,7 +588,7 @@
 <span class="sd">        The PDFGetter config</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">pg</span> <span class="o">=</span> <span class="n">PDFGetter</span><span class="p">()</span>
-    <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;composition&#39;</span><span class="p">:</span> <span class="n">composition</span><span class="p">})</span>
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;composition&quot;</span><span class="p">:</span> <span class="n">composition</span><span class="p">})</span>
     <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
     <span class="n">pg</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">sq</span>
@@ -574,9 +618,9 @@
 <span class="sd">    config: dict</span>
 <span class="sd">        The PDFGetter config</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;composition&#39;</span><span class="p">:</span> <span class="n">composition</span><span class="p">})</span>
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;composition&quot;</span><span class="p">:</span> <span class="n">composition</span><span class="p">})</span>
     <span class="c1"># explicit qmin/qmaxinst cutting</span>
-    <span class="n">truth_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;qmaxinst&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">q</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">q</span> <span class="o">&gt;</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;qmin&#39;</span><span class="p">]))</span>
+    <span class="n">truth_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;qmaxinst&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">q</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">q</span> <span class="o">&gt;</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;qmin&quot;</span><span class="p">]))</span>
     <span class="n">pg</span> <span class="o">=</span> <span class="n">PDFGetter</span><span class="p">()</span>
     <span class="c1"># remove resampling transformations (and bg sub)</span>
     <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>

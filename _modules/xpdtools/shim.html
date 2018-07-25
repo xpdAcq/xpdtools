@@ -152,17 +152,20 @@
 
 <div class="viewcode-block" id="PDFGetterShim"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.shim.PDFGetterShim">[docs]</a><span class="k">class</span> <span class="nc">PDFGetterShim</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Shim for PDFGetX3&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;qmax&#39;</span><span class="p">:</span> <span class="s1">&#39;testing&#39;</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;qmax&quot;</span><span class="p">:</span> <span class="s2">&quot;testing&quot;</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This is a testing shim for PDFgetx.</span><span class="se">\n</span><span class="s2">&quot;</span>
-              <span class="s2">&quot;If you see this message then &quot;</span>
-              <span class="s2">&quot;you don&#39;t have PDFgetx3 installed.</span><span class="se">\n</span><span class="s2">&quot;</span>
-              <span class="s2">&quot;The data that comes from this is for testing purposes only &quot;</span>
-              <span class="s2">&quot;and has no bearing on reality&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;This is a testing shim for PDFgetx.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;If you see this message then &quot;</span>
+            <span class="s2">&quot;you don&#39;t have PDFgetx3 installed.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;The data that comes from this is for testing purposes only &quot;</span>
+            <span class="s2">&quot;and has no bearing on reality&quot;</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span></div>
 </pre></div>
 

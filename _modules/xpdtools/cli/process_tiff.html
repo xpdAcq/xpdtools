@@ -157,54 +157,78 @@
 <span class="kn">from</span> <span class="nn">skbeam.io.fit2d</span> <span class="k">import</span> <span class="n">fit2d_save</span><span class="p">,</span> <span class="n">read_fit2d_msk</span>
 <span class="kn">from</span> <span class="nn">skbeam.io.save_powder_output</span> <span class="k">import</span> <span class="n">save_output</span>
 <span class="kn">from</span> <span class="nn">streamz_ext</span> <span class="k">import</span> <span class="n">Stream</span>
-<span class="kn">from</span> <span class="nn">xpdtools.pipelines.raw_pipeline</span> <span class="k">import</span> <span class="p">(</span><span class="n">polarization_array</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span>
-                                             <span class="n">mean</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span>
-                                             <span class="n">geometry</span><span class="p">,</span>
-                                             <span class="n">dark_corrected_foreground</span><span class="p">,</span>
-                                             <span class="n">dark_corrected_background</span><span class="p">,</span>
-                                             <span class="n">mask_kwargs</span><span class="p">,</span>
-                                             <span class="n">mask_setting</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">xpdtools.pipelines.raw_pipeline</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">polarization_array</span><span class="p">,</span>
+    <span class="n">mask</span><span class="p">,</span>
+    <span class="n">mean</span><span class="p">,</span>
+    <span class="n">q</span><span class="p">,</span>
+    <span class="n">geometry</span><span class="p">,</span>
+    <span class="n">dark_corrected_foreground</span><span class="p">,</span>
+    <span class="n">dark_corrected_background</span><span class="p">,</span>
+    <span class="n">mask_kwargs</span><span class="p">,</span>
+    <span class="n">mask_setting</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">xpdtools.pipelines.extra</span> <span class="k">import</span> <span class="n">median</span><span class="p">,</span> <span class="n">std</span><span class="p">,</span> <span class="n">z_score</span>
 
-<span class="n">img_extensions</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;.tiff&#39;</span><span class="p">,</span> <span class="s1">&#39;.edf&#39;</span><span class="p">,</span> <span class="s1">&#39;.tif&#39;</span><span class="p">}</span>
+<span class="n">img_extensions</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;.tiff&quot;</span><span class="p">,</span> <span class="s2">&quot;.edf&quot;</span><span class="p">,</span> <span class="s2">&quot;.tif&quot;</span><span class="p">}</span>
 <span class="c1"># Modify graph</span>
 <span class="c1"># create filename nodes</span>
-<span class="n">filename_source</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="n">stream_name</span><span class="o">=</span><span class="s1">&#39;filename&#39;</span><span class="p">)</span>
-<span class="n">filename_node</span> <span class="o">=</span> <span class="p">(</span><span class="n">filename_source</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">filename_source</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;filename&quot;</span><span class="p">)</span>
+<span class="n">filename_node</span> <span class="o">=</span> <span class="n">filename_source</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 <span class="c1"># write out mask</span>
 <span class="n">mask</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">filename_node</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sink</span><span class="p">(</span>
-    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">fit2d_save</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">fit2d_save</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="p">)</span>
 <span class="n">mask</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">filename_node</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sink</span><span class="p">(</span>
-    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_mask.npy&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_mask.npy&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="p">)</span>
 
 <span class="c1"># write out chi</span>
 <span class="n">outs</span> <span class="o">=</span> <span class="p">[</span><span class="n">q</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">median</span><span class="p">,</span> <span class="n">std</span><span class="p">]</span>
 <span class="n">out_tup</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">outs</span><span class="p">])</span>
 <span class="n">out_sinks</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">k</span><span class="o">.</span><span class="n">sink</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">append</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">L</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">outs</span><span class="p">,</span> <span class="n">out_tup</span><span class="p">)])</span>
 
-<span class="p">(</span><span class="n">mean</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">filename_node</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span>
- <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="p">(</span><span class="o">*</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span>
- <span class="n">sink</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">save_output</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;Q&#39;</span><span class="p">)))</span>
-<span class="p">(</span><span class="n">median</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">filename_node</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span>
- <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="p">(</span><span class="o">*</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span>
- <span class="n">sink</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">save_output</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_median&#39;</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">)))</span>
-<span class="p">(</span><span class="n">std</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">filename_node</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span>
- <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="p">(</span><span class="o">*</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span>
- <span class="n">sink</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">save_output</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_std&#39;</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">)))</span>
-<span class="p">(</span><span class="n">z_score</span>
- <span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">filename_node</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
- <span class="o">.</span><span class="n">starsink</span><span class="p">(</span><span class="k">lambda</span> <span class="n">img</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="s1">&#39;_zscore.tif&#39;</span><span class="p">,</span>
-                                          <span class="n">data</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))))</span>
+<span class="p">(</span>
+    <span class="n">mean</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">filename_node</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="p">(</span><span class="o">*</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="o">.</span><span class="n">sink</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">save_output</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s2">&quot;Q&quot;</span><span class="p">))</span>
+<span class="p">)</span>
+<span class="p">(</span>
+    <span class="n">median</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">filename_node</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="p">(</span><span class="o">*</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="o">.</span><span class="n">sink</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">save_output</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_median&quot;</span><span class="p">,</span> <span class="s2">&quot;Q&quot;</span><span class="p">))</span>
+<span class="p">)</span>
+<span class="p">(</span>
+    <span class="n">std</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">filename_node</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="p">(</span><span class="o">*</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="o">.</span><span class="n">sink</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">save_output</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_std&quot;</span><span class="p">,</span> <span class="s2">&quot;Q&quot;</span><span class="p">))</span>
+<span class="p">)</span>
+<span class="p">(</span>
+    <span class="n">z_score</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">filename_node</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">starsink</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">img</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span>
+            <span class="n">n</span> <span class="o">+</span> <span class="s2">&quot;_zscore.tif&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../xpdtools.cli.html#xpdtools.cli.process_tiff.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">poni_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">image_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bg_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-         <span class="n">polarization</span><span class="o">=.</span><span class="mi">99</span><span class="p">,</span>
-         <span class="n">edge</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-         <span class="n">lower_thresh</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
-         <span class="n">upper_thresh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-         <span class="n">alpha</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span> <span class="n">auto_type</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">,</span>
-         <span class="n">mask_settings</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>
-         <span class="n">flip_input_mask</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../xpdtools.cli.html#xpdtools.cli.process_tiff.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+    <span class="n">poni_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">image_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">bg_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">mask_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">polarization</span><span class="o">=.</span><span class="mi">99</span><span class="p">,</span>
+    <span class="n">edge</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">lower_thresh</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
+    <span class="n">upper_thresh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span>
+    <span class="n">auto_type</span><span class="o">=</span><span class="s2">&quot;median&quot;</span><span class="p">,</span>
+    <span class="n">mask_settings</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="n">flip_input_mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Run the data processing protocol taking raw images to background</span>
 <span class="sd">    subtracted I(Q) files.</span>
 
@@ -266,7 +290,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">polarization_array</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">polarization</span><span class="p">,)</span>
     <span class="k">if</span> <span class="n">mask_file</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">mask_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.msk&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">mask_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.msk&quot;</span><span class="p">):</span>
             <span class="c1"># TODO: may need to flip this?</span>
             <span class="n">tmsk</span> <span class="o">=</span> <span class="n">read_fit2d_msk</span><span class="p">(</span><span class="n">mask_file</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -277,18 +301,20 @@
         <span class="n">tmsk</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># update all the kwargs</span>
-    <span class="n">mask_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">tmsk</span><span class="o">=</span><span class="n">tmsk</span><span class="p">,</span>
-                       <span class="n">edge</span><span class="o">=</span><span class="n">edge</span><span class="p">,</span>
-                       <span class="n">lower_thresh</span><span class="o">=</span><span class="n">lower_thresh</span><span class="p">,</span>
-                       <span class="n">upper_thresh</span><span class="o">=</span><span class="n">upper_thresh</span><span class="p">,</span>
-                       <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
-                       <span class="n">auto_type</span><span class="o">=</span><span class="n">auto_type</span><span class="p">)</span>
+    <span class="n">mask_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="n">tmsk</span><span class="o">=</span><span class="n">tmsk</span><span class="p">,</span>
+        <span class="n">edge</span><span class="o">=</span><span class="n">edge</span><span class="p">,</span>
+        <span class="n">lower_thresh</span><span class="o">=</span><span class="n">lower_thresh</span><span class="p">,</span>
+        <span class="n">upper_thresh</span><span class="o">=</span><span class="n">upper_thresh</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+        <span class="n">auto_type</span><span class="o">=</span><span class="n">auto_type</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">mask_kwargs</span><span class="p">)</span>
     <span class="n">mask_setting</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">setting</span><span class="o">=</span><span class="n">mask_settings</span><span class="p">)</span>
 
     <span class="c1"># Load calibration</span>
     <span class="k">if</span> <span class="n">poni_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">poni_file</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.poni&#39;</span><span class="p">)]</span>
+        <span class="n">poni_file</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.poni&quot;</span><span class="p">)]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">poni_file</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;There can only be one poni file&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -299,16 +325,22 @@
     <span class="n">img_filenames</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">image_files</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">img_filenames</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="k">if</span>
-                         <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">i</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">img_extensions</span><span class="p">]</span>
+        <span class="n">img_filenames</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">i</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">i</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">img_extensions</span>
+        <span class="p">]</span>
         <span class="c1"># TODO: Test non tiff files</span>
-        <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.tiff&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.tif&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span>
-                <span class="n">img_filenames</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tiff&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tif&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">img_filenames</span><span class="p">]</span>
+        <span class="p">):</span>
             <span class="n">imgs</span> <span class="o">=</span> <span class="p">(</span><span class="n">tifffile</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">img_filenames</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">imgs</span> <span class="o">=</span> <span class="p">(</span><span class="n">fabio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span>
-                    <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="k">if</span>
-                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">i</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">img_extensions</span><span class="p">)</span>
+            <span class="n">imgs</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">fabio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">i</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">img_extensions</span>
+            <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_files</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">image_files</span> <span class="o">=</span> <span class="p">(</span><span class="n">image_files</span><span class="p">,)</span>
@@ -340,7 +372,7 @@
     <span class="n">fire</span><span class="o">.</span><span class="n">Fire</span><span class="p">(</span><span class="n">main</span><span class="p">)</span></div>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">run_main</span><span class="p">()</span>
 </pre></div>
 

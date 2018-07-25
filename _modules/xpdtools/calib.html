@@ -185,25 +185,26 @@
 <span class="sd">        filepath to the yml file which stores calibration param</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># save glbl attribute for xpdAcq</span>
-    <span class="n">calibrant_name</span> <span class="o">=</span> <span class="n">calib_c</span><span class="o">.</span><span class="n">calibrant</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">calibrant_name</span> <span class="o">=</span> <span class="n">calib_c</span><span class="o">.</span><span class="n">calibrant</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">calib_config_dict</span> <span class="o">=</span> <span class="n">calib_c</span><span class="o">.</span><span class="n">geoRef</span><span class="o">.</span><span class="n">getPyFAI</span><span class="p">()</span>
     <span class="n">calib_config_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">calib_c</span><span class="o">.</span><span class="n">geoRef</span><span class="o">.</span><span class="n">getFit2D</span><span class="p">())</span>
-    <span class="n">calib_config_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;poni_file_name&#39;</span><span class="p">:</span>
-                              <span class="n">calib_c</span><span class="o">.</span><span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;.poni&#39;</span><span class="p">})</span>
-    <span class="n">calib_config_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">timestr</span><span class="p">})</span>
-    <span class="n">calib_config_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;dSpacing&#39;</span><span class="p">:</span>
-                              <span class="n">calib_c</span><span class="o">.</span><span class="n">calibrant</span><span class="o">.</span><span class="n">dSpacing</span><span class="p">})</span>
-    <span class="n">calib_config_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;calibrant_name&#39;</span><span class="p">:</span>
-                              <span class="n">calibrant_name</span><span class="p">})</span>
+    <span class="n">calib_config_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;poni_file_name&quot;</span><span class="p">:</span> <span class="n">calib_c</span><span class="o">.</span><span class="n">basename</span> <span class="o">+</span> <span class="s2">&quot;.poni&quot;</span><span class="p">})</span>
+    <span class="n">calib_config_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">timestr</span><span class="p">})</span>
+    <span class="n">calib_config_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;dSpacing&quot;</span><span class="p">:</span> <span class="n">calib_c</span><span class="o">.</span><span class="n">calibrant</span><span class="o">.</span><span class="n">dSpacing</span><span class="p">})</span>
+    <span class="n">calib_config_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;calibrant_name&quot;</span><span class="p">:</span> <span class="n">calibrant_name</span><span class="p">})</span>
 
     <span class="c1"># save yaml dict used for xpdAcq</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">calib_yml_fp</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">calib_yml_fp</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">calib_config_dict</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;INFO: End of calibration process. This set of calibration &quot;</span>
-          <span class="s2">&quot;will be injected as metadata to subsequent scans until you &quot;</span>
-          <span class="s2">&quot;perform this process again</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;INFO: you can also use:</span><span class="se">\n</span><span class="s2">&gt;&gt;&gt; show_calib()</span><span class="se">\n</span><span class="s2">command to check&quot;</span>
-          <span class="s2">&quot; current calibration parameters&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s2">&quot;INFO: End of calibration process. This set of calibration &quot;</span>
+        <span class="s2">&quot;will be injected as metadata to subsequent scans until you &quot;</span>
+        <span class="s2">&quot;perform this process again</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s2">&quot;INFO: you can also use:</span><span class="se">\n</span><span class="s2">&gt;&gt;&gt; show_calib()</span><span class="se">\n</span><span class="s2">command to check&quot;</span>
+        <span class="s2">&quot; current calibration parameters&quot;</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">calib_config_dict</span>
 
 
@@ -225,10 +226,17 @@
 <span class="sd">        additional keyword argument for calibration. please refer to</span>
 <span class="sd">        pyFAI documentation for all options.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:=^20}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;INFO: you are able to perform calibration, &quot;</span>
-                           <span class="s2">&quot;please refer to pictorial guide here:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:^20}</span><span class="s1">&#39;</span>
-          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;http://xpdacq.github.io/usb_Running.html#calib-manual</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="si">{:=^20}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">&quot;INFO: you are able to perform calibration, &quot;</span>
+            <span class="s2">&quot;please refer to pictorial guide here:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="si">{:^20}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">&quot;http://xpdacq.github.io/usb_Running.html#calib-manual</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
     <span class="c1"># default params</span>
     <span class="n">interactive</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="c1"># calibration</span>
@@ -240,16 +248,19 @@
     <span class="k">if</span> <span class="n">calib_ref_fp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_is_tmp_dir</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">td</span> <span class="o">=</span> <span class="n">TemporaryDirectory</span><span class="p">()</span>
-        <span class="n">calib_ref_fp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">td</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;from_calib_func&#39;</span><span class="p">)</span>
+        <span class="n">calib_ref_fp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">td</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;from_calib_func&quot;</span><span class="p">)</span>
     <span class="n">basename</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">calib_ref_fp</span><span class="p">)</span>
     <span class="n">poni_fn</span> <span class="o">=</span> <span class="n">basename</span> <span class="o">+</span> <span class="s2">&quot;.npt&quot;</span>
     <span class="n">c</span><span class="o">.</span><span class="n">basename</span> <span class="o">=</span> <span class="n">basename</span>
     <span class="n">c</span><span class="o">.</span><span class="n">pointfile</span> <span class="o">=</span> <span class="n">poni_fn</span>
-    <span class="n">c</span><span class="o">.</span><span class="n">peakPicker</span> <span class="o">=</span> <span class="n">PeakPicker</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">reconst</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                              <span class="n">pointfile</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">pointfile</span><span class="p">,</span>
-                              <span class="n">calibrant</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">calibrant</span><span class="p">,</span>
-                              <span class="n">wavelength</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
-                              <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">peakPicker</span> <span class="o">=</span> <span class="n">PeakPicker</span><span class="p">(</span>
+        <span class="n">img</span><span class="p">,</span>
+        <span class="n">reconst</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">pointfile</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">pointfile</span><span class="p">,</span>
+        <span class="n">calibrant</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">calibrant</span><span class="p">,</span>
+        <span class="n">wavelength</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span>
     <span class="n">c</span><span class="o">.</span><span class="n">peakPicker</span><span class="o">.</span><span class="n">gui</span><span class="p">(</span><span class="n">log</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">maximize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pick</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">update_fig</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">peakPicker</span><span class="o">.</span><span class="n">fig</span><span class="p">)</span>
     <span class="n">c</span><span class="o">.</span><span class="n">gui_peakPicker</span><span class="p">()</span>
@@ -262,8 +273,14 @@
     <span class="k">return</span> <span class="n">c</span><span class="p">,</span> <span class="n">timestr</span>
 
 
-<div class="viewcode-block" id="img_calibration"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.calib.img_calibration">[docs]</a><span class="k">def</span> <span class="nf">img_calibration</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">calibrant</span><span class="o">=</span><span class="s1">&#39;Ni&#39;</span><span class="p">,</span>
-                    <span class="n">detector</span><span class="o">=</span><span class="s1">&#39;perkin_elmer&#39;</span><span class="p">,</span> <span class="n">calib_ref_fp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="img_calibration"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.calib.img_calibration">[docs]</a><span class="k">def</span> <span class="nf">img_calibration</span><span class="p">(</span>
+    <span class="n">img</span><span class="p">,</span>
+    <span class="n">wavelength</span><span class="p">,</span>
+    <span class="n">calibrant</span><span class="o">=</span><span class="s2">&quot;Ni&quot;</span><span class="p">,</span>
+    <span class="n">detector</span><span class="o">=</span><span class="s2">&quot;perkin_elmer&quot;</span><span class="p">,</span>
+    <span class="n">calib_ref_fp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Function to calibrate experimental geometry for an image</span>
 
 <span class="sd">    Parameters</span>
@@ -326,12 +343,13 @@
 <span class="sd">    pyFAI documentation:</span>
 <span class="sd">    http://pyfai.readthedocs.io/en/latest/</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">wavelength</span> <span class="o">*=</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">10</span>
+    <span class="n">wavelength</span> <span class="o">*=</span> <span class="mi">10</span> <span class="o">**</span> <span class="o">-</span><span class="mi">10</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">calibrant</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="n">calibrant</span> <span class="o">=</span> <span class="n">Calibrant</span><span class="p">(</span><span class="n">dSpacing</span><span class="o">=</span><span class="n">calibrant</span><span class="p">,</span> <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">)</span>
     <span class="c1"># configure calibration instance</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">Calibration</span><span class="p">(</span><span class="n">calibrant</span><span class="o">=</span><span class="n">calibrant</span><span class="p">,</span> <span class="n">detector</span><span class="o">=</span><span class="n">detector</span><span class="p">,</span>
-                    <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">Calibration</span><span class="p">(</span>
+        <span class="n">calibrant</span><span class="o">=</span><span class="n">calibrant</span><span class="p">,</span> <span class="n">detector</span><span class="o">=</span><span class="n">detector</span><span class="p">,</span> <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span>
+    <span class="p">)</span>
     <span class="c1"># pyFAI calibration</span>
     <span class="n">calib_c</span><span class="p">,</span> <span class="n">timestr</span> <span class="o">=</span> <span class="n">_calibration</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">calib_ref_fp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="c1"># TODO: apply polarization correction and recalibrate?</span>

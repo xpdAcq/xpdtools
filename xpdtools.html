@@ -275,7 +275,7 @@ with wavlength 0.1823 angstrom</p>
 <p>Tools for x-ray scattering data processing</p>
 <dl class="function">
 <dt id="xpdtools.tools.binned_outlier">
-<code class="descclassname">xpdtools.tools.</code><code class="descname">binned_outlier</code><span class="sig-paren">(</span><em>img</em>, <em>binner</em>, <em>alpha=3</em>, <em>tmsk=None</em>, <em>mask_method='median'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#binned_outlier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.binned_outlier" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xpdtools.tools.</code><code class="descname">binned_outlier</code><span class="sig-paren">(</span><em>img</em>, <em>binner</em>, <em>alpha=3</em>, <em>tmsk=None</em>, <em>mask_method='median'</em>, <em>pool=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#binned_outlier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.binned_outlier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sigma Clipping based masking</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -288,6 +288,7 @@ with wavlength 0.1823 angstrom</p>
 <li><strong>tmsk</strong> (<em>np.ndarray, optional</em>) – Prior mask. If None don’t use a prior mask, defaults to None.</li>
 <li><strong>mask_method</strong> (<em>{‘median’, ‘mean’}, optional</em>) – The method to use for creating the mask, median is faster, mean is more
 accurate. Defaults to median.</li>
+<li><strong>pool</strong> (<em>Executor instance</em>) – A pool against which jobs can be submitted for parallel processing</li>
 </ul>
 </td>
 </tr>
@@ -424,7 +425,7 @@ accurate. Defaults to median.</li>
 
 <dl class="function">
 <dt id="xpdtools.tools.mask_img">
-<code class="descclassname">xpdtools.tools.</code><code class="descname">mask_img</code><span class="sig-paren">(</span><em>img</em>, <em>binner</em>, <em>edge=30</em>, <em>lower_thresh=0.0</em>, <em>upper_thresh=None</em>, <em>alpha=3</em>, <em>auto_type='median'</em>, <em>tmsk=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#mask_img"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.mask_img" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xpdtools.tools.</code><code class="descname">mask_img</code><span class="sig-paren">(</span><em>img</em>, <em>binner</em>, <em>edge=30</em>, <em>lower_thresh=0.0</em>, <em>upper_thresh=None</em>, <em>alpha=3</em>, <em>auto_type='median'</em>, <em>tmsk=None</em>, <em>pool=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#mask_img"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.mask_img" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mask an image based off of various methods</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -449,6 +450,7 @@ If None, no outlier masking applied.</li>
 where ‘mean’ is more accurate, defaults to ‘median’.</li>
 <li><strong>tmsk</strong> (<em>np.ndarray, optional</em>) – The starting mask to be compounded on. Defaults to None. If None mask
 generated from scratch.</li>
+<li><strong>pool</strong> (<em>Executor instance</em>) – A pool against which jobs can be submitted for parallel processing</li>
 </ul>
 </td>
 </tr>
@@ -592,6 +594,11 @@ are masked out.</p>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="function">
+<dt id="xpdtools.tools.progress_decorator">
+<code class="descclassname">xpdtools.tools.</code><code class="descname">progress_decorator</code><span class="sig-paren">(</span><em>func</em>, <em>progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#progress_decorator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.progress_decorator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="xpdtools.tools.sq_getter">
