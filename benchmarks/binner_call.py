@@ -5,8 +5,8 @@ import pyFAI
 from numba import jit
 import numpy as np
 
-geo = pyFAI.load('test.poni')
-img = imread('test.tiff')
+geo = pyFAI.load("test.poni")
+img = imread("test.tiff")
 
 bo = map_to_binner
 

@@ -1,0 +1,17 @@
+**Added:** None
+
+**Changed:**
+
+* Added ``pool`` to `xpdtools.tools.binned_outlier`` and
+  ``xpdtools.tools.mask_img`` for an executor pool interface
+* Added ``tqdm`` for slow mean masking
+
+**Deprecated:** None
+
+**Removed:** None
+
+**Fixed:**
+
+* ``binned_outlier`` properly uses existing masks
+
+**Security:** None

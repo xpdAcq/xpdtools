@@ -63,8 +63,9 @@ def mask_ring_mean(values_array, positions_array, alpha):  # pragma: no cover
     m = np.ones(positions_array.shape, dtype=boolean)
     removals = []
     while True:
-        b = np.array([item in removals for item in positions_array],
-                     dtype=boolean)
+        b = np.array(
+            [item in removals for item in positions_array], dtype=boolean
+        )
         m[b] = False
         v = values_array[m]
         if len(v) <= 1:
