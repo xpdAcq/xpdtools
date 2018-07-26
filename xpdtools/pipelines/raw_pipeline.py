@@ -17,6 +17,7 @@ from xpdtools.tools import (
 )
 
 mask_setting = {"setting": "auto"}
+calib_setting = {'setting': True}
 raw_foreground = Stream(stream_name="raw foreground")
 raw_foreground_dark = Stream(stream_name="raw foreground dark")
 raw_background = Stream(stream_name="raw background")
@@ -41,22 +42,23 @@ is_calibration_img = Stream(stream_name="Is Calibration")
 geo_input = Stream(stream_name="geometry")
 gated_cal = (
     bg_corrected_img.combine_latest(is_calibration_img, emit_on=0)
-    .filter(lambda a: bool(a[1]))
-    .pluck(0, stream_name="Gate calibration")
+        .filter(lambda a: bool(a[1]))
+        .pluck(0, stream_name="Gate calibration")
 )
 
 gen_geo_cal = gated_cal.combine_latest(
-    wavelength, calibrant, detector, emit_on=0
+    wavelength, calibrant, detector, emit_on=0).filter(
+    lambda x, **kwargs: calib_setting["setting"] is True
 ).starmap(img_calibration)
 
 gen_geo = gen_geo_cal.pluck(1)
 
 geometry = (
     geo_input.combine_latest(is_calibration_img, emit_on=0)
-    .filter(lambda a: not bool(a[1]))
-    .pluck(0, stream_name="Gate calibration")
-    .map(load_geo)
-    .union(gen_geo, stream_name="Combine gen and load cal")
+        .filter(lambda a: not bool(a[1]))
+        .pluck(0, stream_name="Gate calibration")
+        .map(load_geo)
+        .union(gen_geo, stream_name="Combine gen and load cal")
 )
 
 # Image corrections
@@ -106,10 +108,10 @@ first_mask = (
     img_cal_binner.filter(
         lambda x, **kwargs: mask_setting["setting"] == "first"
     )
-    .zip(img_counter)
-    .filter(lambda x: x[1] == 1)
-    .pluck(0)
-    .starmap(mask_img, stream_name="mask", **{})
+        .zip(img_counter)
+        .filter(lambda x: x[1] == 1)
+        .pluck(0)
+        .starmap(mask_img, stream_name="mask", **{})
 )
 
 no_mask = img_cal_binner.filter(
@@ -121,14 +123,14 @@ mask = all_mask.union(first_mask, no_mask)
 # Integration
 binner = (
     map_res.combine_latest(mask, emit_on=1)
-    .map(lambda x: (x[0][0], x[0][1], x[1]))
-    .starmap(map_to_binner)
+        .map(lambda x: (x[0][0], x[0][1], x[1]))
+        .starmap(map_to_binner)
 )
 q = binner.map(getattr, "bin_centers", stream_name="Q")
 tth = (
     q.combine_latest(wavelength, emit_on=0)
-    .starmap(q_to_twotheta, stream_name="tth")
-    .map(np.rad2deg)
+        .starmap(q_to_twotheta, stream_name="tth")
+        .map(np.rad2deg)
 )
 
 f_img_binner = pol_corrected_img.map(np.ravel).combine_latest(
