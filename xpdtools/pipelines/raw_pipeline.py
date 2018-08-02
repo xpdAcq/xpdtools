@@ -17,6 +17,7 @@ from xpdtools.tools import (
 )
 
 mask_setting = {"setting": "auto"}
+calib_setting = {"setting": True}
 raw_foreground = Stream(stream_name="raw foreground")
 raw_foreground_dark = Stream(stream_name="raw foreground dark")
 raw_background = Stream(stream_name="raw background")
@@ -45,9 +46,11 @@ gated_cal = (
     .pluck(0, stream_name="Gate calibration")
 )
 
-gen_geo_cal = gated_cal.combine_latest(
-    wavelength, calibrant, detector, emit_on=0
-).starmap(img_calibration)
+gen_geo_cal = (
+    gated_cal.combine_latest(wavelength, calibrant, detector, emit_on=0)
+    .filter(lambda x, **kwargs: calib_setting["setting"] is True)
+    .starmap(img_calibration)
+)
 
 gen_geo = gen_geo_cal.pluck(1)
 
