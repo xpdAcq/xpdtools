@@ -46,7 +46,7 @@ def progress_decorator(func, progress=None):
 
 
 def binned_outlier(
-    img, binner, alpha=3, tmsk=None, mask_method="median", pool=None
+        img, binner, alpha=3, tmsk=None, mask_method="median", pool=None
 ):
     """Sigma Clipping based masking
 
@@ -88,10 +88,10 @@ def binned_outlier(
     t = []
     i = 0
     for k in binner.flatcount:
-        m = tmsk2[i : i + k]
-        vm = vfs[i : i + k][m]
+        m = tmsk2[i: i + k]
+        vm = vfs[i: i + k][m]
         if k > 0 and len(vm) > 0:
-            t.append((vm, (pfs[i : i + k][m]), alpha))
+            t.append((vm, (pfs[i: i + k][m]), alpha))
         i += k
     p_err = np.seterr(all="ignore")
     # only run tqdm on mean since it is slow
@@ -118,15 +118,15 @@ def binned_outlier(
 
 
 def mask_img(
-    img,
-    binner,
-    edge=30,
-    lower_thresh=0.0,
-    upper_thresh=None,
-    alpha=3,
-    auto_type="median",
-    tmsk=None,
-    pool=None,
+        img,
+        binner,
+        edge=30,
+        lower_thresh=0.0,
+        upper_thresh=None,
+        alpha=3,
+        auto_type="median",
+        tmsk=None,
+        pool=None,
 ):
     """
     Mask an image based off of various methods
@@ -299,7 +299,7 @@ def z_score_image(img, binner):
     t = []
     for k in binner.flatcount:
         if k > 0:
-            t.append(vfs[i : i + k])
+            t.append(vfs[i: i + k])
         i += k
     list(map(ring_zscore, t))
     np.seterr(**p_err)
@@ -524,3 +524,47 @@ def move_center(motors, geometry):
     g2.poni1 += motors[0]
     g2.poni2 += motors[1]
     return g2
+
+
+def splay_tuple(iter_of_tuple):
+    """Splay all tuples in an iterable
+
+    Parameters
+    ----------
+    iter_of_tuple : iterable
+        An iterable which may contain tuples
+
+    Returns
+    -------
+    tuple :
+        The splayed output
+
+    """
+    out = []
+    for i in iter_of_tuple:
+        if isinstance(i, tuple):
+            out.extend(list(i))
+        else:
+            out.append(i)
+    return tuple(out)
+
+
+# TODO: make this into a singleton
+pc_default = '~~pluck_check_null~~'
+
+
+def pluck_check(t, position, eq=pc_default):
+    """Check if a position in an iterable is truthy or equal to eq"""
+    if eq is pc_default:
+        return bool(t[position])
+    else:
+        return t[position] == eq
+
+
+def call_stream_element(callable_item, *args, **kwargs):
+    """Call callable_item on the args and kwargs"""
+    return callable_item(*args, **kwargs)
+
+
+def check_kwargs(x, k, v, **kwargs):
+    return kwargs[k] == v
