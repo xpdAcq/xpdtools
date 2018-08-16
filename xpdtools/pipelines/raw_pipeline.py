@@ -14,7 +14,11 @@ from xpdtools.tools import (
     pdf_getter,
     sq_getter,
     generate_map_bin,
-    pluck_check, splay_tuple, call_stream_element, check_kwargs)
+    pluck_check,
+    splay_tuple,
+    call_stream_element,
+    check_kwargs,
+)
 
 mask_setting = {"setting": "auto"}
 calib_setting = {"setting": True}
@@ -48,7 +52,7 @@ gated_cal = (
 
 gen_geo_cal = (
     gated_cal.combine_latest(wavelength, calibrant, detector, emit_on=0)
-    .filter(check_kwargs, 'setting', True, **calib_setting)
+    .filter(check_kwargs, "setting", True, **calib_setting)
     .starmap(img_calibration)
 )
 
@@ -70,10 +74,11 @@ geometry_img_shape = geometry.zip_latest(img_shape)
 map_res = geometry_img_shape.starmap(generate_map_bin)
 cal_binner = map_res.starmap(map_to_binner)
 
-polarization_callable = geometry.map(getattr, 'polarization')
+polarization_callable = geometry.map(getattr, "polarization")
 
 polarization_array = polarization_callable.zip_latest(img_shape).starmap(
-    call_stream_element, .99,)
+    call_stream_element, .99
+)
 
 pol_correction_combine = bg_corrected_img.combine_latest(
     polarization_array, emit_on=bg_corrected_img
@@ -88,10 +93,10 @@ img_cal_binner = pol_corrected_img.combine_latest(
     cal_binner, emit_on=pol_corrected_img
 )
 
-all_mask_filter = img_cal_binner.filter(check_kwargs, 'setting', 'auto',
-                                       **mask_setting)
-all_mask = (all_mask_filter
-    .starmap(
+all_mask_filter = img_cal_binner.filter(
+    check_kwargs, "setting", "auto", **mask_setting
+)
+all_mask = all_mask_filter.starmap(
     mask_img,
     stream_name="mask",
     **dict(
@@ -102,22 +107,22 @@ all_mask = (all_mask_filter
         auto_type="median",
         tmsk=None,
     )
-))
+)
 img_counter = Stream(stream_name="img counter")
-first_mask_filter = img_cal_binner.filter(check_kwargs, 'setting', 'first',
-                                       **mask_setting)
+first_mask_filter = img_cal_binner.filter(
+    check_kwargs, "setting", "first", **mask_setting
+)
 first_mask = (
-    first_mask_filter
-    .zip(img_counter)
+    first_mask_filter.zip(img_counter)
     .filter(pluck_check, eq=1)
     .pluck(0)
     .starmap(mask_img, stream_name="mask", **{})
 )
 
-no_mask_filter = img_cal_binner.filter(check_kwargs, 'setting', 'none',
-                                       **mask_setting)
-no_mask = (no_mask_filter
-           .pluck(0).starmap(np.ones, dtype=bool))
+no_mask_filter = img_cal_binner.filter(
+    check_kwargs, "setting", "none", **mask_setting
+)
+no_mask = no_mask_filter.pluck(0).starmap(np.ones, dtype=bool)
 
 mask = all_mask.union(first_mask, no_mask)
 
@@ -134,11 +139,12 @@ tth = (
     .map(np.rad2deg)
 )
 
-f_img_binner = binner.combine_latest(pol_corrected_img.map(np.ravel), emit_on=1)
+f_img_binner = binner.combine_latest(
+    pol_corrected_img.map(np.ravel), emit_on=1
+)
 
-mean = f_img_binner.starmap(call_stream_element,
-                            statistic="mean",
-                            stream_name="Mean IQ",
+mean = f_img_binner.starmap(
+    call_stream_element, statistic="mean", stream_name="Mean IQ"
 ).map(np.nan_to_num)
 
 # PDF
