@@ -166,6 +166,9 @@
 <span class="kn">from</span> <span class="nn">tempfile</span> <span class="k">import</span> <span class="n">TemporaryDirectory</span>
 
 <span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">pyFAI.calibration</span> <span class="k">import</span> <span class="n">Calibration</span><span class="p">,</span> <span class="n">PeakPicker</span><span class="p">,</span> <span class="n">Calibrant</span>
+<span class="kn">from</span> <span class="nn">pyFAI.gui.utils</span> <span class="k">import</span> <span class="n">update_fig</span>
+
 <span class="kn">from</span> <span class="nn">xpdtools.dev_utils</span> <span class="k">import</span> <span class="n">_timestampstr</span>
 
 
@@ -223,8 +226,6 @@
 <span class="sd">        additional keyword argument for calibration. please refer to</span>
 <span class="sd">        pyFAI documentation for all options.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">pyFAI.calibration</span> <span class="k">import</span> <span class="n">PeakPicker</span>
-    <span class="kn">from</span> <span class="nn">pyFAI.gui.utils</span> <span class="k">import</span> <span class="n">update_fig</span>
     <span class="nb">print</span><span class="p">(</span>
         <span class="s2">&quot;</span><span class="si">{:=^20}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;INFO: you are able to perform calibration, &quot;</span>
@@ -342,7 +343,6 @@
 <span class="sd">    pyFAI documentation:</span>
 <span class="sd">    http://pyfai.readthedocs.io/en/latest/</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">pyFAI.calibration</span> <span class="k">import</span> <span class="n">Calibration</span><span class="p">,</span> <span class="n">Calibrant</span>
     <span class="n">wavelength</span> <span class="o">*=</span> <span class="mi">10</span> <span class="o">**</span> <span class="o">-</span><span class="mi">10</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">calibrant</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="n">calibrant</span> <span class="o">=</span> <span class="n">Calibrant</span><span class="p">(</span><span class="n">dSpacing</span><span class="o">=</span><span class="n">calibrant</span><span class="p">,</span> <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">)</span>
