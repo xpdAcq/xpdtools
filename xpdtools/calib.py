@@ -18,9 +18,6 @@ import time
 from tempfile import TemporaryDirectory
 
 import yaml
-from pyFAI.calibration import Calibration, PeakPicker, Calibrant
-from pyFAI.gui.utils import update_fig
-
 from xpdtools.dev_utils import _timestampstr
 
 
@@ -78,6 +75,8 @@ def _calibration(img, calibration, calib_ref_fp=None, **kwargs):
         additional keyword argument for calibration. please refer to
         pyFAI documentation for all options.
     """
+    from pyFAI.calibration import PeakPicker
+    from pyFAI.gui.utils import update_fig
     print(
         "{:=^20}".format(
             "INFO: you are able to perform calibration, "
@@ -195,6 +194,7 @@ def img_calibration(
     pyFAI documentation:
     http://pyfai.readthedocs.io/en/latest/
     """
+    from pyFAI.calibration import Calibration, Calibrant
     wavelength *= 10 ** -10
     if isinstance(calibrant, list):
         calibrant = Calibrant(dSpacing=calibrant, wavelength=wavelength)

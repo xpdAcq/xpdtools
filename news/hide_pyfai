@@ -1,0 +1,14 @@
+**Added:** None
+
+**Changed:**
+
+* ``pyFAI`` imports for calibration are now inside the functions so we don't
+  run the imports until they are actually needed.
+
+**Deprecated:** None
+
+**Removed:** None
+
+**Fixed:** None
+
+**Security:** None
