@@ -524,3 +524,47 @@ def move_center(motors, geometry):
     g2.poni1 += motors[0]
     g2.poni2 += motors[1]
     return g2
+
+
+def splay_tuple(iter_of_tuple):
+    """Splay all tuples in an iterable
+
+    Parameters
+    ----------
+    iter_of_tuple : iterable
+        An iterable which may contain tuples
+
+    Returns
+    -------
+    tuple :
+        The splayed output
+
+    """
+    out = []
+    for i in iter_of_tuple:
+        if isinstance(i, tuple):
+            out.extend(list(i))
+        else:
+            out.append(i)
+    return tuple(out)
+
+
+# TODO: make this into a singleton
+pc_default = "~~pluck_check_null~~"
+
+
+def pluck_check(t, position, eq=pc_default):
+    """Check if a position in an iterable is truthy or equal to eq"""
+    if eq is pc_default:
+        return bool(t[position])
+    else:
+        return t[position] == eq
+
+
+def call_stream_element(callable_item, *args, **kwargs):
+    """Call callable_item on the args and kwargs"""
+    return callable_item(*args, **kwargs)
+
+
+def check_kwargs(x, k, v, **kwargs):
+    return kwargs[k] == v

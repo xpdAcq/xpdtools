@@ -14,6 +14,10 @@ from xpdtools.tools import (
     pdf_getter,
     sq_getter,
     generate_map_bin,
+    pluck_check,
+    splay_tuple,
+    call_stream_element,
+    check_kwargs,
 )
 
 mask_setting = {"setting": "auto"}
@@ -42,13 +46,13 @@ is_calibration_img = Stream(stream_name="Is Calibration")
 geo_input = Stream(stream_name="geometry")
 gated_cal = (
     bg_corrected_img.combine_latest(is_calibration_img, emit_on=0)
-    .filter(lambda a: bool(a[1]))
+    .filter(pluck_check, 1)
     .pluck(0, stream_name="Gate calibration")
 )
 
 gen_geo_cal = (
     gated_cal.combine_latest(wavelength, calibrant, detector, emit_on=0)
-    .filter(lambda x, **kwargs: calib_setting["setting"] is True)
+    .filter(check_kwargs, "setting", True, **calib_setting)
     .starmap(img_calibration)
 )
 
@@ -56,7 +60,7 @@ gen_geo = gen_geo_cal.pluck(1)
 
 geometry = (
     geo_input.combine_latest(is_calibration_img, emit_on=0)
-    .filter(lambda a: not bool(a[1]))
+    .filter(pluck_check, 1)
     .pluck(0, stream_name="Gate calibration")
     .map(load_geo)
     .union(gen_geo, stream_name="Combine gen and load cal")
@@ -70,11 +74,10 @@ geometry_img_shape = geometry.zip_latest(img_shape)
 map_res = geometry_img_shape.starmap(generate_map_bin)
 cal_binner = map_res.starmap(map_to_binner)
 
-polarization_array = geometry_img_shape.starmap(
-    lambda geo, shape, polarization_factor: geo.polarization(
-        shape, polarization_factor
-    ),
-    .99,
+polarization_callable = geometry.map(getattr, "polarization")
+
+polarization_array = polarization_callable.zip_latest(img_shape).starmap(
+    call_stream_element, .99
 )
 
 pol_correction_combine = bg_corrected_img.combine_latest(
@@ -90,9 +93,10 @@ img_cal_binner = pol_corrected_img.combine_latest(
     cal_binner, emit_on=pol_corrected_img
 )
 
-all_mask = img_cal_binner.filter(
-    lambda x, **kwargs: mask_setting["setting"] == "auto"
-).starmap(
+all_mask_filter = img_cal_binner.filter(
+    check_kwargs, "setting", "auto", **mask_setting
+)
+all_mask = all_mask_filter.starmap(
     mask_img,
     stream_name="mask",
     **dict(
@@ -105,26 +109,27 @@ all_mask = img_cal_binner.filter(
     )
 )
 img_counter = Stream(stream_name="img counter")
+first_mask_filter = img_cal_binner.filter(
+    check_kwargs, "setting", "first", **mask_setting
+)
 first_mask = (
-    img_cal_binner.filter(
-        lambda x, **kwargs: mask_setting["setting"] == "first"
-    )
-    .zip(img_counter)
-    .filter(lambda x: x[1] == 1)
+    first_mask_filter.zip(img_counter)
+    .filter(pluck_check, eq=1)
     .pluck(0)
     .starmap(mask_img, stream_name="mask", **{})
 )
 
-no_mask = img_cal_binner.filter(
-    lambda x, **kwargs: mask_setting["setting"] == "none"
-).starmap(lambda img, *_: np.ones(img.shape, dtype=bool))
+no_mask_filter = img_cal_binner.filter(
+    check_kwargs, "setting", "none", **mask_setting
+)
+no_mask = no_mask_filter.pluck(0).starmap(np.ones, dtype=bool)
 
 mask = all_mask.union(first_mask, no_mask)
 
 # Integration
 binner = (
     map_res.combine_latest(mask, emit_on=1)
-    .map(lambda x: (x[0][0], x[0][1], x[1]))
+    .map(splay_tuple)
     .starmap(map_to_binner)
 )
 q = binner.map(getattr, "bin_centers", stream_name="Q")
@@ -134,14 +139,12 @@ tth = (
     .map(np.rad2deg)
 )
 
-f_img_binner = pol_corrected_img.map(np.ravel).combine_latest(
-    binner, emit_on=0
+f_img_binner = binner.combine_latest(
+    pol_corrected_img.map(np.ravel), emit_on=1
 )
 
 mean = f_img_binner.starmap(
-    lambda img, binner, **kwargs: binner(img, **kwargs),
-    statistic="mean",
-    stream_name="Mean IQ",
+    call_stream_element, statistic="mean", stream_name="Mean IQ"
 ).map(np.nan_to_num)
 
 # PDF
@@ -149,7 +152,7 @@ composition = Stream(stream_name="composition")
 iq_comp = q.combine_latest(mean, emit_on=1).combine_latest(
     composition, emit_on=0
 )
-iq_comp_map = iq_comp.map(lambda x: (x[0][0], x[0][1], x[1]))
+iq_comp_map = iq_comp.map(splay_tuple)
 
 # TODO: split these all up into their components ((r, pdf), (q, fq)...)
 sq = iq_comp_map.starmap(
@@ -174,6 +177,9 @@ pdf = iq_comp_map.starmap(
 mask_kwargs = all_mask.kwargs
 first_mask.kwargs = mask_kwargs
 no_mask.kwargs = mask_kwargs
+
+mask_setting = all_mask_filter.kwargs
+
 
 fq_kwargs = fq.kwargs
 sq.kwargs = fq_kwargs
