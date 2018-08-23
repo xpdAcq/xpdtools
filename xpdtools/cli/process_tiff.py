@@ -10,17 +10,29 @@ from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
 from skbeam.io.save_powder_output import save_output
 from streamz_ext import Stream
 from xpdtools.pipelines.raw_pipeline import (
-    polarization_array,
-    mask,
-    mean,
-    q,
-    geometry,
-    dark_corrected_foreground,
-    dark_corrected_background,
-    mask_kwargs,
-    mask_setting,
+    pipeline_order,
+    namespace,
+    explicit_link,
 )
-from xpdtools.pipelines.extra import median, std, z_score
+from xpdtools.pipelines.extra import median_gen, std_gen, z_score_gen
+
+# link the pipeline up
+namespace = explicit_link(*(pipeline_order +
+                            [median_gen, std_gen, z_score_gen]), **namespace)
+
+polarization_array = namespace["polarization_array"]
+mask = namespace["mask"]
+mean = namespace["mean"]
+q = namespace["q"]
+geometry = namespace["geometry"]
+dark_corrected_foreground = namespace["dark_corrected_foreground"]
+dark_corrected_background = namespace["dark_corrected_background"]
+mask_kwargs = namespace["mask_kwargs"]
+mask_setting = namespace["mask_setting"]
+
+median = namespace['median']
+std = namespace['std']
+z_score = namespace['z_score']
 
 img_extensions = {".tiff", ".edf", ".tif"}
 # Modify graph
@@ -80,6 +92,7 @@ def main(
     auto_type="median",
     mask_settings="auto",
     flip_input_mask=True,
+    bg_scale=1
 ):
     """Run the data processing protocol taking raw images to background
     subtracted I(Q) files.
@@ -128,6 +141,8 @@ def main(
     flip_input_mask: bool, optional
         If True flip the input mask up down, this helps when using fit2d
         defaults to True.
+    bg_scale : float, optional
+        The scale for the image to image background subtraction, defaults to 1
 
     Returns
     -------
@@ -141,6 +156,7 @@ def main(
         The list of standard deviation values
     """
     polarization_array.args = (polarization,)
+    dark_corrected_background.args = (bg_scale, )
     if mask_file:
         if mask_file.endswith(".msk"):
             # TODO: may need to flip this?

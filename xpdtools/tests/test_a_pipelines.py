@@ -2,19 +2,6 @@ import numpy as np
 import pyFAI
 import pytest
 import tifffile
-from xpdtools.pipelines.raw_pipeline import (
-    raw_foreground,
-    raw_foreground_dark,
-    raw_background,
-    raw_background_dark,
-    geometry,
-    is_calibration_img,
-    geo_input,
-    pdf,
-    composition,
-    mask_setting,
-    img_counter,
-)
 
 from xpdsim import pyfai_poni, image_file
 
@@ -24,7 +11,25 @@ geo = pyFAI.load(pyfai_poni)
 
 @pytest.mark.parametrize("mask_s", ["first", "none", "auto"])
 def test_raw_pipeline(mask_s):
-    mask_setting["setting"] = mask_s
+    # link the pipeline up
+    from xpdtools.pipelines.raw_pipeline import (
+        pipeline_order,
+        namespace,
+        explicit_link,
+    )
+    namespace = explicit_link(*pipeline_order, **namespace)
+
+    is_calibration_img = namespace["is_calibration_img"]
+    geo_input = namespace["geo_input"]
+    img_counter = namespace["img_counter"]
+    namespace['mask_setting']["setting"] = mask_s
+
+    pdf = namespace['pdf']
+    raw_background_dark = namespace['raw_background_dark']
+    raw_background = namespace['raw_background']
+    raw_foreground_dark = namespace['raw_foreground_dark']
+    composition = namespace['composition']
+    raw_foreground = namespace['raw_foreground']
     sl = pdf.sink_to_list()
     is_calibration_img.emit(False)
     a = geo.getPyFAI()
@@ -36,9 +41,25 @@ def test_raw_pipeline(mask_s):
     raw_foreground.emit(img)
     assert len(sl) == 1
 
-
 def test_extra_pipeline():
-    from xpdtools.pipelines.extra import z_score
+    # link the pipeline up
+    from xpdtools.pipelines.raw_pipeline import (
+        pipeline_order,
+        namespace,
+        explicit_link,
+    )
+    from xpdtools.pipelines.extra import z_score_gen
+    namespace = explicit_link(*(pipeline_order + [z_score_gen]),
+                              **namespace)
+
+    geometry = namespace["geometry"]
+
+    z_score = namespace['z_score']
+    raw_background_dark = namespace['raw_background_dark']
+    raw_background = namespace['raw_background']
+    raw_foreground_dark = namespace['raw_foreground_dark']
+    raw_foreground = namespace['raw_foreground']
+
 
     sl = z_score.sink_to_list()
     geometry.emit(geo)
@@ -46,74 +67,3 @@ def test_extra_pipeline():
         s.emit(np.zeros(img.shape))
     raw_foreground.emit(img)
     assert len(sl) == 1
-
-
-def test_qoi_pipeline():
-    from xpdtools.pipelines.qoi import (
-        r_peak_pos,
-        q_peak_pos,
-        mean_peaks,
-        mean_intensity,
-        pdf_peaks,
-        pdf_intensity,
-        pdf_argrelmax_kwargs,
-        mean_argrelmax_kwargs,
-    )
-
-    sls = [
-        k.sink_to_list()
-        for k in [
-            mean_peaks,
-            q_peak_pos,
-            pdf_peaks,
-            r_peak_pos,
-            mean_intensity,
-            pdf_intensity,
-        ]
-    ]
-    geometry.emit(geo)
-    for s in [raw_background_dark, raw_background, raw_foreground_dark]:
-        s.emit(np.zeros(img.shape))
-    composition.emit("Au")
-    raw_foreground.emit(img)
-    for sl in sls:
-        print(sl)
-        assert len(sl) == 1
-    assert pdf_argrelmax_kwargs == {"order": 5}
-    assert mean_argrelmax_kwargs == {"order": 20}
-
-
-def test_qoi_pipeline2():
-    from xpdtools.pipelines.qoi import (
-        r_peak_pos,
-        q_peak_pos,
-        mean_peaks,
-        mean_intensity,
-        pdf_peaks,
-        pdf_intensity,
-        pdf_argrelmax_kwargs,
-        mean_argrelmax_kwargs,
-    )
-
-    sls = [
-        k.sink_to_list()
-        for k in [
-            mean_peaks,
-            q_peak_pos,
-            pdf_peaks,
-            r_peak_pos,
-            mean_intensity,
-            pdf_intensity,
-        ]
-    ]
-    geometry.emit(geo)
-    for s in [raw_background_dark, raw_background, raw_foreground_dark]:
-        s.emit(np.zeros(img.shape))
-    composition.emit("Au")
-    pdf_argrelmax_kwargs.update({"order": 100})
-    raw_foreground.emit(img)
-    for sl in sls:
-        print(sl)
-        assert len(sl) == 1
-    assert pdf_argrelmax_kwargs == {"order": 100}
-    assert mean_argrelmax_kwargs == {"order": 20}
