@@ -155,8 +155,8 @@ def gen_mask(
     pol_corrected_img, cal_binner, img_counter, mask_setting, **kwargs
 ):
     # emit on img so we don't propagate old image data
-    # note that the pol_corrected_img has touched the geometry and so always 
-    # comes after the geometry itself, so we never have a condition where 
+    # note that the pol_corrected_img has touched the geometry and so always
+    # comes after the geometry itself, so we never have a condition where
     # we fail to emit because pol_corrected_img comes down first
     img_cal_binner = pol_corrected_img.combine_latest(
         cal_binner, emit_on=pol_corrected_img
