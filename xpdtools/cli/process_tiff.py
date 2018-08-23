@@ -17,8 +17,9 @@ from xpdtools.pipelines.raw_pipeline import (
 from xpdtools.pipelines.extra import median_gen, std_gen, z_score_gen
 
 # link the pipeline up
-namespace = explicit_link(*(pipeline_order +
-                            [median_gen, std_gen, z_score_gen]), **namespace)
+namespace = explicit_link(
+    *(pipeline_order + [median_gen, std_gen, z_score_gen]), **namespace
+)
 
 polarization_array = namespace["polarization_array"]
 mask = namespace["mask"]
@@ -30,9 +31,9 @@ dark_corrected_background = namespace["dark_corrected_background"]
 mask_kwargs = namespace["mask_kwargs"]
 mask_setting = namespace["mask_setting"]
 
-median = namespace['median']
-std = namespace['std']
-z_score = namespace['z_score']
+median = namespace["median"]
+std = namespace["std"]
+z_score = namespace["z_score"]
 
 img_extensions = {".tiff", ".edf", ".tif"}
 # Modify graph
@@ -92,7 +93,7 @@ def main(
     auto_type="median",
     mask_settings="auto",
     flip_input_mask=True,
-    bg_scale=1
+    bg_scale=1,
 ):
     """Run the data processing protocol taking raw images to background
     subtracted I(Q) files.
@@ -156,7 +157,7 @@ def main(
         The list of standard deviation values
     """
     polarization_array.args = (polarization,)
-    dark_corrected_background.args = (bg_scale, )
+    dark_corrected_background.args = (bg_scale,)
     if mask_file:
         if mask_file.endswith(".msk"):
             # TODO: may need to flip this?

@@ -17,6 +17,7 @@ def test_raw_pipeline(mask_s):
         namespace,
         explicit_link,
     )
+
     namespace = explicit_link(*pipeline_order, **namespace)
 
     is_calibration_img = namespace["is_calibration_img"]
@@ -24,12 +25,12 @@ def test_raw_pipeline(mask_s):
     img_counter = namespace["img_counter"]
     namespace['mask_setting']["setting"] = mask_s
 
-    pdf = namespace['pdf']
-    raw_background_dark = namespace['raw_background_dark']
-    raw_background = namespace['raw_background']
-    raw_foreground_dark = namespace['raw_foreground_dark']
-    composition = namespace['composition']
-    raw_foreground = namespace['raw_foreground']
+    pdf = namespace["pdf"]
+    raw_background_dark = namespace["raw_background_dark"]
+    raw_background = namespace["raw_background"]
+    raw_foreground_dark = namespace["raw_foreground_dark"]
+    composition = namespace["composition"]
+    raw_foreground = namespace["raw_foreground"]
     sl = pdf.sink_to_list()
     is_calibration_img.emit(False)
     a = geo.getPyFAI()
@@ -49,17 +50,16 @@ def test_extra_pipeline():
         explicit_link,
     )
     from xpdtools.pipelines.extra import z_score_gen
-    namespace = explicit_link(*(pipeline_order + [z_score_gen]),
-                              **namespace)
+
+    namespace = explicit_link(*(pipeline_order + [z_score_gen]), **namespace)
 
     geometry = namespace["geometry"]
 
-    z_score = namespace['z_score']
-    raw_background_dark = namespace['raw_background_dark']
-    raw_background = namespace['raw_background']
-    raw_foreground_dark = namespace['raw_foreground_dark']
-    raw_foreground = namespace['raw_foreground']
-
+    z_score = namespace["z_score"]
+    raw_background_dark = namespace["raw_background_dark"]
+    raw_background = namespace["raw_background"]
+    raw_foreground_dark = namespace["raw_foreground_dark"]
+    raw_foreground = namespace["raw_foreground"]
 
     sl = z_score.sink_to_list()
     geometry.emit(geo)
