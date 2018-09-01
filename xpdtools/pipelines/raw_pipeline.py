@@ -24,7 +24,9 @@ from xpdtools.tools import (
 def explicit_link(*args, **kwargs):
     namespace = kwargs
     for pipe in args:
-        namespace.update(pipe(**namespace))
+        new_namespace = pipe(**namespace)
+        if new_namespace:
+            namespace.update(**new_namespace)
     return namespace
 
 
