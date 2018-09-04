@@ -60,7 +60,7 @@ gen_geo = gen_geo_cal.pluck(1)
 
 geometry = (
     geo_input.combine_latest(is_calibration_img, emit_on=0)
-    .filter(pluck_check, 1)
+    .filter(pluck_check, 1, False)
     .pluck(0, stream_name="Gate calibration")
     .map(load_geo)
     .union(gen_geo, stream_name="Combine gen and load cal")

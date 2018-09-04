@@ -23,6 +23,7 @@ from skbeam.core.mask import margin
 from xpdtools.jit_tools import mask_ring_median, mask_ring_mean, ring_zscore
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from functools import wraps
 
 try:
     from diffpy.pdfgetx import PDFGetter
@@ -46,7 +47,7 @@ def progress_decorator(func, progress=None):
 
 
 def binned_outlier(
-    img, binner, alpha=3, tmsk=None, mask_method="median", pool=None
+        img, binner, alpha=3, tmsk=None, mask_method="median", pool=None
 ):
     """Sigma Clipping based masking
 
@@ -88,10 +89,10 @@ def binned_outlier(
     t = []
     i = 0
     for k in binner.flatcount:
-        m = tmsk2[i : i + k]
-        vm = vfs[i : i + k][m]
+        m = tmsk2[i: i + k]
+        vm = vfs[i: i + k][m]
         if k > 0 and len(vm) > 0:
-            t.append((vm, (pfs[i : i + k][m]), alpha))
+            t.append((vm, (pfs[i: i + k][m]), alpha))
         i += k
     p_err = np.seterr(all="ignore")
     # only run tqdm on mean since it is slow
@@ -118,15 +119,15 @@ def binned_outlier(
 
 
 def mask_img(
-    img,
-    binner,
-    edge=30,
-    lower_thresh=0.0,
-    upper_thresh=None,
-    alpha=3,
-    auto_type="median",
-    tmsk=None,
-    pool=None,
+        img,
+        binner,
+        edge=30,
+        lower_thresh=0.0,
+        upper_thresh=None,
+        alpha=3,
+        auto_type="median",
+        tmsk=None,
+        pool=None,
 ):
     """
     Mask an image based off of various methods
@@ -299,7 +300,7 @@ def z_score_image(img, binner):
     t = []
     for k in binner.flatcount:
         if k > 0:
-            t.append(vfs[i : i + k])
+            t.append(vfs[i: i + k])
         i += k
     list(map(ring_zscore, t))
     np.seterr(**p_err)
@@ -568,3 +569,14 @@ def call_stream_element(callable_item, *args, **kwargs):
 
 def check_kwargs(x, k, v, **kwargs):
     return kwargs[k] == v
+
+
+def check_in(x, k):
+    return k in x
+
+
+def ignore_streamz_input(func):
+    @wraps(func)
+    def inner(x, *args, **kwargs):
+        return func(*args, **kwargs)
+    return inner
