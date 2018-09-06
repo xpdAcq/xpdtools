@@ -6,14 +6,14 @@ def median_gen(f_img_binner, **kwargs):
     median = f_img_binner.starmap(
         call_stream_element, statistic="median", stream_name="Mean IQ"
     ).map(np.nan_to_num)
-    return {"median": median}
+    return locals()
 
 
 def std_gen(f_img_binner, **kwargs):
     std = f_img_binner.starmap(
         call_stream_element, statistic="std", stream_name="Mean IQ"
     ).map(np.nan_to_num)
-    return {"std": std}
+    return locals()
 
 
 def z_score_gen(pol_corrected_img, binner, mask, **kwargs):
@@ -23,4 +23,4 @@ def z_score_gen(pol_corrected_img, binner, mask, **kwargs):
         .combine_latest(mask, emit_on=0)
         .starmap(overlay_mask)
     )
-    return {"z_score": z_score}
+    return locals()

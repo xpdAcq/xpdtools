@@ -54,7 +54,7 @@ def image_process(
     raw_foreground_dark,
     raw_background,
     raw_background_dark,
-    bg_scale,
+    bg_scale=1.,
     **kwargs
 ):
     # Get the image shape for the binner
@@ -70,12 +70,7 @@ def image_process(
         dark_corrected_background, emit_on=0
     ).starmap(op.sub, stream_name="background corrected img")
     img_shape = bg_corrected_img.map(np.shape).unique(history=1)
-    return {
-        "dark_corrected_foreground": dark_corrected_foreground,
-        "dark_corrected_background": dark_corrected_background,
-        "bg_corrected_img": bg_corrected_img,
-        "img_shape": img_shape,
-    }
+    return locals()
 
 
 def calibration(
@@ -86,11 +81,13 @@ def calibration(
     geo_input,
     bg_corrected_img,
     img_shape,
-    calib_setting,
+        calib_setting=None,
     **kwargs
 ):
     # Calibration management
 
+    if calib_setting is None:
+        calib_setting = {'setting': True}
     gated_cal = (
         bg_corrected_img.combine_latest(is_calibration_img, emit_on=0)
         .filter(pluck_check, 1)
@@ -120,19 +117,11 @@ def calibration(
     # (new calibration)
     map_res = geometry_img_shape.starmap(generate_map_bin)
     cal_binner = map_res.starmap(map_to_binner)
-    return {
-        "gated_cal": gated_cal,
-        "gen_geo_cal": gen_geo_cal,
-        "gen_geo": gen_geo,
-        "geometry": geometry,
-        "geometry_img_shape": geometry_img_shape,
-        "map_res": map_res,
-        "cal_binner": cal_binner,
-    }
+    return locals()
 
 
 def scattering_correction(
-    geometry, img_shape, bg_corrected_img, polarization_factor, **kwargs
+    geometry, img_shape, bg_corrected_img, polarization_factor=.99, **kwargs
 ):
 
     polarization_callable = geometry.map(getattr, "polarization")
@@ -145,17 +134,24 @@ def scattering_correction(
         polarization_array, emit_on=bg_corrected_img
     )
     pol_corrected_img = pol_correction_combine.starmap(op.truediv)
-    return {
-        "polarization_callable": polarization_callable,
-        "polarization_array": polarization_array,
-        "pol_correction_combine": pol_correction_combine,
-        "pol_corrected_img": pol_corrected_img,
-    }
+    return locals()
 
 
 def gen_mask(
-    pol_corrected_img, cal_binner, img_counter, mask_setting, **kwargs
+    pol_corrected_img, cal_binner, img_counter,
+        mask_setting=None, mask_kwargs=None,
+        **kwargs
 ):
+    if mask_kwargs is None:
+        mask_kwargs = dict(
+            edge=30,
+            lower_thresh=0.0,
+            upper_thresh=None,
+            alpha=3,
+            auto_type="median",
+            tmsk=None, )
+    if mask_setting is None:
+        mask_setting = {'setting': 'auto'}
     # emit on img so we don't propagate old image data
     # note that the pol_corrected_img has touched the geometry and so always
     # comes after the geometry itself, so we never have a condition where
@@ -170,15 +166,8 @@ def gen_mask(
     all_mask = all_mask_filter.starmap(
         mask_img,
         stream_name="mask",
-        **dict(
-            edge=30,
-            lower_thresh=0.0,
-            upper_thresh=None,
-            alpha=3,
-            auto_type="median",
-            tmsk=None,
+        **mask_kwargs
         )
-    )
     first_mask_filter = img_cal_binner.filter(
         check_kwargs, "setting", "first", **mask_setting
     )
@@ -205,25 +194,14 @@ def gen_mask(
 
     mask = all_mask.union(first_mask, no_mask)
 
+    mask_kwargs = all_mask.kwargs
+    first_mask.kwargs = mask_kwargs
+
     mask_setting = all_mask_filter.kwargs
     first_mask_filter.kwargs = mask_setting
     no_mask_filter.kwargs = mask_setting
 
-    mask_kwargs = all_mask.kwargs
-    first_mask.kwargs = mask_kwargs
-
-    return dict(
-        img_cal_binner=img_cal_binner,
-        all_mask_filter=all_mask_filter,
-        all_mask=all_mask,
-        first_mask_filter=first_mask_filter,
-        first_mask=first_mask,
-        no_mask_filter=no_mask_filter,
-        no_mask=no_mask,
-        mask=mask,
-        mask_kwargs=mask_kwargs,
-        mask_setting=mask_setting,
-    )
+    return locals()
 
 
 def integration(map_res, mask, wavelength, pol_corrected_img, **kwargs):
@@ -247,9 +225,7 @@ def integration(map_res, mask, wavelength, pol_corrected_img, **kwargs):
     mean = f_img_binner.starmap(
         call_stream_element, statistic="mean", stream_name="Mean IQ"
     ).map(np.nan_to_num)
-    return dict(
-        binner=binner, q=q, tth=tth, f_img_binner=f_img_binner, mean=mean
-    )
+    return locals()
 
 
 def pdf_gen(q, mean, composition, **kwargs):
@@ -280,15 +256,7 @@ def pdf_gen(q, mean, composition, **kwargs):
     sq.kwargs = fq_kwargs
     pdf_kwargs = pdf.kwargs
 
-    return dict(
-        iq_comp=iq_comp,
-        iq_comp_map=iq_comp_map,
-        sq=sq,
-        fq=fq,
-        pdf=pdf,
-        fq_kwargs=fq_kwargs,
-        pdf_kwargs=pdf_kwargs,
-    )
+    return locals()
 
 
 pipeline_order = [
