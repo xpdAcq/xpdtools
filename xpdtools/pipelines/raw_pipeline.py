@@ -81,13 +81,13 @@ def calibration(
     geo_input,
     bg_corrected_img,
     img_shape,
-        calib_setting=None,
+    calib_setting=None,
     **kwargs
 ):
     # Calibration management
 
     if calib_setting is None:
-        calib_setting = {'setting': True}
+        calib_setting = {"setting": True}
     gated_cal = (
         bg_corrected_img.combine_latest(is_calibration_img, emit_on=0)
         .filter(pluck_check, 1)
@@ -138,9 +138,12 @@ def scattering_correction(
 
 
 def gen_mask(
-    pol_corrected_img, cal_binner, img_counter,
-        mask_setting=None, mask_kwargs=None,
-        **kwargs
+    pol_corrected_img,
+    cal_binner,
+    img_counter,
+    mask_setting=None,
+    mask_kwargs=None,
+    **kwargs
 ):
     if mask_kwargs is None:
         mask_kwargs = dict(
@@ -149,9 +152,10 @@ def gen_mask(
             upper_thresh=None,
             alpha=3,
             auto_type="median",
-            tmsk=None, )
+            tmsk=None,
+        )
     if mask_setting is None:
-        mask_setting = {'setting': 'auto'}
+        mask_setting = {"setting": "auto"}
     # emit on img so we don't propagate old image data
     # note that the pol_corrected_img has touched the geometry and so always
     # comes after the geometry itself, so we never have a condition where
@@ -164,10 +168,8 @@ def gen_mask(
         check_kwargs, "setting", "auto", **mask_setting
     )
     all_mask = all_mask_filter.starmap(
-        mask_img,
-        stream_name="mask",
-        **mask_kwargs
-        )
+        mask_img, stream_name="mask", **mask_kwargs
+    )
     first_mask_filter = img_cal_binner.filter(
         check_kwargs, "setting", "first", **mask_setting
     )
