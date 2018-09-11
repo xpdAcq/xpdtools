@@ -176,7 +176,6 @@ pdf = iq_comp_map.starmap(
 # Tie all the kwargs together (so changes in one node change the rest)
 mask_kwargs = all_mask.kwargs
 first_mask.kwargs = mask_kwargs
-no_mask.kwargs = mask_kwargs
 
 mask_setting = all_mask_filter.kwargs
 
