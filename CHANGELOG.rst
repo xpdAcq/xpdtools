@@ -4,6 +4,24 @@
 
 .. current developments
 
+v0.4.2
+====================
+
+**Added:**
+
+* ``calib_setting`` dict to the raw pipeline, if
+  ``calib_setting['setting'] is False`` then the calibration gui will not be
+  run even for calibration runs
+
+
+**Changed:**
+
+* ``pyFAI`` imports for calibration are now inside the functions so we don't
+  run the imports until they are actually needed.
+
+
+
+
 v0.4.1
 ====================
 
