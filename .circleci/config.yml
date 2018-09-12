@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  pr:
+  run_test:
     working_directory: ~/repo
     docker:
       - image: continuumio/miniconda3:latest
@@ -14,68 +14,24 @@ jobs:
             conda config --add channels conda-forge
             conda update --all
       - run:
-          name: Git user
-          command: |
-            git config --global user.name regro-cf-autotick-bot
-            git config --global user.email circleci@cf-graph.regro.github.com
-      - run:
           name: Clone and Setup
           command: |
-            export START_TIME=$(date +%s)
-            export TIMEOUT=7200
             set -e
-            git clone https://github.com/regro/cf-scripts.git
-            cd cf-scripts
             export GIT_FULL_HASH=`git rev-parse HEAD`
-            conda install --file requirements/run
-            conda info
-            conda config --show-sources
-            conda list --show-channel-urls
-            python setup.py develop
-            cd ..
-            git clone --depth=1 https://github.com/regro/cf-graph3.git cf-graph
+            conda create --yes -n testenv python=3.6 orch
+            source activate testenv
+            orch score.yaml
       - run:
-          name: Stage 0
+          name: test
           command: |
-            cd cf-graph
-            conda-forge-tick --run 0
-      - run:
-          name: Stage 1
-          command: |
-            cd cf-graph
-            conda-forge-tick --run 1
-      - run:
-          name: Stage 2
-          command: |
-            cd cf-graph
-            conda-forge-tick --run 2
-      - run:
-          name: Stage 3
-          command: |
-            export START_TIME=$(date +%s)
-            export TIMEOUT=7200
-            cd cf-graph
-            conda-forge-tick --run 3
-      - run:
-          name: Stage 4
-          command: |
-            cd cf-graph
-            conda-forge-tick --run 4
-      - run:
-          name: deploy
-          when: always
-          command: |
-            cd cf-graph
-            conda-forge-tick --run -1
+            set -e
+            coverage run run_tests.py
+            coverage report -m
+            codecov
+            image_to_iq -- --help
+            flake8 xpdtools
 workflows:
   version: 2
-  hourly:
-    triggers:
-      - schedule:
-          cron: "0 * * * *"
-          filters:
-            branches:
-              only:
-                - master
+  run_all_pythons:
     jobs:
-      - pr
+      - run_test
