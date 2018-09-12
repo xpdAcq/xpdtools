@@ -1,0 +1,37 @@
+version: 2
+
+jobs:
+  test:
+    working_directory: ~/repo
+    docker:
+      - image: continuumio/miniconda3:latest
+    steps:
+      - checkout
+      - run:
+          name: Update Conda
+          command: |
+            conda config --set always_yes True
+            conda config --add channels conda-forge
+            conda update --all
+      - run:
+          name: Clone and Setup
+          command: |
+            set -e
+            export GIT_FULL_HASH=`git rev-parse HEAD`
+            conda create --yes -n testenv python=3.6 orch
+            source activate testenv
+            orch score.yaml
+      - run:
+          name: test
+          command: |
+            set -e
+            coverage run run_tests.py
+            coverage report -m
+            codecov
+            image_to_iq -- --help
+            flake8 xpdtools
+workflows:
+  version: 2
+  run_all_pythons:
+    jobs:
+      - test
