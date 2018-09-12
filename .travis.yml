@@ -29,9 +29,13 @@ before_install:
 
 install:
   - export GIT_FULL_HASH=`git rev-parse HEAD`
-  - conda create --yes -n testenv python=$TRAVIS_PYTHON_VERSION orch
+#  - conda create --yes -n testenv python=$TRAVIS_PYTHON_VERSION orch
+#  - source activate testenv
+#  - orch score.yaml
+  - conda create --yes -n testenv python=3.6 setuptools
   - source activate testenv
-  - orch score.yaml
+  - conda install --file requirements/run.txt
+  - conda install --file requirements/test.txt
 script:
   - set -e
   - coverage run run_tests.py

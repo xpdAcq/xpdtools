@@ -13,7 +13,6 @@ from xpdtools.pipelines.raw_pipeline import (
     pdf,
     composition,
     mask_setting,
-    mask,
     img_counter,
 )
 
@@ -26,8 +25,6 @@ geo = pyFAI.load(pyfai_poni)
 @pytest.mark.parametrize("mask_s", ["first", "none", "auto"])
 def test_raw_pipeline(mask_s):
     mask_setting["setting"] = mask_s
-    L = geometry.sink_to_list()
-    LL = mask.sink_to_list()
     sl = pdf.sink_to_list()
     is_calibration_img.emit(False)
     a = geo.getPyFAI()
@@ -37,8 +34,6 @@ def test_raw_pipeline(mask_s):
     composition.emit("Au")
     img_counter.emit(1)
     raw_foreground.emit(img)
-    assert len(L) == 1
-    assert LL
     assert len(sl) == 1
 
 
