@@ -9,7 +9,7 @@ import pytest
 
 from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
 from xpdsim import pyfai_poni, image_file
-from xpdtools.cli.process_tiff import main, out_sinks
+from xpdtools.cli.process_tiff import main
 
 expected_outputs = tuple(
     [
