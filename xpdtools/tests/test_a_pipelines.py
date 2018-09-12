@@ -9,23 +9,28 @@ from xpdtools.pipelines.raw_pipeline import (
     raw_background,
     raw_background_dark,
     geometry,
+    is_calibration_img,
+    geo_input,
     pdf,
     composition,
 )
-
 
 img = tifffile.imread(image_file)
 geo = pyFAI.load(pyfai_poni)
 
 
 def test_raw_pipeline():
+    L = geometry.sink_to_list()
     sl = pdf.sink_to_list()
-    geometry.emit(geo)
+    is_calibration_img.emit(False)
+    a = geo.getPyFAI()
+    geo_input.emit(a)
     for s in [raw_background_dark, raw_background, raw_foreground_dark]:
         s.emit(np.zeros(img.shape))
     composition.emit("Au")
     raw_foreground.emit(img)
     assert len(sl) == 1
+    assert len(L) == 1
 
 
 def test_extra_pipeline():
