@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 import tifffile
 import pyFAI
 
@@ -13,14 +14,21 @@ from xpdtools.pipelines.raw_pipeline import (
     geo_input,
     pdf,
     composition,
+    mask_setting,
+    img_cal_binner,
+    mask,
+    img_counter,
 )
 
 img = tifffile.imread(image_file)
 geo = pyFAI.load(pyfai_poni)
 
 
-def test_raw_pipeline():
+@pytest.mark.parametrize("mask_s", ["first", "none", "auto"])
+def test_raw_pipeline(mask_s):
+    mask_setting["setting"] = mask_s
     L = geometry.sink_to_list()
+    LL = mask.sink_to_list()
     sl = pdf.sink_to_list()
     is_calibration_img.emit(False)
     a = geo.getPyFAI()
@@ -28,9 +36,11 @@ def test_raw_pipeline():
     for s in [raw_background_dark, raw_background, raw_foreground_dark]:
         s.emit(np.zeros(img.shape))
     composition.emit("Au")
+    img_counter.emit(1)
     raw_foreground.emit(img)
-    assert len(sl) == 1
     assert len(L) == 1
+    assert LL
+    assert len(sl) == 1
 
 
 def test_extra_pipeline():

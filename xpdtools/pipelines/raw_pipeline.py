@@ -114,15 +114,26 @@ first_mask_filter = img_cal_binner.filter(
 )
 first_mask = (
     first_mask_filter.zip(img_counter)
-    .filter(pluck_check, eq=1)
+    .filter(pluck_check, position=1, eq=1)
     .pluck(0)
-    .starmap(mask_img, stream_name="mask", **{})
+    .starmap(
+        mask_img,
+        stream_name="mask",
+        **dict(
+            edge=30,
+            lower_thresh=0.0,
+            upper_thresh=None,
+            alpha=3,
+            auto_type="median",
+            tmsk=None,
+        )
+    )
 )
 
 no_mask_filter = img_cal_binner.filter(
     check_kwargs, "setting", "none", **mask_setting
 )
-no_mask = no_mask_filter.pluck(0).starmap(np.ones, dtype=bool)
+no_mask = no_mask_filter.pluck(0).map(np.shape).map(np.ones, dtype=bool)
 
 mask = all_mask.union(first_mask, no_mask)
 
@@ -176,10 +187,10 @@ pdf = iq_comp_map.starmap(
 # Tie all the kwargs together (so changes in one node change the rest)
 mask_kwargs = all_mask.kwargs
 first_mask.kwargs = mask_kwargs
-no_mask.kwargs = mask_kwargs
 
 mask_setting = all_mask_filter.kwargs
-
+first_mask_filter.kwargs = mask_setting
+no_mask_filter.kwargs = mask_setting
 
 fq_kwargs = fq.kwargs
 sq.kwargs = fq_kwargs
