@@ -18,9 +18,10 @@ jobs:
           command: |
             set -e
             export GIT_FULL_HASH=`git rev-parse HEAD`
-            conda create --yes -n testenv python=3.6 orch
+            conda create --yes -n testenv python=3.6 setuptools
             source activate testenv
-            orch score.yaml
+            conda install --file requirements/run.txt
+            conda install --file requirements/test.txt.txt
       - run:
           name: test
           command: |
