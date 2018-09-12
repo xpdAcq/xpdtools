@@ -1,9 +1,7 @@
 import numpy as np
+import pyFAI
 import pytest
 import tifffile
-import pyFAI
-
-from xpdsim import pyfai_poni, image_file
 from xpdtools.pipelines.raw_pipeline import (
     raw_foreground,
     raw_foreground_dark,
@@ -15,10 +13,11 @@ from xpdtools.pipelines.raw_pipeline import (
     pdf,
     composition,
     mask_setting,
-    img_cal_binner,
     mask,
     img_counter,
 )
+
+from xpdsim import pyfai_poni, image_file
 
 img = tifffile.imread(image_file)
 geo = pyFAI.load(pyfai_poni)
