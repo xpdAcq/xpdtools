@@ -20,8 +20,8 @@ jobs:
             export GIT_FULL_HASH=`git rev-parse HEAD`
             conda create --yes -n testenv python=3.6 setuptools
             source activate testenv
-            conda install --file requirements/run.txt
-            conda install --file requirements/test.txt
+            conda install --file requirements/run.txt -v
+            conda install --file requirements/test.txt -v
       - run:
           name: test
           command: |
