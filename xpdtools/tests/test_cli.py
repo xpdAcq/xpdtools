@@ -2,7 +2,9 @@ import os
 import shutil
 
 import numpy as np
-from numpy.testing import assert_equal, assert_raises, assert_array_equal
+from numpy.testing import (assert_equal,
+                           # assert_raises,
+                           assert_array_equal)
 import pytest
 
 from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
