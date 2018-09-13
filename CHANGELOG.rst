@@ -4,6 +4,17 @@
 
 .. current developments
 
+v0.4.3
+====================
+
+**Fixed:**
+
+* Fix bug where ``is_calibration_img`` was not being checked properly
+* no mask setting, we don't need kwargs for no mask
+
+
+
+
 v0.4.2
 ====================
 
