@@ -20,16 +20,6 @@ from xpdtools.tools import (
     check_kwargs,
 )
 
-
-def explicit_link(*args, **kwargs):
-    namespace = kwargs
-    for pipe in args:
-        new_namespace = pipe(**namespace)
-        if new_namespace:
-            namespace.update(**new_namespace)
-    return namespace
-
-
 namespace = dict(
     raw_foreground=Stream(stream_name="raw foreground"),
     raw_foreground_dark=Stream(stream_name="raw foreground dark"),

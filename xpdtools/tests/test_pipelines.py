@@ -4,6 +4,13 @@ import pytest
 import tifffile
 
 from xpdsim import pyfai_poni, image_file
+from xpdtools.pipelines.raw_pipeline import (
+        pipeline_order,
+        namespace as g_namespace,
+)
+from streamz_ext.link import link
+from xpdtools.pipelines.extra import z_score_gen
+from streamz_ext import destroy_pipeline
 
 img = tifffile.imread(image_file)
 geo = pyFAI.load(pyfai_poni)
@@ -12,13 +19,7 @@ geo = pyFAI.load(pyfai_poni)
 @pytest.mark.parametrize("mask_s", ["first", "none", "auto"])
 def test_raw_pipeline(mask_s):
     # link the pipeline up
-    from xpdtools.pipelines.raw_pipeline import (
-        pipeline_order,
-        namespace,
-        explicit_link,
-    )
-
-    namespace = explicit_link(*pipeline_order, **namespace)
+    namespace = link(*pipeline_order, **g_namespace)
 
     is_calibration_img = namespace["is_calibration_img"]
     geo_input = namespace["geo_input"]
@@ -32,6 +33,9 @@ def test_raw_pipeline(mask_s):
     composition = namespace["composition"]
     raw_foreground = namespace["raw_foreground"]
     sl = pdf.sink_to_list()
+    L = namespace['geometry'].sink_to_list()
+    ml = namespace['mask'].sink_to_list()
+
     is_calibration_img.emit(False)
     a = geo.getPyFAI()
     geo_input.emit(a)
@@ -40,18 +44,19 @@ def test_raw_pipeline(mask_s):
     composition.emit("Au")
     img_counter.emit(1)
     raw_foreground.emit(img)
+    destroy_pipeline(raw_foreground)
+    del namespace
+    assert len(L) == 1
+    assert ml
     assert len(sl) == 1
+    sl.clear()
+    L.clear()
+    ml.clear()
+
 
 def test_extra_pipeline():
     # link the pipeline up
-    from xpdtools.pipelines.raw_pipeline import (
-        pipeline_order,
-        namespace,
-        explicit_link,
-    )
-    from xpdtools.pipelines.extra import z_score_gen
-
-    namespace = explicit_link(*(pipeline_order + [z_score_gen]), **namespace)
+    namespace = link(*(pipeline_order + [z_score_gen]), **g_namespace)
 
     geometry = namespace["geometry"]
 
@@ -66,4 +71,7 @@ def test_extra_pipeline():
     for s in [raw_background_dark, raw_background, raw_foreground_dark]:
         s.emit(np.zeros(img.shape))
     raw_foreground.emit(img)
+    del namespace
+    destroy_pipeline(raw_foreground)
     assert len(sl) == 1
+    sl.clear()
