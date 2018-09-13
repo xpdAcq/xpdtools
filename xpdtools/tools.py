@@ -344,6 +344,7 @@ def load_geo(cal_params):
         The calibrate azimuthal integrator (which inherits from the geometry)
     """
     from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
+
     ai = AzimuthalIntegrator()
     ai.setPyFAI(**cal_params)
     return ai

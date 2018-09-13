@@ -2,10 +2,12 @@ import os
 import shutil
 
 import numpy as np
-from numpy.testing import (assert_equal,
-                           assert_raises,
-                           assert_array_equal,
-                           assert_allclose)
+from numpy.testing import (
+    assert_equal,
+    assert_raises,
+    assert_array_equal,
+    assert_allclose,
+)
 import pytest
 
 from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
@@ -121,7 +123,9 @@ def test_main_kwargs(fast_tmpdir, key, value):
     b = make_main(True)(poni_file, **kwargs)
     assert_raises(AssertionError, assert_array_equal, a[1][0], b[1][0])
     # Make sure we have actual data
-    assert_raises(AssertionError, assert_allclose, a[1][0], np.zeros(a[1][0].shape))
+    assert_raises(
+        AssertionError, assert_allclose, a[1][0], np.zeros(a[1][0].shape)
+    )
 
 
 def test_main_no_poni(fast_tmpdir):
