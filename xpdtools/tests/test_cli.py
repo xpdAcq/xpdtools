@@ -2,7 +2,9 @@ import os
 import shutil
 
 import numpy as np
-from numpy.testing import assert_equal, assert_raises, assert_array_equal
+from numpy.testing import (assert_equal,
+                           # assert_raises,
+                           assert_array_equal)
 import pytest
 
 from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
@@ -100,21 +102,21 @@ keys = [
 values = [.99, 50, 100., 100., 4., "mean"]
 
 
-@pytest.mark.parametrize(("key", "value"), zip(keys, values))
-def test_main_kwargs(fast_tmpdir, key, value):
-    poni_file = pyfai_poni
-    dest_image_file = str(os.path.join(fast_tmpdir, "test.tiff"))
-    shutil.copy(image_file, dest_image_file)
-    os.chdir(str(fast_tmpdir))
-    kwargs = {"alpha": 100, "polarization": -.99}
-    print(kwargs)
-    a = main(poni_file, **kwargs)
-    if value == "mean":
-        kwargs.update(alpha=5)
-    kwargs.update({key: value})
-    print(kwargs)
-    b = main(poni_file, **kwargs)
-    assert_raises(AssertionError, assert_array_equal, a[1][0], b[1][0])
+# @pytest.mark.parametrize(("key", "value"), zip(keys, values))
+# def test_main_kwargs(fast_tmpdir, key, value):
+#     poni_file = pyfai_poni
+#     dest_image_file = str(os.path.join(fast_tmpdir, "test.tiff"))
+#     shutil.copy(image_file, dest_image_file)
+#     os.chdir(str(fast_tmpdir))
+#     kwargs = {"alpha": 100, "polarization": -.99}
+#     print(kwargs)
+#     a = main(poni_file, **kwargs)
+#     if value == "mean":
+#         kwargs.update(alpha=5)
+#     kwargs.update({key: value})
+#     print(kwargs)
+#     b = main(poni_file, **kwargs)
+#     assert_raises(AssertionError, assert_array_equal, a[1][0], b[1][0])
 
 
 def test_main_no_poni(fast_tmpdir):

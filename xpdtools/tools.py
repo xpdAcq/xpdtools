@@ -23,6 +23,7 @@ from skbeam.core.mask import margin
 from xpdtools.jit_tools import mask_ring_median, mask_ring_mean, ring_zscore
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from functools import wraps
 
 try:
     from diffpy.pdfgetx import PDFGetter
@@ -568,3 +569,15 @@ def call_stream_element(callable_item, *args, **kwargs):
 
 def check_kwargs(x, k, v, **kwargs):
     return kwargs[k] == v
+
+
+def check_in(x, k):
+    return k in x
+
+
+def ignore_streamz_input(func):
+    @wraps(func)
+    def inner(x, *args, **kwargs):
+        return func(*args, **kwargs)
+
+    return inner

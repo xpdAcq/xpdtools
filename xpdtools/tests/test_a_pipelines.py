@@ -1,29 +1,38 @@
 import numpy as np
-import tifffile
 import pyFAI
-
-from xpdsim import pyfai_poni, image_file
+import pytest
+import tifffile
 from xpdtools.pipelines.raw_pipeline import (
     raw_foreground,
     raw_foreground_dark,
     raw_background,
     raw_background_dark,
     geometry,
+    is_calibration_img,
+    geo_input,
     pdf,
     composition,
+    mask_setting,
+    img_counter,
 )
 
+from xpdsim import pyfai_poni, image_file
 
 img = tifffile.imread(image_file)
 geo = pyFAI.load(pyfai_poni)
 
 
-def test_raw_pipeline():
+@pytest.mark.parametrize("mask_s", ["first", "none", "auto"])
+def test_raw_pipeline(mask_s):
+    mask_setting["setting"] = mask_s
     sl = pdf.sink_to_list()
-    geometry.emit(geo)
+    is_calibration_img.emit(False)
+    a = geo.getPyFAI()
+    geo_input.emit(a)
     for s in [raw_background_dark, raw_background, raw_foreground_dark]:
         s.emit(np.zeros(img.shape))
     composition.emit("Au")
+    img_counter.emit(1)
     raw_foreground.emit(img)
     assert len(sl) == 1
 

@@ -1,0 +1,13 @@
+**Added:** None
+
+**Changed:** None
+
+**Deprecated:** None
+
+**Removed:** None
+
+**Fixed:**
+
+* Fix bug where ``is_calibration_img`` was not being checked properly
+
+**Security:** None
