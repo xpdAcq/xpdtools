@@ -111,8 +111,8 @@ def make_main(_output_sinks):
         Parameters
         ----------
         poni_file: str or None, optional
-            File generated from pyFAI's calibration, if None look in the current
-            working directory for the poni file, defaults to None.
+            File generated from pyFAI's calibration, if None look in the
+            current working directory for the poni file, defaults to None.
         image_files: str or None, optional
             File to process, if None use all the valid files in the directory,
             defaults to None.
@@ -126,19 +126,19 @@ def make_main(_output_sinks):
             The polzarization factor to use, defaults to .99, if None do not
             perform polarization correction
         edge: int, optional
-            The number of pixels from the edge to mask with an edge mask, defaults
-            to 20, if None no edge mask used
+            The number of pixels from the edge to mask with an edge mask,
+            defaults to 20, if None no edge mask used
         lower_thresh: float, optional
             Threshold for lower threshold mask, all pixels with value less than
-            this value (after background subtraction if applicable), defaults to 1.
-            if None do not apply lower theshold mask
+            this value (after background subtraction if applicable), defaults
+            to 1. if None do not apply lower theshold mask
         upper_thresh: float, optional
-            Threshold for upper threshold mask, all pixels with value greater than
-            this value (after background subtraction if applicable), defaults to
-            None if None do not apply upper theshold mask
+            Threshold for upper threshold mask, all pixels with value greater
+            than this value (after background subtraction if applicable),
+            defaults to None if None do not apply upper theshold mask
         alpha: float, optional
-            Number of standard deviations away from the ring mean to mask, defaults
-            to 3. if None do not apply automated masking
+            Number of standard deviations away from the ring mean to mask,
+            defaults to 3. if None do not apply automated masking
         auto_type : {'median', 'mean'}, optional
             The type of automasking to use, median is faster, mean is more
             accurate. Defaults to 'median'.
@@ -149,7 +149,8 @@ def make_main(_output_sinks):
             If True flip the input mask up down, this helps when using fit2d
             defaults to True.
         bg_scale : float, optional
-            The scale for the image to image background subtraction, defaults to 1
+            The scale for the image to image background subtraction, defaults
+            to 1
 
         Returns
         -------
