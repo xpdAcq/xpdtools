@@ -454,8 +454,7 @@ accurate. Defaults to median.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>img</strong> (<em>np.ndarray</em>) – The image to be masked</li>
-<li><strong>binner</strong> (<em>pyFAI.geometry.Geometry</em>) – The pyFAI description of the detector orientation or any
-subclass of pyFAI.geometry.Geometry class</li>
+<li><strong>binner</strong> (<em>BinnedStatistic1D instance</em>) – The binned statistics information</li>
 <li><strong>edge</strong> (<em>int, optional</em>) – The number of edge pixels to mask. Defaults to 30. If None, no edge
 mask is applied</li>
 <li><strong>lower_thresh</strong> (<em>float, optional</em>) – Pixels with values less than or equal to this threshold will be masked.
