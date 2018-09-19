@@ -136,9 +136,8 @@ def mask_img(
     ----------
     img: np.ndarray
         The image to be masked
-    binner: pyFAI.geometry.Geometry
-        The pyFAI description of the detector orientation or any
-        subclass of pyFAI.geometry.Geometry class
+    binner : BinnedStatistic1D instance
+        The binned statistics information
     edge: int, optional
         The number of edge pixels to mask. Defaults to 30. If None, no edge
         mask is applied
