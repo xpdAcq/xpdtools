@@ -2,14 +2,19 @@ import os
 import shutil
 
 import numpy as np
-from numpy.testing import (assert_equal,
-                           # assert_raises,
-                           assert_array_equal)
+from numpy.testing import (
+    assert_equal,
+    assert_raises,
+    assert_array_equal,
+    assert_allclose,
+)
 import pytest
 
 from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
 from xpdsim import pyfai_poni, image_file
-from xpdtools.cli.process_tiff import main
+from xpdtools.cli.process_tiff import main, make_main
+
+no_output_main = make_main(False)
 
 expected_outputs = tuple(
     [
@@ -28,7 +33,7 @@ def test_main(fast_tmpdir):
     poni_file = pyfai_poni
     dest_image_file = str(os.path.join(fast_tmpdir, "test.tiff"))
     shutil.copy(image_file, dest_image_file)
-    main(poni_file, dest_image_file)
+    no_output_main(poni_file, dest_image_file)
     files = os.listdir(str(fast_tmpdir))
     for ext in expected_outputs:
         assert "test" + ext in files
@@ -47,7 +52,7 @@ def test_main2(fast_tmpdir):
     poni_file = pyfai_poni
     dest_image_file = str(os.path.join(fast_tmpdir, "test.tiff"))
     shutil.copy(image_file, dest_image_file)
-    main(poni_file, dest_image_file)
+    no_output_main(poni_file, dest_image_file)
     files = os.listdir(str(fast_tmpdir))
     for ext in expected_outputs:
         assert "test" + ext in files
@@ -64,7 +69,7 @@ def test_main_fit2d_mask(fast_tmpdir):
     shutil.copy(image_file, dest_image_file)
     print(dest_image_file)
     # Copy the poni and image files to the temp dir
-    main(
+    no_output_main(
         poni_file,
         dest_image_file,
         edge=None,
@@ -85,7 +90,7 @@ def test_main_no_img(fast_tmpdir):
     dest_image_file = str(os.path.join(fast_tmpdir, "test.tiff"))
     shutil.copy(image_file, dest_image_file)
     os.chdir(str(fast_tmpdir))
-    main(poni_file)
+    no_output_main(poni_file)
     files = os.listdir(str(fast_tmpdir))
     for ext in expected_outputs:
         assert "test" + ext in files
@@ -102,21 +107,25 @@ keys = [
 values = [.99, 50, 100., 100., 4., "mean"]
 
 
-# @pytest.mark.parametrize(("key", "value"), zip(keys, values))
-# def test_main_kwargs(fast_tmpdir, key, value):
-#     poni_file = pyfai_poni
-#     dest_image_file = str(os.path.join(fast_tmpdir, "test.tiff"))
-#     shutil.copy(image_file, dest_image_file)
-#     os.chdir(str(fast_tmpdir))
-#     kwargs = {"alpha": 100, "polarization": -.99}
-#     print(kwargs)
-#     a = main(poni_file, **kwargs)
-#     if value == "mean":
-#         kwargs.update(alpha=5)
-#     kwargs.update({key: value})
-#     print(kwargs)
-#     b = main(poni_file, **kwargs)
-#     assert_raises(AssertionError, assert_array_equal, a[1][0], b[1][0])
+@pytest.mark.parametrize(("key", "value"), zip(keys, values))
+def test_main_kwargs(fast_tmpdir, key, value):
+    poni_file = pyfai_poni
+    dest_image_file = str(os.path.join(fast_tmpdir, "test.tiff"))
+    shutil.copy(image_file, dest_image_file)
+    os.chdir(str(fast_tmpdir))
+    kwargs = {"alpha": 100, "polarization": -.99}
+    print(kwargs)
+    a = make_main(True)(poni_file, **kwargs)
+    if value == "mean":
+        kwargs.update(alpha=5)
+    kwargs.update({key: value})
+    print(kwargs)
+    b = make_main(True)(poni_file, **kwargs)
+    assert_raises(AssertionError, assert_array_equal, a[1][0], b[1][0])
+    # Make sure we have actual data
+    assert_raises(
+        AssertionError, assert_allclose, a[1][0], np.zeros(a[1][0].shape)
+    )
 
 
 def test_main_no_poni(fast_tmpdir):
@@ -125,7 +134,7 @@ def test_main_no_poni(fast_tmpdir):
         dest_image_file = str(os.path.join(fast_tmpdir, name))
         shutil.copy(file, dest_image_file)
     os.chdir(str(fast_tmpdir))
-    main()
+    no_output_main()
     files = os.listdir(str(fast_tmpdir))
     for ext in expected_outputs:
         assert "test" + ext in files
@@ -134,15 +143,15 @@ def test_main_no_poni(fast_tmpdir):
 def test_main_multi_poni(fast_tmpdir):
     poni_file = pyfai_poni
     for file, name in zip(
-        [image_file, poni_file, poni_file],
-        ["test.tiff", "test.poni", "test2.poni"],
+            [image_file, poni_file, poni_file],
+            ["test.tiff", "test.poni", "test2.poni"],
     ):
         dest_image_file = str(os.path.join(fast_tmpdir, name))
         shutil.copy(file, dest_image_file)
     os.chdir(str(fast_tmpdir))
     print(os.listdir("."))
     with pytest.raises(RuntimeError):
-        main()
+        no_output_main()
 
 
 def test_main_background(fast_tmpdir):

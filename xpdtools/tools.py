@@ -16,7 +16,6 @@
 import copy
 
 import numpy as np
-from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from scipy.integrate import simps
 from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
 from skbeam.core.mask import margin
@@ -343,6 +342,8 @@ def load_geo(cal_params):
     AzimuthalIntegrator :
         The calibrate azimuthal integrator (which inherits from the geometry)
     """
+    from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
+
     ai = AzimuthalIntegrator()
     ai.setPyFAI(**cal_params)
     return ai
