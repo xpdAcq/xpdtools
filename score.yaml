@@ -38,6 +38,8 @@ run:
     default: {conda: pims}
   tqdm:
     default: {conda: tqdm}
+  scikit-learn:
+    default: {conda: scikit-learn}
 test:
   pytest:
     default: {conda: pytest}
