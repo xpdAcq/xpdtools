@@ -24,6 +24,9 @@ from xpdtools.jit_tools import mask_ring_median, mask_ring_mean, ring_zscore
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import wraps
 
+from sklearn.cluster import DBSCAN
+from scipy.stats import spearmanr
+
 try:
     from diffpy.pdfgetx import PDFGetter
 except ImportError:
@@ -584,8 +587,9 @@ def ignore_streamz_input(func):
 
 
 
-
-def find_sample_from_2dscan(I_arr, xy_arr, Q_arr=None, params=None):
+def find_sample_from_2dscan(I_arr, xy_arr, Q_arr=None, 
+        eps=0.05, min_samples=20, n_jobs=1,
+        b_ratio_thres=0.5, qrange=(1,5), use_unclassified=True):
     """Find sample positions from xy-scan 
     
     Parameters
@@ -594,22 +598,22 @@ def find_sample_from_2dscan(I_arr, xy_arr, Q_arr=None, params=None):
     I_arr : Intensities for each scan point
     Q_arr : Q-points (optional)
     
-    params : (optional)
-    Parameters for DBSCAN clustering and point selection.
     See DBSCAN documentation:
     http://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html
-    - eps: The maximum distance between two samples for them to 
+    
+    eps: The maximum distance between two samples for them to 
       be considered as in the same neighborhood.
-    - min_samples: The number of samples (or total weight) 
+      
+    min_samples: The number of samples (or total weight) 
       in a neighborhood for a point to be considered as a core point. 
       This includes the point itself.
-    - n_jobs: The number of parallel jobs to run. None means 1 
+      
+    n_jobs: The number of parallel jobs to run. None means 1 
       unless in a joblib.parallel_backend context. 
       -1 means using all processors.  
-      s_ratio: Ratio of sample points to total points. If we have
-    100 dx,dy points and sample is expected to be found in 20 of
-    these points, then the remaining 80 should be background.
-    So, s_ratio is 0.2. Default value of 0.5 works fine.
+    
+    b_ratio_thres: Clusters more than this threshold will be 
+    condidered as background (not belonging to sample).
 
     use_unclassified: Sometimes DBSCAN is unable to classify 
     points around sample boundary. It that case, it gives -1.
@@ -626,27 +630,18 @@ def find_sample_from_2dscan(I_arr, xy_arr, Q_arr=None, params=None):
     
     """
     
-    from sklearn.cluster import DBSCAN
-    from scipy.stats import spearmanr
-    
-    if params is None:
-        print('params is not provided. Using default parameters')
-        params = {'eps':0.05,'min_samples':20,'n_jobs':1,
-                  's_ratio':0.5,'qrange':(1,5),
-                 'use_unclassified':True}        
-    
     if isinstance(Q_arr,np.ndarray):
-        if params['qrange']:
-            # Trim to selected Q range. Because we do not want mess around 
-            # sample holder and detector edge. This also speedups DBSCAN calculation
-            sel = (Q_arr > params['qrange'][0]) & (Q_arr < params['qrange'][1])            
-            I_arr = np.array([i[sel] for i in I_arr])
+        # Trim to selected Q range. Because we do not want mess around 
+        # beam stopper and high q. This also speedups DBSCAN calculation
+        sel = (Q_arr > qrange[0]) & (Q_arr < qrange[1])            
+        I_arr = np.array([i[sel] for i in I_arr])
     else:
-        print('Q array is not provided. Using whole points')
+        print('Q array is not provided. Using all points')
+        
          
     # Use DBSCAN package to cluster I_arr
-    dbs   = DBSCAN(params['eps'], min_samples=params['min_samples'],
-                metric=lambda i, j: 1 - spearmanr(i, j)[0], n_jobs=params['n_jobs'])
+    dbs   = DBSCAN(eps, min_samples=min_samples,
+                metric=lambda i, j: 1 - spearmanr(i, j)[0], n_jobs=n_jobs)
     preds = dbs.fit_predict(np.array(I_arr))
     uniques, counts = np.unique(preds, return_counts=True)
     ratios = counts / sum(counts)
@@ -655,18 +650,18 @@ def find_sample_from_2dscan(I_arr, xy_arr, Q_arr=None, params=None):
     pts = []   
 
     for j,u in enumerate(uniques):
+        
         mask = (preds == u)        
         masked = []
         for i,tf in enumerate(mask):
             if tf:
                 masked.append(xy_arr[i])
-        # these are not classified
+                
         if u == -1:
-            if params['use_unclassified']:
+            if use_unclassified:
                 pts.extend(masked)
         else:
-            # these are possibly background
-            if not (ratios[j] >= params['s_ratio']):
+            if (ratios[j] <= b_ratio_thres):
                 pts.extend(masked)        
     pts = np.array(pts)
        
