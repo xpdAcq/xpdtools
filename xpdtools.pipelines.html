@@ -176,6 +176,36 @@
 <div class="section" id="module-xpdtools.pipelines.raw_pipeline">
 <span id="xpdtools-pipelines-raw-pipeline-module"></span><h2>xpdtools.pipelines.raw_pipeline module<a class="headerlink" href="#module-xpdtools.pipelines.raw_pipeline" title="Permalink to this headline">¶</a></h2>
 <p>Main pipeline for processing images to I(Q) and PDF</p>
+<dl class="function">
+<dt id="xpdtools.pipelines.raw_pipeline.calibration">
+<code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">calibration</code><span class="sig-paren">(</span><em>wavelength</em>, <em>calibrant</em>, <em>detector</em>, <em>is_calibration_img</em>, <em>geo_input</em>, <em>bg_corrected_img</em>, <em>img_shape</em>, <em>calib_setting=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#calibration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.calibration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="xpdtools.pipelines.raw_pipeline.gen_mask">
+<code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">gen_mask</code><span class="sig-paren">(</span><em>pol_corrected_img</em>, <em>cal_binner</em>, <em>img_counter</em>, <em>mask_setting=None</em>, <em>mask_kwargs=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#gen_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.gen_mask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="xpdtools.pipelines.raw_pipeline.image_process">
+<code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">image_process</code><span class="sig-paren">(</span><em>raw_foreground</em>, <em>raw_foreground_dark</em>, <em>raw_background</em>, <em>raw_background_dark</em>, <em>bg_scale=1.0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#image_process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.image_process" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="xpdtools.pipelines.raw_pipeline.integration">
+<code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">integration</code><span class="sig-paren">(</span><em>map_res</em>, <em>mask</em>, <em>wavelength</em>, <em>pol_corrected_img</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#integration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.integration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="xpdtools.pipelines.raw_pipeline.pdf_gen">
+<code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">pdf_gen</code><span class="sig-paren">(</span><em>q</em>, <em>mean</em>, <em>composition</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#pdf_gen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.pdf_gen" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="xpdtools.pipelines.raw_pipeline.scattering_correction">
+<code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">scattering_correction</code><span class="sig-paren">(</span><em>geometry</em>, <em>img_shape</em>, <em>bg_corrected_img</em>, <em>polarization_factor=0.99</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#scattering_correction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.scattering_correction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-xpdtools.pipelines">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-xpdtools.pipelines" title="Permalink to this headline">¶</a></h2>

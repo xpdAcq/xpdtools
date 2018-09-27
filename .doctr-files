@@ -1,6 +1,7 @@
 ./_modules/index.html
 ./_modules/xpdtools/calib.html
 ./_modules/xpdtools/cli/process_tiff.html
+./_modules/xpdtools/pipelines/raw_pipeline.html
 ./_modules/xpdtools/shim.html
 ./_modules/xpdtools/tools.html
 ./_sources/index.rst.txt

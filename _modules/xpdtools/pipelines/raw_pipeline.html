@@ -1,0 +1,470 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>xpdtools.pipelines.raw_pipeline &mdash; xpdtools 0.4.3 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> xpdtools
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../xpdtools.html">xpdtools package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">xpdtools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>xpdtools.pipelines.raw_pipeline</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for xpdtools.pipelines.raw_pipeline</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Main pipeline for processing images to I(Q) and PDF&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">operator</span> <span class="k">as</span> <span class="nn">op</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">skbeam.core.utils</span> <span class="k">import</span> <span class="n">q_to_twotheta</span>
+<span class="kn">from</span> <span class="nn">streamz_ext</span> <span class="k">import</span> <span class="n">Stream</span>
+
+<span class="kn">from</span> <span class="nn">xpdtools.calib</span> <span class="k">import</span> <span class="n">img_calibration</span>
+<span class="kn">from</span> <span class="nn">xpdtools.tools</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">load_geo</span><span class="p">,</span>
+    <span class="n">mask_img</span><span class="p">,</span>
+    <span class="n">map_to_binner</span><span class="p">,</span>
+    <span class="n">fq_getter</span><span class="p">,</span>
+    <span class="n">pdf_getter</span><span class="p">,</span>
+    <span class="n">sq_getter</span><span class="p">,</span>
+    <span class="n">generate_map_bin</span><span class="p">,</span>
+    <span class="n">pluck_check</span><span class="p">,</span>
+    <span class="n">splay_tuple</span><span class="p">,</span>
+    <span class="n">call_stream_element</span><span class="p">,</span>
+    <span class="n">check_kwargs</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">namespace</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">raw_foreground</span><span class="o">=</span><span class="n">Stream</span><span class="p">(</span><span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;raw foreground&quot;</span><span class="p">),</span>
+    <span class="n">raw_foreground_dark</span><span class="o">=</span><span class="n">Stream</span><span class="p">(</span><span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;raw foreground dark&quot;</span><span class="p">),</span>
+    <span class="n">raw_background</span><span class="o">=</span><span class="n">Stream</span><span class="p">(</span><span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;raw background&quot;</span><span class="p">),</span>
+    <span class="n">raw_background_dark</span><span class="o">=</span><span class="n">Stream</span><span class="p">(</span><span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;raw background dark&quot;</span><span class="p">),</span>
+    <span class="n">wavelength</span><span class="o">=</span><span class="n">Stream</span><span class="p">(</span><span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;wavelength&quot;</span><span class="p">),</span>
+    <span class="n">calibrant</span><span class="o">=</span><span class="n">Stream</span><span class="p">(</span><span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;calibrant&quot;</span><span class="p">),</span>
+    <span class="n">detector</span><span class="o">=</span><span class="n">Stream</span><span class="p">(</span><span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
+    <span class="n">is_calibration_img</span><span class="o">=</span><span class="n">Stream</span><span class="p">(</span><span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;Is Calibration&quot;</span><span class="p">),</span>
+    <span class="n">geo_input</span><span class="o">=</span><span class="n">Stream</span><span class="p">(</span><span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;geometry&quot;</span><span class="p">),</span>
+    <span class="n">img_counter</span><span class="o">=</span><span class="n">Stream</span><span class="p">(</span><span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;img counter&quot;</span><span class="p">),</span>
+    <span class="n">composition</span><span class="o">=</span><span class="n">Stream</span><span class="p">(</span><span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;composition&quot;</span><span class="p">),</span>
+    <span class="n">polarization_factor</span><span class="o">=.</span><span class="mi">99</span><span class="p">,</span>
+    <span class="n">mask_setting</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;setting&quot;</span><span class="p">:</span> <span class="s2">&quot;auto&quot;</span><span class="p">},</span>
+    <span class="n">calib_setting</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;setting&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+    <span class="n">bg_scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="image_process"><a class="viewcode-back" href="../../../xpdtools.pipelines.html#xpdtools.pipelines.raw_pipeline.image_process">[docs]</a><span class="k">def</span> <span class="nf">image_process</span><span class="p">(</span>
+    <span class="n">raw_foreground</span><span class="p">,</span>
+    <span class="n">raw_foreground_dark</span><span class="p">,</span>
+    <span class="n">raw_background</span><span class="p">,</span>
+    <span class="n">raw_background_dark</span><span class="p">,</span>
+    <span class="n">bg_scale</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+    <span class="c1"># Get the image shape for the binner</span>
+    <span class="n">dark_corrected_foreground</span> <span class="o">=</span> <span class="n">raw_foreground</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span>
+        <span class="n">raw_foreground_dark</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
+    <span class="n">dark_corrected_background</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">raw_background</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">raw_background_dark</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">sub</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">mul</span><span class="p">,</span> <span class="n">bg_scale</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">bg_corrected_img</span> <span class="o">=</span> <span class="n">dark_corrected_foreground</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span>
+        <span class="n">dark_corrected_background</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">sub</span><span class="p">,</span> <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;background corrected img&quot;</span><span class="p">)</span>
+    <span class="n">img_shape</span> <span class="o">=</span> <span class="n">bg_corrected_img</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">history</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">locals</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="calibration"><a class="viewcode-back" href="../../../xpdtools.pipelines.html#xpdtools.pipelines.raw_pipeline.calibration">[docs]</a><span class="k">def</span> <span class="nf">calibration</span><span class="p">(</span>
+    <span class="n">wavelength</span><span class="p">,</span>
+    <span class="n">calibrant</span><span class="p">,</span>
+    <span class="n">detector</span><span class="p">,</span>
+    <span class="n">is_calibration_img</span><span class="p">,</span>
+    <span class="n">geo_input</span><span class="p">,</span>
+    <span class="n">bg_corrected_img</span><span class="p">,</span>
+    <span class="n">img_shape</span><span class="p">,</span>
+    <span class="n">calib_setting</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+    <span class="c1"># Calibration management</span>
+
+    <span class="k">if</span> <span class="n">calib_setting</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">calib_setting</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;setting&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">gated_cal</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">bg_corrected_img</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">is_calibration_img</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pluck_check</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">pluck</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;Gate calibration&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">gen_geo_cal</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">gated_cal</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">wavelength</span><span class="p">,</span> <span class="n">calibrant</span><span class="p">,</span> <span class="n">detector</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">check_kwargs</span><span class="p">,</span> <span class="s2">&quot;setting&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">calib_setting</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">img_calibration</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">gen_geo</span> <span class="o">=</span> <span class="n">gen_geo_cal</span><span class="o">.</span><span class="n">pluck</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">geometry</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">geo_input</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">is_calibration_img</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pluck_check</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">pluck</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;Gate calibration&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">load_geo</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">gen_geo</span><span class="p">,</span> <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;Combine gen and load cal&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Image corrections</span>
+    <span class="n">geometry_img_shape</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">zip_latest</span><span class="p">(</span><span class="n">img_shape</span><span class="p">)</span>
+
+    <span class="c1"># Only create map and bins (which is expensive) when needed</span>
+    <span class="c1"># (new calibration)</span>
+    <span class="n">map_res</span> <span class="o">=</span> <span class="n">geometry_img_shape</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">generate_map_bin</span><span class="p">)</span>
+    <span class="n">cal_binner</span> <span class="o">=</span> <span class="n">map_res</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">map_to_binner</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">locals</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="scattering_correction"><a class="viewcode-back" href="../../../xpdtools.pipelines.html#xpdtools.pipelines.raw_pipeline.scattering_correction">[docs]</a><span class="k">def</span> <span class="nf">scattering_correction</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">,</span> <span class="n">img_shape</span><span class="p">,</span> <span class="n">bg_corrected_img</span><span class="p">,</span> <span class="n">polarization_factor</span><span class="o">=.</span><span class="mi">99</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+
+    <span class="n">polarization_callable</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">getattr</span><span class="p">,</span> <span class="s2">&quot;polarization&quot;</span><span class="p">)</span>
+
+    <span class="n">polarization_array</span> <span class="o">=</span> <span class="n">polarization_callable</span><span class="o">.</span><span class="n">zip_latest</span><span class="p">(</span><span class="n">img_shape</span><span class="p">)</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span>
+        <span class="n">call_stream_element</span><span class="p">,</span> <span class="n">polarization_factor</span>
+    <span class="p">)</span>
+
+    <span class="n">pol_correction_combine</span> <span class="o">=</span> <span class="n">bg_corrected_img</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span>
+        <span class="n">polarization_array</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="n">bg_corrected_img</span>
+    <span class="p">)</span>
+    <span class="n">pol_corrected_img</span> <span class="o">=</span> <span class="n">pol_correction_combine</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">truediv</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">locals</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="gen_mask"><a class="viewcode-back" href="../../../xpdtools.pipelines.html#xpdtools.pipelines.raw_pipeline.gen_mask">[docs]</a><span class="k">def</span> <span class="nf">gen_mask</span><span class="p">(</span>
+    <span class="n">pol_corrected_img</span><span class="p">,</span>
+    <span class="n">cal_binner</span><span class="p">,</span>
+    <span class="n">img_counter</span><span class="p">,</span>
+    <span class="n">mask_setting</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">mask_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+    <span class="k">if</span> <span class="n">mask_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mask_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">edge</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+            <span class="n">lower_thresh</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">upper_thresh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">auto_type</span><span class="o">=</span><span class="s2">&quot;median&quot;</span><span class="p">,</span>
+            <span class="n">tmsk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">mask_setting</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mask_setting</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;setting&quot;</span><span class="p">:</span> <span class="s2">&quot;auto&quot;</span><span class="p">}</span>
+    <span class="c1"># emit on img so we don&#39;t propagate old image data</span>
+    <span class="c1"># note that the pol_corrected_img has touched the geometry and so always</span>
+    <span class="c1"># comes after the geometry itself, so we never have a condition where</span>
+    <span class="c1"># we fail to emit because pol_corrected_img comes down first</span>
+    <span class="n">img_cal_binner</span> <span class="o">=</span> <span class="n">pol_corrected_img</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span>
+        <span class="n">cal_binner</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="n">pol_corrected_img</span>
+    <span class="p">)</span>
+
+    <span class="n">all_mask_filter</span> <span class="o">=</span> <span class="n">img_cal_binner</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+        <span class="n">check_kwargs</span><span class="p">,</span> <span class="s2">&quot;setting&quot;</span><span class="p">,</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">mask_setting</span>
+    <span class="p">)</span>
+    <span class="n">all_mask</span> <span class="o">=</span> <span class="n">all_mask_filter</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span>
+        <span class="n">mask_img</span><span class="p">,</span> <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;mask&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">mask_kwargs</span>
+    <span class="p">)</span>
+    <span class="n">first_mask_filter</span> <span class="o">=</span> <span class="n">img_cal_binner</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+        <span class="n">check_kwargs</span><span class="p">,</span> <span class="s2">&quot;setting&quot;</span><span class="p">,</span> <span class="s2">&quot;first&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">mask_setting</span>
+    <span class="p">)</span>
+    <span class="n">first_mask</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">first_mask_filter</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">img_counter</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pluck_check</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">pluck</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">starmap</span><span class="p">(</span>
+            <span class="n">mask_img</span><span class="p">,</span>
+            <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;mask&quot;</span><span class="p">,</span>
+            <span class="o">**</span><span class="nb">dict</span><span class="p">(</span>
+                <span class="n">edge</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+                <span class="n">lower_thresh</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">upper_thresh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                <span class="n">auto_type</span><span class="o">=</span><span class="s2">&quot;median&quot;</span><span class="p">,</span>
+                <span class="n">tmsk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">no_mask_filter</span> <span class="o">=</span> <span class="n">img_cal_binner</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+        <span class="n">check_kwargs</span><span class="p">,</span> <span class="s2">&quot;setting&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">mask_setting</span>
+    <span class="p">)</span>
+    <span class="n">no_mask</span> <span class="o">=</span> <span class="n">no_mask_filter</span><span class="o">.</span><span class="n">pluck</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">all_mask</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">first_mask</span><span class="p">,</span> <span class="n">no_mask</span><span class="p">)</span>
+
+    <span class="n">mask_kwargs</span> <span class="o">=</span> <span class="n">all_mask</span><span class="o">.</span><span class="n">kwargs</span>
+    <span class="n">first_mask</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">mask_kwargs</span>
+
+    <span class="n">mask_setting</span> <span class="o">=</span> <span class="n">all_mask_filter</span><span class="o">.</span><span class="n">kwargs</span>
+    <span class="n">first_mask_filter</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">mask_setting</span>
+    <span class="n">no_mask_filter</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">mask_setting</span>
+
+    <span class="k">return</span> <span class="nb">locals</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="integration"><a class="viewcode-back" href="../../../xpdtools.pipelines.html#xpdtools.pipelines.raw_pipeline.integration">[docs]</a><span class="k">def</span> <span class="nf">integration</span><span class="p">(</span><span class="n">map_res</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">pol_corrected_img</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="c1"># Integration</span>
+    <span class="n">binner</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">map_res</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">splay_tuple</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">map_to_binner</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">binner</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">getattr</span><span class="p">,</span> <span class="s2">&quot;bin_centers&quot;</span><span class="p">,</span> <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;Q&quot;</span><span class="p">)</span>
+    <span class="n">tth</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">q</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">wavelength</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">q_to_twotheta</span><span class="p">,</span> <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;tth&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">f_img_binner</span> <span class="o">=</span> <span class="n">binner</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span>
+        <span class="n">pol_corrected_img</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">),</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="n">mean</span> <span class="o">=</span> <span class="n">f_img_binner</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span>
+        <span class="n">call_stream_element</span><span class="p">,</span> <span class="n">statistic</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;Mean IQ&quot;</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">locals</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="pdf_gen"><a class="viewcode-back" href="../../../xpdtools.pipelines.html#xpdtools.pipelines.raw_pipeline.pdf_gen">[docs]</a><span class="k">def</span> <span class="nf">pdf_gen</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="c1"># PDF</span>
+    <span class="n">iq_comp</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span>
+        <span class="n">composition</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span>
+    <span class="n">iq_comp_map</span> <span class="o">=</span> <span class="n">iq_comp</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">splay_tuple</span><span class="p">)</span>
+
+    <span class="c1"># TODO: split these all up into their components ((r, pdf), (q, fq)...)</span>
+    <span class="n">sq</span> <span class="o">=</span> <span class="n">iq_comp_map</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span>
+        <span class="n">sq_getter</span><span class="p">,</span>
+        <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;sq&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">dataformat</span><span class="o">=</span><span class="s2">&quot;QA&quot;</span><span class="p">,</span> <span class="n">qmaxinst</span><span class="o">=</span><span class="mi">28</span><span class="p">,</span> <span class="n">qmax</span><span class="o">=</span><span class="mi">25</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="n">fq</span> <span class="o">=</span> <span class="n">iq_comp_map</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span>
+        <span class="n">fq_getter</span><span class="p">,</span>
+        <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;fq&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">dataformat</span><span class="o">=</span><span class="s2">&quot;QA&quot;</span><span class="p">,</span> <span class="n">qmaxinst</span><span class="o">=</span><span class="mi">28</span><span class="p">,</span> <span class="n">qmax</span><span class="o">=</span><span class="mi">25</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="n">pdf</span> <span class="o">=</span> <span class="n">iq_comp_map</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span>
+        <span class="n">pdf_getter</span><span class="p">,</span>
+        <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;pdf&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">dataformat</span><span class="o">=</span><span class="s2">&quot;QA&quot;</span><span class="p">,</span> <span class="n">qmaxinst</span><span class="o">=</span><span class="mi">28</span><span class="p">,</span> <span class="n">qmax</span><span class="o">=</span><span class="mi">22</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="n">fq_kwargs</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">kwargs</span>
+    <span class="n">sq</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">fq_kwargs</span>
+    <span class="n">pdf_kwargs</span> <span class="o">=</span> <span class="n">pdf</span><span class="o">.</span><span class="n">kwargs</span>
+
+    <span class="k">return</span> <span class="nb">locals</span><span class="p">()</span></div>
+
+
+<span class="n">pipeline_order</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">image_process</span><span class="p">,</span>
+    <span class="n">calibration</span><span class="p">,</span>
+    <span class="n">scattering_correction</span><span class="p">,</span>
+    <span class="n">gen_mask</span><span class="p">,</span>
+    <span class="n">integration</span><span class="p">,</span>
+    <span class="n">pdf_gen</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Author.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.4.3',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
