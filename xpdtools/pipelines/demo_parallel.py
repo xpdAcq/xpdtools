@@ -128,10 +128,9 @@ def gen_mask(
         cal_binner, emit_on=pol_corrected_img
     )
 
-    # mask = img_cal_binner.starmap(
-    #     mask_img, stream_name="mask", **mask_kwargs
-    # )
-    mask = img_cal_binner.pluck(0).map(np.shape).map(np.ones, dtype=bool)
+    mask = img_cal_binner.starmap(
+        mask_img, stream_name="mask", **mask_kwargs
+    )
     mask_kwargs = mask.kwargs
     return locals()
 
