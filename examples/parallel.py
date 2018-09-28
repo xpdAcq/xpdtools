@@ -32,9 +32,7 @@ def raw_pipeline_parallel():
     gg_namespace.update(s_ns)
     namespace = link(*pipeline_order[:-1], **gg_namespace)
 
-    is_calibration_img = namespace["_is_calibration_img"]
     geo_input = namespace["_geo_input"]
-    img_counter = namespace["_img_counter"]
     composition = namespace["_composition"]
 
     raw_background_dark = namespace["_raw_background_dark"]
@@ -52,11 +50,9 @@ def raw_pipeline_parallel():
     LL = g.map(lambda x: time.time()).sink_to_list()
     L = g.sink_to_list()
 
-    is_calibration_img.emit(False)
     a = geo.getPyFAI()
     geo_input.emit(a)
     composition.emit("Au1.0")
-    img_counter.emit(1)
     for s in [raw_background_dark, raw_background, raw_foreground_dark]:
         s.emit(np.zeros(img.shape))
     ii = 10

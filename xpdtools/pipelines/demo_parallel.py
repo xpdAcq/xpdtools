@@ -26,15 +26,9 @@ namespace = dict(
     raw_background=Stream(stream_name="raw background"),
     raw_background_dark=Stream(stream_name="raw background dark"),
     wavelength=Stream(stream_name="wavelength"),
-    calibrant=Stream(stream_name="calibrant"),
-    detector=Stream(stream_name="detector"),
-    is_calibration_img=Stream(stream_name="Is Calibration"),
     geo_input=Stream(stream_name="geometry"),
-    img_counter=Stream(stream_name="img counter"),
     composition=Stream(stream_name="composition"),
     polarization_factor=.99,
-    mask_setting={"setting": "auto"},
-    calib_setting={"setting": True},
     bg_scale=1,
 )
 
@@ -42,8 +36,8 @@ namespace = dict(
 def image_process(
     raw_foreground,
     raw_foreground_dark,
-    raw_background,
-    raw_background_dark,
+    # raw_background,
+    # raw_background_dark,
     bg_scale=1.,
     **kwargs
 ):
@@ -51,25 +45,21 @@ def image_process(
     dark_corrected_foreground = raw_foreground.combine_latest(
         raw_foreground_dark, emit_on=0
     ).starmap(op.sub)
-    dark_corrected_background = (
-        raw_background.combine_latest(raw_background_dark, emit_on=0)
-        .starmap(op.sub)
-        .map(op.mul, bg_scale)
-    )
-    bg_corrected_img = dark_corrected_foreground.combine_latest(
-        dark_corrected_background, emit_on=0
-    ).starmap(op.sub, stream_name="background corrected img")
-    img_shape = bg_corrected_img.map(np.shape).unique(history=1)
+    bg_corrected_img = dark_corrected_foreground
+    # dark_corrected_background = (
+    #     raw_background.combine_latest(raw_background_dark, emit_on=0)
+    #     .starmap(op.sub)
+    #     .map(op.mul, bg_scale)
+    # )
+    # bg_corrected_img = dark_corrected_foreground.combine_latest(
+    #     dark_corrected_background, emit_on=0
+    # ).starmap(op.sub, stream_name="background corrected img")
+    img_shape = bg_corrected_img.map(np.shape)
     return locals()
 
 
 def calibration(
-    wavelength,
-    calibrant,
-    detector,
-    is_calibration_img,
     geo_input,
-    bg_corrected_img,
     img_shape,
     calib_setting=None,
     **kwargs
@@ -107,7 +97,6 @@ def scattering_correction(
 def gen_mask(
     pol_corrected_img,
     cal_binner,
-    img_counter,
     mask_kwargs=None,
     **kwargs
 ):
@@ -135,7 +124,9 @@ def gen_mask(
     return locals()
 
 
-def integration(map_res, mask, wavelength, pol_corrected_img, **kwargs):
+def integration(map_res, mask,
+                # wavelength,
+                pol_corrected_img, **kwargs):
     # Integration
     binner = (
         map_res.combine_latest(mask, emit_on=1)
@@ -143,11 +134,11 @@ def integration(map_res, mask, wavelength, pol_corrected_img, **kwargs):
         .starmap(map_to_binner)
     )
     q = binner.map(getattr, "bin_centers", stream_name="Q")
-    tth = (
-        q.combine_latest(wavelength, emit_on=0)
-        .starmap(q_to_twotheta, stream_name="tth")
-        .map(np.rad2deg)
-    )
+    # tth = (
+    #     q.combine_latest(wavelength, emit_on=0)
+    #     .starmap(q_to_twotheta, stream_name="tth")
+    #     .map(np.rad2deg)
+    # )
 
     p = pol_corrected_img.map(np.ravel)
     f_img_binner = binner.combine_latest(
