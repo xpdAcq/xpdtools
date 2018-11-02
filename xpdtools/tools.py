@@ -21,7 +21,7 @@ from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
 from skbeam.core.mask import margin
 from xpdtools.jit_tools import mask_ring_median, mask_ring_mean, ring_zscore
 
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, as_completed, Future
 from functools import wraps
 
 try:
@@ -95,7 +95,7 @@ def binned_outlier(
         i += k
     p_err = np.seterr(all="ignore")
     # only run tqdm on mean since it is slow
-    if mask_method:
+    if mask_method == 'mean':
         import tqdm
 
         progress = tqdm.tqdm(total=len(t))
