@@ -12,8 +12,8 @@ from xpdtools.pipelines.demo_parallel import (
     pipeline_order,
     namespace as g_namespace,
 )
-from streamz_ext.link import link
-from streamz_ext import destroy_pipeline, Stream
+from rapidz.link import link
+from rapidz import destroy_pipeline, Stream
 
 img = tifffile.imread(image_file)
 geo = pyFAI.load(pyfai_poni)

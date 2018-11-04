@@ -5,8 +5,8 @@ import pyFAI
 import pytest
 import tifffile
 from distributed import Client
-from streamz_ext import destroy_pipeline, Stream
-from streamz_ext.link import link
+from rapidz import destroy_pipeline, Stream
+from rapidz.link import link
 from tornado import gen
 from xpdsim import pyfai_poni, image_file
 from xpdtools.pipelines.demo_parallel import (
