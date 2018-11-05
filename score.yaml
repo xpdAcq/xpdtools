@@ -38,6 +38,8 @@ run:
     default: {conda: pims}
   tqdm:
     default: {conda: tqdm}
+  distributed:
+    default: {conda: distributed}
 test:
   pytest:
     default: {conda: pytest}
