@@ -51,6 +51,8 @@ test:
     default: {conda: pytest-env}
   nose:
     default: {conda: nose}
+  pytest-tornado:
+    default: {conda: pytest-tornado}
 docs:
   doctr:
     default: {conda: doctr}
