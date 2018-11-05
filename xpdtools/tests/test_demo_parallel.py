@@ -21,13 +21,13 @@ geo = pyFAI.load(pyfai_poni)
 
 gen_test = pytest.mark.gen_test
 
+@gen_test(timeout=10)
 @pytest.mark.parametrize("n", [
     'bg_corrected_img',
     'mask', 'binner', 'mean',
 ])
-@gen_test(timeout=10)
-def test_raw_pipeline_parallel(n, caplog):
-    caplog.set_level(logging.CRITICAL)
+def test_raw_pipeline_parallel(n):
+    # caplog.set_level(logging.CRITICAL)
     # link the pipeline up
     gg_namespace = dict(g_namespace)
     s_ns = {
