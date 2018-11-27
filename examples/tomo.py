@@ -57,6 +57,7 @@ zz.sink(li.update)
 plt.pause(.1)
 
 center.emit(rot_center)
+input()
 for pr, th in zip(proj, theta):
     proj_node.emit(pr)
     theta_node.emit(th)
