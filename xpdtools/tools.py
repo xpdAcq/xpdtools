@@ -585,13 +585,13 @@ def ignore_streamz_input(func):
     return inner
 
 
-def max_value(g, r):
+def max_value(g):
     """Returns largest value
 
     Parameters
     ----------
-    g : ndarray g(r) of the pdf
-    r : ndarray of corresponding r values
+    g : ndarray
+        g(r) of the pdf
 
     Returns
     -------
@@ -602,13 +602,16 @@ def max_value(g, r):
     return np.amax(g)
 
 
-def tallest_peak(g,r):
+def tallest_peak(g, r):
     """Returns r,g(r) of the tallest peak
 
        Parameters
        ----------
-       g : ndarray g(r) of the pdf
-       r : ndarray of corresponding r values
+       g : ndarray
+            g(r) of the pdf
+
+       r : ndarray
+            corresponding r values
 
        Returns
        -------
@@ -617,7 +620,7 @@ def tallest_peak(g,r):
         float :
             g(r) value of the tallest peak
 
-       """
+    """
     peaks = sig.find_peaks(g)
     height = []
     r_val = []
@@ -627,41 +630,43 @@ def tallest_peak(g,r):
     return r_val[np.argmax(height)], np.amax(height)
 
 
-def total_counts(g,r):
+def total_counts(g):
     """Returns total number of data points in graph
 
-           Parameters
-           ----------
-           g : ndarray g(r) of the pdf
-           r : ndarray of corresponding r values
+       Parameters
+       ----------
+       g : ndarray
+            g(r) of the pdf
 
-           Returns
-           -------
-           float :
-               total number of data points
+       Returns
+       -------
+       int :
+           total number of data points
 
-
-           """
+    """
     return len(g)
 
 
-def average_pearson(group, g,r):
+def average_pearson(group, g, r):
     """Computes the average pearson of this PDF with the rest of the group
 
-               Parameters
-               ----------
-               g : ndarray g(r) of the pdf
-               r : ndarray of corresponding r values
-               group : ndarray of PDFs (PDFs as tuples (g,r))
-               Returns
-               -------
-               float :
-                   Average pearson's coefficient
+      Parameters
+       ----------
+       g : ndarray
+            g(r) of the pdf
 
+       r : ndarray
+            corresponding r values
+       group : ndarray
+            Group of PDFs (PDFs as tuples (g,r))
+       Returns
+       -------
+       float :
+           Average pearson's coefficient
 
-               """
+    """
     val = 0
     for i in group:
-        r,p = stats.pearsonr((g, r), i)
+        r, p = stats.pearsonr((g, r), i)
         val = val + r
     return val/len(group)

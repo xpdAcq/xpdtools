@@ -30,10 +30,3 @@ for s, t in zip([mean, true_pdf], [pmp, ppp]):
 
 pdf_argrelmax_kwargs = pdf_peaks.upstreams[0].kwargs
 mean_argrelmax_kwargs = mean_peaks.upstreams[0].kwargs
-
-
-
-
-
-
-
