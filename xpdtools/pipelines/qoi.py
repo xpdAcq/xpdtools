@@ -32,41 +32,7 @@ pdf_argrelmax_kwargs = pdf_peaks.upstreams[0].kwargs
 mean_argrelmax_kwargs = mean_peaks.upstreams[0].kwargs
 
 
-def max_value(pdf):
-    return np.amax(pdf.pluck(1))
 
-
-def total_counts(pdf):
-    return len(pdf.pluck(0))
-
-
-def tallest_peak(pdf):
-    peaks = sig.find_peaks(pdf.pluck(1))
-    height = []
-    r_val = []
-    for i in peaks[0]:
-        height.append(pdf.pluck(1)[i])
-        r_val.append(pdf.pluck(0)[i])
-    return np.amax(r_val), np.amax(height)
-
-#doesn't quite work yet
-def oscillation_behavior(pdf):
-    def func(x, a, b, c):
-        return a * np.exp(-b * x) + c
-    for i in range(len(pdf.pluck(0))):
-        if pdf.pluck(1)[i] >= 20:
-            idx = i
-            break
-    peaks = sig.find_peaks(pdf.pluck(1)[idx:])
-    height = []
-    r_val = []
-    for i in peaks[0]:
-        height.append(pdf.pluck(1)[i])
-        r_val.append(pdf.pluck(0)[i])
-
-highest_value_stream = pdf.map(max_value)
-total_counts_stream = pdf.map(total_counts)
-tallest_peak_height, tallest_peak_position = pdf.map(tallest_peak)
 
 
 
