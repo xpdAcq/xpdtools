@@ -61,16 +61,34 @@ def tomo_prep(x, th, th_dim, x_dim, th_extents, x_extents, **kwargs):
         .starmap(np.linspace)
         .map(np.deg2rad)
     )
-    x_pos = x.combine_latest(x_ext, emit_on=x).starmap(min_pos)
-    th_pos = th.combine_latest(th_ext, emit_on=th).starmap(min_pos)
+    x_pos = x.combine_latest(x_ext, emit_on=0).starmap(min_pos)
+    th_pos = (
+        th.map(np.deg2rad).combine_latest(th_ext, emit_on=0).starmap(min_pos)
+    )
     return locals()
 
 
 # TODO: this might not be ok long term, since many things will want to access
 #  this array and that might not be stable, maybe need to make new copies
 #  maybe better as an accumulator which mints new arrays?
-def fill_sinogram(q, xp, thp, esa):
-    esa[xp, 0, thp] = q
+def fill_sinogram(esa, q_thp_xp):
+    """
+
+    Parameters
+    ----------
+    esa : np.array
+        The empty sinogram array
+    q_thp_xp: tuple
+        The theta position, x position, and QOI in a tuple
+
+    Returns
+    -------
+
+    """
+    q, thp, xp = q_thp_xp
+    # Copy the array so we have independent access to it
+    # esa = esa.copy()
+    esa[thp, 0, xp] = q
     return esa
 
 
@@ -78,23 +96,18 @@ def tomo_pipeline_piecewise(
     qoi,
     x_pos,
     th_pos,
-    th_dim,
-    x_dim,
+    th_dimension,
+    x_dimension,
     center,
     th_ext,
     algorithm="gridrec",
     **kwargs
 ):
     """Perform a tomographic reconstruction on a QOI"""
-    empty_sineogram_array = th_dim.zip(x_dim).starmap(
-        lambda a, b: np.ones((a, 1, b))
-    )
-    sineogram = (
-        qoi.zip(th_pos, x_pos)
-        .combine_latest(empty_sineogram_array, emit_on=0)
-        .map(flatten)
-        .starmap(fill_sinogram)
-    )
+    # This is created at the start document
+    empty_sineogram_array = np.ones((th_dimension, 1, x_dimension))
+    a = qoi.zip(th_pos, x_pos)
+    sineogram = a.accumulate(fill_sinogram, start=empty_sineogram_array)
 
     rec = (
         sineogram.map(tomopy.minus_log)
