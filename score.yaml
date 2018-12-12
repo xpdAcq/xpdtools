@@ -8,7 +8,7 @@ install: pip install .
 build:
   pip:
     default:
-      conda: setuptools==40.6.2
+      conda: setuptools==40.4
   python:
     default:
       conda: python
