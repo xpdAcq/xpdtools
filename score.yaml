@@ -4,11 +4,11 @@ section_order:
   - run
   - test
   - docs
-install: python setup.py install
+install: pip install .
 build:
   pip:
     default:
-      conda: setuptools
+      conda: setuptools==40.6.2
   python:
     default:
       conda: python
