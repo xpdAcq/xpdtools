@@ -7,12 +7,12 @@ import numpy as np
 import tifffile
 from skbeam.io.fit2d import fit2d_save, read_fit2d_msk
 from skbeam.io.save_powder_output import save_output
-from streamz_ext import Stream, destroy_pipeline
+from rapidz import Stream, destroy_pipeline
 from xpdtools.pipelines.raw_pipeline import (
     pipeline_order,
     namespace as general_namespace,
 )
-from streamz_ext.link import link
+from rapidz.link import link
 from xpdtools.pipelines.extra import median_gen, std_gen, z_score_gen
 
 img_extensions = {".tiff", ".edf", ".tif"}

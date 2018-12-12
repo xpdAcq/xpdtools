@@ -2,7 +2,7 @@
 import operator as op
 
 import numpy as np
-from streamz_ext import Stream
+from rapidz import Stream
 
 from xpdtools.calib import img_calibration
 from xpdtools.tools import (

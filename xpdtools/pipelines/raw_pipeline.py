@@ -3,7 +3,7 @@ import operator as op
 
 import numpy as np
 from skbeam.core.utils import q_to_twotheta
-from streamz_ext import Stream
+from rapidz import Stream
 
 from xpdtools.calib import img_calibration
 from xpdtools.tools import (
