@@ -42,7 +42,7 @@ run:
     default: {conda: distributed}
 test:
   pytest:
-    default: {conda: pytest}
+    default: {conda: pytest==3.10.1}
   flake8:
     default: {conda: flake8}
   codecov:
