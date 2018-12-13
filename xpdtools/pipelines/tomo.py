@@ -22,6 +22,30 @@ def min_pos(x, y):
     return np.argmin((x - y) ** 2)
 
 
+# TODO: this might not be ok long term, since many things will want to access
+#  this array and that might not be stable, maybe need to make new copies
+#  maybe better as an accumulator which mints new arrays?
+def fill_sinogram(esa, q_thp_xp):
+    """
+
+    Parameters
+    ----------
+    esa : np.array
+        The empty sinogram array
+    q_thp_xp: tuple
+        The theta position, x position, and QOI in a tuple
+
+    Returns
+    -------
+
+    """
+    q, thp, xp = q_thp_xp
+    # Copy the array so we have independent access to it
+    # esa = esa.copy()
+    esa[thp, 0, xp] = q
+    return esa
+
+
 def tomo_pipeline_theta(qoi, theta, center, algorithm="gridrec"):
     tomo_node = (
         qoi.map(reshape, stream_name="reshape")
@@ -52,30 +76,6 @@ def tomo_prep(x, th, th_dim, x_dim, th_extents, x_extents, **kwargs):
         th.map(np.deg2rad).combine_latest(th_ext, emit_on=0).starmap(min_pos)
     )
     return locals()
-
-
-# TODO: this might not be ok long term, since many things will want to access
-#  this array and that might not be stable, maybe need to make new copies
-#  maybe better as an accumulator which mints new arrays?
-def fill_sinogram(esa, q_thp_xp):
-    """
-
-    Parameters
-    ----------
-    esa : np.array
-        The empty sinogram array
-    q_thp_xp: tuple
-        The theta position, x position, and QOI in a tuple
-
-    Returns
-    -------
-
-    """
-    q, thp, xp = q_thp_xp
-    # Copy the array so we have independent access to it
-    # esa = esa.copy()
-    esa[thp, 0, xp] = q
-    return esa
 
 
 def tomo_pipeline_piecewise(
