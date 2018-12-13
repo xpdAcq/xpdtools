@@ -14,15 +14,14 @@
 #
 ##############################################################################
 import copy
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from functools import wraps
 
 import numpy as np
 from scipy.integrate import simps
 from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
 from skbeam.core.mask import margin
 from xpdtools.jit_tools import mask_ring_median, mask_ring_mean, ring_zscore
-
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from functools import wraps
 
 try:
     from diffpy.pdfgetx import PDFGetter
@@ -95,7 +94,7 @@ def binned_outlier(
         i += k
     p_err = np.seterr(all="ignore")
     # only run tqdm on mean since it is slow
-    if mask_method:
+    if mask_method == "mean":
         import tqdm
 
         progress = tqdm.tqdm(total=len(t))

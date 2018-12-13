@@ -8,9 +8,9 @@ from xpdtools.pipelines.raw_pipeline import (
     pipeline_order,
     namespace as g_namespace,
 )
-from streamz_ext.link import link
+from rapidz.link import link
 from xpdtools.pipelines.extra import z_score_gen
-from streamz_ext import destroy_pipeline
+from rapidz import destroy_pipeline
 
 img = tifffile.imread(image_file)
 geo = pyFAI.load(pyfai_poni)

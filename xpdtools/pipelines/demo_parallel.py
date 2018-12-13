@@ -2,10 +2,7 @@
 import operator as op
 
 import numpy as np
-from skbeam.core.utils import q_to_twotheta
 from rapidz import Stream
-
-from xpdtools.calib import img_calibration
 from xpdtools.tools import (
     load_geo,
     mask_img,
@@ -14,10 +11,8 @@ from xpdtools.tools import (
     pdf_getter,
     sq_getter,
     generate_map_bin,
-    pluck_check,
     splay_tuple,
     call_stream_element,
-    check_kwargs,
 )
 
 namespace = dict(
@@ -26,15 +21,9 @@ namespace = dict(
     raw_background=Stream(stream_name="raw background"),
     raw_background_dark=Stream(stream_name="raw background dark"),
     wavelength=Stream(stream_name="wavelength"),
-    calibrant=Stream(stream_name="calibrant"),
-    detector=Stream(stream_name="detector"),
-    is_calibration_img=Stream(stream_name="Is Calibration"),
     geo_input=Stream(stream_name="geometry"),
-    img_counter=Stream(stream_name="img counter"),
     composition=Stream(stream_name="composition"),
     polarization_factor=.99,
-    mask_setting={"setting": "auto"},
-    calib_setting={"setting": True},
     bg_scale=1,
 )
 
@@ -42,8 +31,8 @@ namespace = dict(
 def image_process(
     raw_foreground,
     raw_foreground_dark,
-    raw_background,
-    raw_background_dark,
+    # raw_background,
+    # raw_background_dark,
     bg_scale=1.,
     **kwargs
 ):
@@ -51,54 +40,22 @@ def image_process(
     dark_corrected_foreground = raw_foreground.combine_latest(
         raw_foreground_dark, emit_on=0
     ).starmap(op.sub)
-    dark_corrected_background = (
-        raw_background.combine_latest(raw_background_dark, emit_on=0)
-        .starmap(op.sub)
-        .map(op.mul, bg_scale)
-    )
-    bg_corrected_img = dark_corrected_foreground.combine_latest(
-        dark_corrected_background, emit_on=0
-    ).starmap(op.sub, stream_name="background corrected img")
-    img_shape = bg_corrected_img.map(np.shape).unique(history=1)
+    bg_corrected_img = dark_corrected_foreground
+    # dark_corrected_background = (
+    #     raw_background.combine_latest(raw_background_dark, emit_on=0)
+    #     .starmap(op.sub)
+    #     .map(op.mul, bg_scale)
+    # )
+    # bg_corrected_img = dark_corrected_foreground.combine_latest(
+    #     dark_corrected_background, emit_on=0
+    # ).starmap(op.sub, stream_name="background corrected img")
+    img_shape = bg_corrected_img.map(np.shape)
     return locals()
 
 
-def calibration(
-    wavelength,
-    calibrant,
-    detector,
-    is_calibration_img,
-    geo_input,
-    bg_corrected_img,
-    img_shape,
-    calib_setting=None,
-    **kwargs
-):
+def calibration(geo_input, img_shape, calib_setting=None, **kwargs):
     # Calibration management
-
-    if calib_setting is None:
-        calib_setting = {"setting": True}
-    gated_cal = (
-        bg_corrected_img.combine_latest(is_calibration_img, emit_on=0)
-        .filter(pluck_check, 1)
-        .pluck(0, stream_name="Gate calibration")
-    )
-
-    gen_geo_cal = (
-        gated_cal.combine_latest(wavelength, calibrant, detector, emit_on=0)
-        .filter(check_kwargs, "setting", True, **calib_setting)
-        .starmap(img_calibration)
-    )
-
-    gen_geo = gen_geo_cal.pluck(1)
-
-    geometry = (
-        geo_input.combine_latest(is_calibration_img, emit_on=0)
-        .filter(pluck_check, 1, False)
-        .pluck(0, stream_name="Gate calibration")
-        .map(load_geo)
-        .union(gen_geo, stream_name="Combine gen and load cal")
-    )
+    geometry = geo_input.map(load_geo)
 
     # Image corrections
     geometry_img_shape = geometry.zip_latest(img_shape)
@@ -127,14 +84,7 @@ def scattering_correction(
     return locals()
 
 
-def gen_mask(
-    pol_corrected_img,
-    cal_binner,
-    img_counter,
-    mask_setting=None,
-    mask_kwargs=None,
-    **kwargs
-):
+def gen_mask(pol_corrected_img, cal_binner, mask_kwargs=None, **kwargs):
     if mask_kwargs is None:
         mask_kwargs = dict(
             edge=30,
@@ -144,8 +94,6 @@ def gen_mask(
             auto_type="median",
             tmsk=None,
         )
-    if mask_setting is None:
-        mask_setting = {"setting": "auto"}
     # emit on img so we don't propagate old image data
     # note that the pol_corrected_img has touched the geometry and so always
     # comes after the geometry itself, so we never have a condition where
@@ -154,51 +102,18 @@ def gen_mask(
         cal_binner, emit_on=pol_corrected_img
     )
 
-    all_mask_filter = img_cal_binner.filter(
-        check_kwargs, "setting", "auto", **mask_setting
-    )
-    all_mask = all_mask_filter.starmap(
-        mask_img, stream_name="mask", **mask_kwargs
-    )
-    first_mask_filter = img_cal_binner.filter(
-        check_kwargs, "setting", "first", **mask_setting
-    )
-    first_mask = (
-        first_mask_filter.zip(img_counter)
-        .filter(pluck_check, position=1, eq=1)
-        .pluck(0)
-        .starmap(
-            mask_img,
-            stream_name="mask",
-            **dict(
-                edge=30,
-                lower_thresh=0.0,
-                upper_thresh=None,
-                alpha=3,
-                auto_type="median",
-                tmsk=None,
-            )
-        )
-    )
-
-    no_mask_filter = img_cal_binner.filter(
-        check_kwargs, "setting", "none", **mask_setting
-    )
-    no_mask = no_mask_filter.pluck(0).map(np.shape).map(np.ones, dtype=bool)
-
-    mask = all_mask.union(first_mask, no_mask)
-
-    mask_kwargs = all_mask.kwargs
-    first_mask.kwargs = mask_kwargs
-
-    mask_setting = all_mask_filter.kwargs
-    first_mask_filter.kwargs = mask_setting
-    no_mask_filter.kwargs = mask_setting
-
+    mask = img_cal_binner.starmap(mask_img, stream_name="mask", **mask_kwargs)
+    mask_kwargs = mask.kwargs
     return locals()
 
 
-def integration(map_res, mask, wavelength, pol_corrected_img, **kwargs):
+def integration(
+    map_res,
+    mask,
+    # wavelength,
+    pol_corrected_img,
+    **kwargs
+):
     # Integration
     binner = (
         map_res.combine_latest(mask, emit_on=1)
@@ -206,15 +121,14 @@ def integration(map_res, mask, wavelength, pol_corrected_img, **kwargs):
         .starmap(map_to_binner)
     )
     q = binner.map(getattr, "bin_centers", stream_name="Q")
-    tth = (
-        q.combine_latest(wavelength, emit_on=0)
-        .starmap(q_to_twotheta, stream_name="tth")
-        .map(np.rad2deg)
-    )
+    # tth = (
+    #     q.combine_latest(wavelength, emit_on=0)
+    #     .starmap(q_to_twotheta, stream_name="tth")
+    #     .map(np.rad2deg)
+    # )
 
-    f_img_binner = binner.combine_latest(
-        pol_corrected_img.map(np.ravel), emit_on=1
-    )
+    p = pol_corrected_img.map(np.ravel)
+    f_img_binner = binner.combine_latest(p, emit_on=1)
 
     mean = f_img_binner.starmap(
         call_stream_element, statistic="mean", stream_name="Mean IQ"

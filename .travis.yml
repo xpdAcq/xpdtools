@@ -32,6 +32,7 @@ install:
   - conda create --yes -n testenv python=$TRAVIS_PYTHON_VERSION orch
   - source activate testenv
   - orch score.yaml
+  - python -m pip install . --no-deps -vv
 #  - conda create --yes -n testenv python=3.6 setuptools
 #  - source activate testenv
 #  - conda install --file requirements/run.txt
@@ -40,10 +41,10 @@ install:
 #  - python setup.py install
 script:
   - set -e
+  - image_to_iq -- --help
   - coverage run run_tests.py
   - coverage report -m
   - codecov
-  - image_to_iq -- --help
   - flake8 xpdtools
   - cd docs
   - make html

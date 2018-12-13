@@ -1,10 +1,10 @@
 section_order:
   - build
-  - install
+#  - install
   - run
   - test
   - docs
-install: pip install .
+install: python -m pip install . --no-deps -vv
 build:
   pip:
     default:
@@ -21,13 +21,13 @@ run:
     default: {conda: scikit-beam}
   scipy:
     default: {conda: scipy}
-  streamz_ext:
-    default: {conda: streamz_ext}
-    bleeding: {orch: 'https://github.com/xpdAcq/streamz_ext.git'}
+  rapidz:
+    default: {conda: rapidz}
+    bleeding: {pip: 'git+https://github.com/xpdAcq/rapidz.git'}
   xpdsim:
     default: {conda: xpdsim}
   numba:
-    default: {conda: numba}
+    default: {conda: numba=0.38}
   fabio:
     default: {conda: fabio}
   pyyaml:
@@ -38,9 +38,11 @@ run:
     default: {conda: pims}
   tqdm:
     default: {conda: tqdm}
+  distributed:
+    default: {conda: distributed}
 test:
   pytest:
-    default: {conda: pytest}
+    default: {conda: pytest==3.10.1}
   flake8:
     default: {conda: flake8}
   codecov:
@@ -51,6 +53,8 @@ test:
     default: {conda: pytest-env}
   nose:
     default: {conda: nose}
+  pytest-tornado:
+    default: {conda: pytest-tornado}
 docs:
   doctr:
     default: {conda: doctr}
