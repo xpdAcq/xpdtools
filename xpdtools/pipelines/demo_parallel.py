@@ -2,10 +2,7 @@
 import operator as op
 
 import numpy as np
-from skbeam.core.utils import q_to_twotheta
 from rapidz import Stream
-
-from xpdtools.calib import img_calibration
 from xpdtools.tools import (
     load_geo,
     mask_img,
@@ -14,10 +11,8 @@ from xpdtools.tools import (
     pdf_getter,
     sq_getter,
     generate_map_bin,
-    pluck_check,
     splay_tuple,
     call_stream_element,
-    check_kwargs,
 )
 
 namespace = dict(
@@ -58,14 +53,9 @@ def image_process(
     return locals()
 
 
-def calibration(
-    geo_input,
-    img_shape,
-    calib_setting=None,
-    **kwargs
-):
+def calibration(geo_input, img_shape, calib_setting=None, **kwargs):
     # Calibration management
-    geometry = (geo_input.map(load_geo))
+    geometry = geo_input.map(load_geo)
 
     # Image corrections
     geometry_img_shape = geometry.zip_latest(img_shape)
@@ -94,12 +84,7 @@ def scattering_correction(
     return locals()
 
 
-def gen_mask(
-    pol_corrected_img,
-    cal_binner,
-    mask_kwargs=None,
-    **kwargs
-):
+def gen_mask(pol_corrected_img, cal_binner, mask_kwargs=None, **kwargs):
     if mask_kwargs is None:
         mask_kwargs = dict(
             edge=30,
@@ -117,16 +102,18 @@ def gen_mask(
         cal_binner, emit_on=pol_corrected_img
     )
 
-    mask = img_cal_binner.starmap(
-        mask_img, stream_name="mask", **mask_kwargs
-    )
+    mask = img_cal_binner.starmap(mask_img, stream_name="mask", **mask_kwargs)
     mask_kwargs = mask.kwargs
     return locals()
 
 
-def integration(map_res, mask,
-                # wavelength,
-                pol_corrected_img, **kwargs):
+def integration(
+    map_res,
+    mask,
+    # wavelength,
+    pol_corrected_img,
+    **kwargs
+):
     # Integration
     binner = (
         map_res.combine_latest(mask, emit_on=1)
@@ -141,9 +128,7 @@ def integration(map_res, mask,
     # )
 
     p = pol_corrected_img.map(np.ravel)
-    f_img_binner = binner.combine_latest(
-        p, emit_on=1
-    )
+    f_img_binner = binner.combine_latest(p, emit_on=1)
 
     mean = f_img_binner.starmap(
         call_stream_element, statistic="mean", stream_name="Mean IQ"
