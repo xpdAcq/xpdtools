@@ -1,6 +1,6 @@
 section_order:
   - build
-  - install
+#  - install
   - run
   - test
   - docs
