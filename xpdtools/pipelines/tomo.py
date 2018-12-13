@@ -1,6 +1,5 @@
 import numpy as np
 import tomopy
-import operator as op
 
 
 def append_data(acc, pt):
@@ -31,19 +30,6 @@ def tomo_pipeline_theta(qoi, theta, center, algorithm="gridrec"):
         .accumulate(append_data)
         .combine_latest(center, emit_on=0)
         .map(flatten)
-        .starmap(tomopy.recon, algorithm=algorithm)
-    )
-    return locals()
-
-
-def tomo_pipeline_x(qoi, y, center, algorithm="gridrec"):
-    tomo_node = (
-        qoi.map(lambda x: np.reshape(x, (x[0], 1, len(theta))))
-        .map(tomopy.minus_log)
-        .zip(y)
-        .accumulate(append_data)
-        .combine_latest(center, emit_on=0)
-        .map(lambda x: (*x[0], x[1]))
         .starmap(tomopy.recon, algorithm=algorithm)
     )
     return locals()
