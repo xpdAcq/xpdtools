@@ -42,7 +42,7 @@ def raw_pipeline_parallel():
 
     print(type(namespace["raw_foreground"]))
 
-    a = namespace['mean']
+    a = namespace["mean"]
     futures = a.sink_to_list()
     b = a.buffer(10)
     g = b.gather()
@@ -59,18 +59,19 @@ def raw_pipeline_parallel():
     t0 = time.time()
     for i in range(ii):
         rimg = np.random.random(img.shape)
-        raw_foreground.emit(img+rimg)
+        raw_foreground.emit(img + rimg)
     while len(L) < ii:
         time.sleep(.01)
 
-    time_diff = [LL[i] - LL[i-1] for i in range(1, ii)]
-    print(max(time_diff), min(time_diff), sum(time_diff)/len(time_diff))
+    time_diff = [LL[i] - LL[i - 1] for i in range(1, ii)]
+    print(max(time_diff), min(time_diff), sum(time_diff) / len(time_diff))
     # print([l - min(LL) for l in LL])
     print([l - t0 for l in LL])
-    print(max([l - t0 for l in LL])/ii)
+    print(max([l - t0 for l in LL]) / ii)
     destroy_pipeline(raw_foreground)
     del namespace
     futures.clear()
     L.clear()
+
 
 raw_pipeline_parallel()

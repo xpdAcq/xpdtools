@@ -1,19 +1,17 @@
-import logging
 import time
 
 import numpy as np
 import pyFAI
 import pytest
 import tifffile
+from rapidz import destroy_pipeline, Stream
+from rapidz.link import link
 from tornado import gen
-
 from xpdsim import pyfai_poni, image_file
 from xpdtools.pipelines.demo_parallel import (
     pipeline_order,
     namespace as g_namespace,
 )
-from rapidz.link import link
-from rapidz import destroy_pipeline, Stream
 
 img = tifffile.imread(image_file)
 geo = pyFAI.load(pyfai_poni)
@@ -21,10 +19,8 @@ geo = pyFAI.load(pyfai_poni)
 
 gen_test = pytest.mark.gen_test
 
-@pytest.mark.parametrize("n", [
-    'bg_corrected_img',
-    'mask', 'binner', 'mean',
-])
+
+@pytest.mark.parametrize("n", ["bg_corrected_img", "mask", "binner", "mean"])
 @gen_test(timeout=30)
 def test_raw_pipeline_parallel(n):
     # caplog.set_level(logging.CRITICAL)
@@ -62,7 +58,7 @@ def test_raw_pipeline_parallel(n):
     ii = 2
     for i in range(ii):
         rimg = np.random.random(img.shape)
-        yield raw_foreground.emit(img+rimg)
+        yield raw_foreground.emit(img + rimg)
     while len(L) < ii:
         yield gen.sleep(.01)
 
