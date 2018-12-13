@@ -1,10 +1,10 @@
 section_order:
   - build
-  - install
+#  - install
   - run
   - test
   - docs
-#install: python -m pip install . --no-deps -vv
+install: python -m pip install . --no-deps -vv
 build:
   pip:
     default:
