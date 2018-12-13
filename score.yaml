@@ -27,7 +27,7 @@ run:
   xpdsim:
     default: {conda: xpdsim}
   numba:
-    default: {conda: numba}
+    default: {conda: numba=0.38}
   fabio:
     default: {conda: fabio}
   pyyaml:
