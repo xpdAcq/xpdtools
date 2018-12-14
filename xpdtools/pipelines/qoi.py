@@ -1,6 +1,7 @@
 import scipy.signal as sig
-
+import numpy as np
 from .raw_pipeline import mean, pdf, q
+from bluesky.callbacks import LivePlot
 
 r = pdf.pluck(0)
 true_pdf = pdf.pluck(1)
