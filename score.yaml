@@ -1,17 +1,15 @@
 section_order:
   - build
   - install
-  - install2
   - run
   - test
   - docs
 install: python -m pip install . --no-deps -vvv
-install2: python -m pip show xpdtools
 build:
   pip:
     default: {conda: setuptools}
   python:
-    default: {conda: python}
+    default: {conda: python=3.6}
 run:
   numpy:
     default: {conda: numpy}
