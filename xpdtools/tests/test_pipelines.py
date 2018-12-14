@@ -105,7 +105,7 @@ def test_tomo_piecewise_pipeline():
     ns['x_extents'].emit([x_linspace[0], x_linspace[-1]])
     ns['center'].emit(2.5)
 
-    np.random.seed(42)
+    # np.random.seed(42)
 
     for x in x_linspace:
         for th in th_linspace:
@@ -130,7 +130,7 @@ def test_tomo_pipeline_theta():
 
     ns.update(tomo_pipeline_theta(**ns))
     L = ns['tomo_node'].sink_to_list()
-    np.random.seed(42)
+    # np.random.seed(42)
 
     th_linspace = np.linspace(0, 180, 6)
     ns['center'].emit(3)
