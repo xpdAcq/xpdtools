@@ -74,7 +74,7 @@ def test_binned_outlier(mask_method):
     img = np.ones((2048, 2048))
     bad = np.unique(np.random.randint(0, 2048 * 2048, 1000))
     urbad = np.unravel_index(bad, (2048, 2048))
-    img[urbad] = 10
+    img[urbad] = 100
     mask = binned_outlier(img, b, mask_method=mask_method)
 
     assert_equal(np.where(mask.ravel() == 0)[0], bad)

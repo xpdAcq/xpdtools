@@ -143,8 +143,8 @@ def test_main_no_poni(fast_tmpdir):
 def test_main_multi_poni(fast_tmpdir):
     poni_file = pyfai_poni
     for file, name in zip(
-            [image_file, poni_file, poni_file],
-            ["test.tiff", "test.poni", "test2.poni"],
+        [image_file, poni_file, poni_file],
+        ["test.tiff", "test.poni", "test2.poni"],
     ):
         dest_image_file = str(os.path.join(fast_tmpdir, name))
         shutil.copy(file, dest_image_file)

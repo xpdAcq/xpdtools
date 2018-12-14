@@ -77,6 +77,7 @@ def _calibration(img, calibration, calib_ref_fp=None, **kwargs):
     """
     from pyFAI.calibration import PeakPicker
     from pyFAI.gui.utils import update_fig
+
     print(
         "{:=^20}".format(
             "INFO: you are able to perform calibration, "
@@ -195,6 +196,7 @@ def img_calibration(
     http://pyfai.readthedocs.io/en/latest/
     """
     from pyFAI.calibration import Calibration, Calibrant
+
     wavelength *= 10 ** -10
     if isinstance(calibrant, list):
         calibrant = Calibrant(dSpacing=calibrant, wavelength=wavelength)

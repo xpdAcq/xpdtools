@@ -10,7 +10,12 @@ from xpdtools.pipelines.raw_pipeline import (
 )
 from rapidz.link import link
 from xpdtools.pipelines.extra import z_score_gen
-from rapidz import destroy_pipeline
+from xpdtools.pipelines.tomo import (
+    tomo_prep,
+    tomo_pipeline_piecewise,
+    tomo_pipeline_theta,
+)
+from rapidz import destroy_pipeline, Stream
 
 img = tifffile.imread(image_file)
 geo = pyFAI.load(pyfai_poni)
@@ -75,3 +80,63 @@ def test_extra_pipeline():
     destroy_pipeline(raw_foreground)
     assert len(sl) == 1
     sl.clear()
+
+
+def test_tomo_piecewise_pipeline():
+    ns = dict(
+        qoi=Stream(),
+        x=Stream(),
+        th=Stream(),
+        th_dim=Stream(),
+        x_dim=Stream(),
+        th_extents=Stream(),
+        x_extents=Stream(),
+        center=Stream(),
+    )
+    x_linspace = np.linspace(0, 5, 6)
+    th_linspace = np.linspace(0, 180, 6)
+
+    ns["th_dimension"] = len(th_linspace)
+    ns["x_dimension"] = len(x_linspace)
+
+    ns.update(**link(*[tomo_prep, tomo_pipeline_piecewise], **ns))
+
+    L = ns["rec"].sink_to_list()
+
+    ns["th_dim"].emit(len(th_linspace))
+    ns["x_dim"].emit(len(x_linspace))
+    ns["th_extents"].emit([0, 180])
+    ns["x_extents"].emit([x_linspace[0], x_linspace[-1]])
+    ns["center"].emit(2.5)
+
+    # np.random.seed(42)
+
+    for x in x_linspace:
+        for th in th_linspace:
+            ns["x"].emit(x)
+            ns["th"].emit(th)
+            ns["qoi"].emit(np.random.random())
+
+    assert len(L) == len(x_linspace) * len(th_linspace)
+    assert L[-1].shape == (1, len(x_linspace), len(th_linspace))
+
+    destroy_pipeline(ns["qoi"])
+    del ns
+    L.clear()
+
+
+def test_tomo_pipeline_theta():
+    ns = dict(qoi=Stream(), theta=Stream(), center=Stream())
+
+    ns.update(tomo_pipeline_theta(**ns))
+    L = ns["tomo_node"].sink_to_list()
+    # np.random.seed(42)
+
+    th_linspace = np.linspace(0, 180, 6)
+    ns["center"].emit(3)
+
+    for th in th_linspace:
+        ns["theta"].emit(th)
+        ns["qoi"].emit(np.random.random((6, 6)))
+    assert len(L) == 6
+    assert L[-1].shape == (6, 6, 6)
