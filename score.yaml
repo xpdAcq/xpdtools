@@ -1,17 +1,15 @@
 section_order:
   - build
-#  - install
+  - install
   - run
   - test
   - docs
-install: python -m pip install . --no-deps -vv
+install: python -m pip install . --no-deps -vvv
 build:
   pip:
-    default:
-      conda: setuptools
+    default: {conda: setuptools}
   python:
-    default:
-      conda: python
+    default: {conda: python=3.6}
 run:
   numpy:
     default: {conda: numpy}
