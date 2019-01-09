@@ -216,6 +216,9 @@ def integration(map_res, mask, wavelength, pol_corrected_img, **kwargs):
         pol_corrected_img.map(np.ravel), emit_on=1
     )
 
+    std = f_img_binner.starmap(
+        call_stream_element, statistic="std", stream_name="std IQ"
+    ).map(np.nan_to_num)
     mean = f_img_binner.starmap(
         call_stream_element, statistic="mean", stream_name="Mean IQ"
     ).map(np.nan_to_num)
