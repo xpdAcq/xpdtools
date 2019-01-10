@@ -13,6 +13,10 @@ cache:
     - $HOME/.cache/pip
     - $HOME/.cache/matplotlib
 
+matrix:
+  allow_failures:
+    - env: PRECEDENCE='default'
+
 python:
   - 3.6
 before_install:
