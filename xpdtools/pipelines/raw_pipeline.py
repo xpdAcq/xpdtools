@@ -223,19 +223,6 @@ def integration(map_res, mask, wavelength, pol_corrected_img, **kwargs):
     return locals()
 
 
-def integration_extra(f_img_binner, pol_corrected_img, binner, **kwargs):
-    std = f_img_binner.starmap(
-        call_stream_element, statistic="std", stream_name="std IQ"
-    ).map(np.nan_to_num)
-    zscore = (
-        pol_corrected_img.combine_latest(binner, emit_on=0)
-        .starmap(z_score_image)
-        .map(np.nan_to_num)
-    )
-
-    return locals()
-
-
 def pdf_gen(q, mean, composition, **kwargs):
 
     # PDF
