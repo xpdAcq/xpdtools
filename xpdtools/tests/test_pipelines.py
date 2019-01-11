@@ -93,13 +93,13 @@ def test_qoi_pipeline():
 
     geometry = namespace["geometry"]
 
-    z_score = namespace["z_score"]
+    mean_max = namespace["mean_max"]
     raw_background_dark = namespace["raw_background_dark"]
     raw_background = namespace["raw_background"]
     raw_foreground_dark = namespace["raw_foreground_dark"]
     raw_foreground = namespace["raw_foreground"]
 
-    sl = z_score.sink_to_list()
+    sl = mean_max.sink_to_list()
     geometry.emit(geo)
     for s in [raw_background_dark, raw_background, raw_foreground_dark]:
         s.emit(np.zeros(img.shape))
