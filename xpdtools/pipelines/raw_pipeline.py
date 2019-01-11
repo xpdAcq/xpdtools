@@ -18,7 +18,6 @@ from xpdtools.tools import (
     splay_tuple,
     call_stream_element,
     check_kwargs,
-    z_score_image,
 )
 
 namespace = dict(
