@@ -4,12 +4,13 @@ import pytest
 import tifffile
 
 from xpdsim import pyfai_poni, image_file
+from xpdtools.pipelines.qoi import max_intensity_mean, max_gr_mean
 from xpdtools.pipelines.raw_pipeline import (
     pipeline_order,
     namespace as g_namespace,
 )
 from rapidz.link import link
-from xpdtools.pipelines.extra import z_score_gen
+from xpdtools.pipelines.extra import z_score_gen, median_gen, std_gen
 from xpdtools.pipelines.tomo import (
     tomo_prep,
     tomo_pipeline_piecewise,
@@ -61,7 +62,9 @@ def test_raw_pipeline(mask_s):
 
 def test_extra_pipeline():
     # link the pipeline up
-    namespace = link(*(pipeline_order + [z_score_gen]), **g_namespace)
+    namespace = link(
+        *(pipeline_order + [median_gen, std_gen, z_score_gen]), **g_namespace
+    )
 
     geometry = namespace["geometry"]
 
@@ -72,6 +75,31 @@ def test_extra_pipeline():
     raw_foreground = namespace["raw_foreground"]
 
     sl = z_score.sink_to_list()
+    geometry.emit(geo)
+    for s in [raw_background_dark, raw_background, raw_foreground_dark]:
+        s.emit(np.zeros(img.shape))
+    raw_foreground.emit(img)
+    del namespace
+    destroy_pipeline(raw_foreground)
+    assert len(sl) == 1
+    sl.clear()
+
+
+def test_qoi_pipeline():
+    # link the pipeline up
+    namespace = link(
+        *(pipeline_order + [max_intensity_mean, max_gr_mean]), **g_namespace
+    )
+
+    geometry = namespace["geometry"]
+
+    mean_max = namespace["mean_max"]
+    raw_background_dark = namespace["raw_background_dark"]
+    raw_background = namespace["raw_background"]
+    raw_foreground_dark = namespace["raw_foreground_dark"]
+    raw_foreground = namespace["raw_foreground"]
+
+    sl = mean_max.sink_to_list()
     geometry.emit(geo)
     for s in [raw_background_dark, raw_background, raw_foreground_dark]:
         s.emit(np.zeros(img.shape))

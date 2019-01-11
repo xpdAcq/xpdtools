@@ -9,7 +9,7 @@ build:
   pip:
     default: {conda: setuptools}
   python:
-    default: {conda: python=3.6}
+    default: {conda: python=$TRAVIS_PYTHON_VERSION}
 run:
   numpy:
     default: {conda: numpy}

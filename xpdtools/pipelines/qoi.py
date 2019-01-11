@@ -1,7 +1,27 @@
-import scipy.signal as sig
+import numpy as np
 
-from .raw_pipeline import mean, pdf, q
+from toolz import get
 
+
+def max_intensity_mean(mean, q, **kwargs):
+    q_at_mean_max = (
+        mean.map(np.nanargmax).combine_latest(q, emit_on=0).starmap(get)
+    )
+    mean_max = mean.map(np.nanmax)
+    return locals()
+
+
+def max_gr_mean(pdf, **kwargs):
+    r = pdf.pluck(0)
+    gr = pdf.pluck(1)
+    r_at_gr_max = (
+        gr.map(np.nanargmax).combine_latest(r, emit_on=0).starmap(get)
+    )
+    gr_max = gr.map(np.nanmax)
+    return locals()
+
+
+"""
 r = pdf.pluck(0)
 true_pdf = pdf.pluck(1)
 
@@ -29,3 +49,4 @@ for s, t in zip([mean, true_pdf], [pmp, ppp]):
 
 pdf_argrelmax_kwargs = pdf_peaks.upstreams[0].kwargs
 mean_argrelmax_kwargs = mean_peaks.upstreams[0].kwargs
+"""
