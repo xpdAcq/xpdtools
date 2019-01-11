@@ -95,11 +95,12 @@ def tomo_pipeline_piecewise(
     # This is created at the start document and bypasses the fill_sinogram
     # function
     # TODO: make a function for the np.ones
-    th_dim.zip(x_dim).starmap(lambda th, x: np.ones((th, 1, x))).connect(sineogram)
+    th_dim.zip(x_dim).starmap(lambda th, x: np.ones((th, 1, x))).connect(
+        sineogram
+    )
 
     rec = (
-        sineogram
-        .map(np.nan_to_num)
+        sineogram.map(np.nan_to_num)
         .map(tomopy.minus_log)
         .map(np.nan_to_num)
         .combine_latest(th_ext, center, emit_on=0)

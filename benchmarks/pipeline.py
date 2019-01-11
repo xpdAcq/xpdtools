@@ -8,10 +8,9 @@ from xpdtools.pipelines.raw_pipeline import *
 from profilehooks import profile
 from rapidz.link import link
 
-namespace['mask_setting'].update(setting="first")
+namespace["mask_setting"].update(setting="first")
 
 namespace = link(*pipeline_order, **namespace)
-
 
 
 # dark_corrected_background.sink(print)
@@ -23,22 +22,20 @@ namespace = link(*pipeline_order, **namespace)
 geo = pyFAI.load("test.poni")
 img = imread("test.tiff")
 
-namespace['geometry'].emit(geo)
-namespace['composition'].emit("Au")
-for n in [namespace['raw_background_dark'],
-          namespace['raw_background'],
-          namespace['raw_foreground_dark']]:
+namespace["geometry"].emit(geo)
+namespace["composition"].emit("Au")
+for n in [
+    namespace["raw_background_dark"],
+    namespace["raw_background"],
+    namespace["raw_foreground_dark"],
+]:
     n.emit(np.zeros(img.shape))
 
 
-@profile(
-    skip=1000,
-    sort='tottime',
-    entries=20,
-)
+@profile(skip=1000, sort="tottime", entries=20)
 def f(i):
-    namespace['img_counter'].emit(i)
-    namespace['raw_foreground'].emit(img)
+    namespace["img_counter"].emit(i)
+    namespace["raw_foreground"].emit(img)
 
 
 for i in range(5000):
