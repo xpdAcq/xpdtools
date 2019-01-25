@@ -14,7 +14,7 @@ def median_gen(f_img_binner, **kwargs):
 def std_gen(f_img_binner, mean, **kwargs):
     std = f_img_binner.starmap(
         call_stream_element, statistic="std", stream_name="Mean IQ"
-    ).starmap(op.truediv).map(np.nan_to_num)
+    ).combine_latest(mean, emit_on=0).starmap(op.truediv).map(np.nan_to_num)
     return locals()
 
 
