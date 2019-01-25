@@ -1,3 +1,5 @@
+import operator as op
+
 import numpy as np
 from xpdtools.tools import z_score_image, overlay_mask, call_stream_element
 
@@ -9,10 +11,10 @@ def median_gen(f_img_binner, **kwargs):
     return locals()
 
 
-def std_gen(f_img_binner, **kwargs):
+def std_gen(f_img_binner, mean, **kwargs):
     std = f_img_binner.starmap(
         call_stream_element, statistic="std", stream_name="Mean IQ"
-    ).map(np.nan_to_num)
+    ).map(op.div).map(np.nan_to_num)
     return locals()
 
 
