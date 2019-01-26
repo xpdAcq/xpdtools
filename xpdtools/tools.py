@@ -582,7 +582,7 @@ def ignore_streamz_input(func):
     return inner
 
 
-def ave_curvature(y, x, high_val):
+def avg_curvature(y, x, high_val):
     """Computes the average of the curvature of a given signal past a
     (currently) user provided high Q value, this will be used as the scalar
      representation for fluctuations at high Q values.
