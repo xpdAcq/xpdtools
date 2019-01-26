@@ -1,0 +1,13 @@
+**Added:** None
+
+**Changed:**
+
+* Support imports for both ``pyFAI`` 0.15 and beyond
+
+**Deprecated:** None
+
+**Removed:** None
+
+**Fixed:** None
+
+**Security:** None

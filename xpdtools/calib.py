@@ -75,7 +75,12 @@ def _calibration(img, calibration, calib_ref_fp=None, **kwargs):
         additional keyword argument for calibration. please refer to
         pyFAI documentation for all options.
     """
-    from pyFAI.calibration import PeakPicker
+    try:
+        # 0.16.0 syntax
+        from pyFAI.gui.cli_calibration import PeakPicker
+    except ImportError:
+        # 0.15.0 syntax
+        from pyFAI.calibration import PeakPicker
     from pyFAI.gui.utils import update_fig
 
     print(
@@ -195,7 +200,12 @@ def img_calibration(
     pyFAI documentation:
     http://pyfai.readthedocs.io/en/latest/
     """
-    from pyFAI.calibration import Calibration, Calibrant
+    try:
+        # 0.16.0 syntax
+        from pyFAI.gui.cli_calibration import Calibration, Calibrant
+    except ImportError:
+        # 0.15.0 syntax
+        from pyFAI.calibration import Calibration, Calibrant
 
     wavelength *= 10 ** -10
     if isinstance(calibrant, list):
