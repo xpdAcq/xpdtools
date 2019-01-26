@@ -580,3 +580,30 @@ def ignore_streamz_input(func):
         return func(*args, **kwargs)
 
     return inner
+
+
+def ave_curvature(y, x, high_val):
+    """Computes the average of the curvature of a given signal past a
+    (currently) user provided high Q value, this will be used as the scalar
+     representation for fluctuations at high Q values.
+
+    Parameters
+    ----------
+    y : ndarray
+        Dependent variable of a given signal
+    x  : ndarray
+        Independent variable of a given signal
+    high_val : float
+        User-defined value start point of analysis. This should remain constant
+        over a scan.
+
+    Returns
+    -------
+    float :
+        The average of curvature beyond a given high_val
+
+    """
+    idx = np.abs(x - high_val).argmin()
+    first_der = np.gradient(y[idx:], x[idx:])
+    sec_der = np.gradient(first_der, x[idx:])
+    return np.average(np.abs(sec_der)/(1+first_der**2)**(3/2))
