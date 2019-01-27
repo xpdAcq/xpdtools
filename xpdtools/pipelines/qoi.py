@@ -28,6 +28,7 @@ def fluc_high_q(iq_comp, high_q_val=45, **kwargs):
     return locals()
 
 
+
 """
 r = pdf.pluck(0)
 true_pdf = pdf.pluck(1)
