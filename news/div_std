@@ -1,0 +1,13 @@
+**Added:** None
+
+**Changed:**
+
+* Standard deviation is now divided by mean so it is more meaningful
+
+**Deprecated:** None
+
+**Removed:** None
+
+**Fixed:** None
+
+**Security:** None
