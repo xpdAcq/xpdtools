@@ -4,6 +4,33 @@
 
 .. current developments
 
+v0.5.0
+====================
+
+**Added:**
+
+* Background scale node
+* Background scale kwarg to cli/process_tiff
+* New example pipeline for parallel operation
+* Added standard deviation nodes
+* Max intensity node
+* Position of max intensity node
+* Tomography pipelines for full-field an ctPDF
+
+**Changed:**
+
+* Chunk pipelines so the can be used modularly and instantiated
+* Move from ``streamz`` to ``rapidz``
+* Only use ``tqdm`` on 'mean' method for ``binned_outlier``
+* Standard deviation is now divided by mean so it is more meaningful
+* Support imports for both ``pyFAI`` 0.15 and beyond
+
+**Fixed:**
+
+* Orch now deffers the actual installation to the travis top level process
+
+
+
 v0.4.3
 ====================
 
