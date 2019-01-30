@@ -200,11 +200,11 @@ def gen_mask(
     img_counter : Stream
     mask_setting : dict, optional
         The setting for the frequency of the mask. If set to
-        ``{'setting': 'auto'}`` each image gets a mask generated for it, if set to
-        ``{'setting': 'first'}`` only the first image in the series has a mask
-        generated for it and all subsequent images in the series use that mask,
-        if set to ``{'setting': 'none'}`` then no image is masked. Defaults to
-        ``{'setting': 'auto'}``.
+        ``{'setting': 'auto'}`` each image gets a mask generated for it, if
+        set to ``{'setting': 'first'}`` only the first image in the series has
+        a mask generated for it and all subsequent images in the series use
+        that mask, if set to ``{'setting': 'none'}`` then no image is masked.
+        Defaults to ``{'setting': 'auto'}``.
     mask_kwargs : dict, optional
         The keyword arguments passed to ``xpdtools.tools.mask_img``.
         Defaults to ``dict(edge=30, lower_thresh=0.0, upper_thresh=None,
