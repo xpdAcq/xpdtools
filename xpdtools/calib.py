@@ -43,6 +43,8 @@ def _save_calib_param(calib_c, timestr, calib_yml_fp):
     calib_config_dict.update({"calibrant_name": calibrant_name})
 
     # save yaml dict used for xpdAcq
+    os.makedirs(os.path.dirname(os.path.expanduser(calib_yml_fp)),
+                exist_ok=True)
     with open(os.path.expanduser(calib_yml_fp), "w") as f:
         yaml.dump(calib_config_dict, f)
     print(
