@@ -191,6 +191,8 @@
     <span class="n">calib_config_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;calibrant_name&quot;</span><span class="p">:</span> <span class="n">calibrant_name</span><span class="p">})</span>
 
     <span class="c1"># save yaml dict used for xpdAcq</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">calib_yml_fp</span><span class="p">)),</span>
+                <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">calib_yml_fp</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">calib_config_dict</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span>
