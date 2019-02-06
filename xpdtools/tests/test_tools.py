@@ -29,6 +29,7 @@ from xpdtools.tools import (
     generate_map_bin,
     generate_binner,
     move_center,
+    avg_curvature,
 )
 from xpdtools.jit_tools import mask_ring_median, mask_ring_mean
 
@@ -131,3 +132,13 @@ def test_move_center():
     g2 = move_center(m, geo)
     for mm, n in zip(m, ["poni1", "poni2"]):
         assert getattr(g2, n) == getattr(geo, n) + mm
+
+
+def test_avg_curvature():
+    t = np.linspace(0,20*np.pi, 100)
+
+    def damp_sin(t, damp_coef):
+        return 5 * np.sin(t)*np.e**(-damp_coef*t)
+
+    assert avg_curvature(damp_sin(t, .05), t, 40) \
+        < avg_curvature(damp_sin(t, .03), t, 40)

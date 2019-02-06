@@ -1,7 +1,7 @@
 import numpy as np
 
 from toolz import get
-
+from xpdtools.tools import avg_curvature
 
 def max_intensity_mean(mean, q, **kwargs):
     q_at_mean_max = (
@@ -18,6 +18,13 @@ def max_gr_mean(pdf, **kwargs):
         gr.map(np.nanargmax).combine_latest(r, emit_on=0).starmap(get)
     )
     gr_max = gr.map(np.nanmax)
+    return locals()
+
+
+def fluc_high_q(iq_comp, high_q_val=45, **kwargs):
+    q = iq_comp.pluck(0)
+    iq = iq_comp.pluck(1)
+    high_q_fluc = avg_curvature(iq, q, high_q_val)
     return locals()
 
 
