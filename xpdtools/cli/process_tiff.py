@@ -142,7 +142,7 @@ def make_main(_output_sinks):
         auto_type : {'median', 'mean'}, optional
             The type of automasking to use, median is faster, mean is more
             accurate. Defaults to 'median'.
-        mask_settings: {'auto', 'first', None}, optional
+        mask_settings: {'auto', 'first', none}, optional
             If auto mask every image, if first only mask first image, if None
             mask no images. Defaults to None
         flip_input_mask: bool, optional
