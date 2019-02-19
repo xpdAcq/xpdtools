@@ -82,21 +82,27 @@ def tomo_pipeline_piecewise(
     qoi,
     x_pos,
     th_pos,
-    th_dimension,
-    x_dimension,
+    th_dim,
+    x_dim,
     center,
     th_ext,
     algorithm="gridrec",
     **kwargs
 ):
     """Perform a tomographic reconstruction on a QOI"""
-    # This is created at the start document
-    empty_sineogram_array = np.ones((th_dimension, 1, x_dimension))
     a = qoi.zip(th_pos, x_pos)
-    sineogram = a.accumulate(fill_sinogram, start=empty_sineogram_array)
+    sineogram = a.accumulate(fill_sinogram)
+    # This is created at the start document and bypasses the fill_sinogram
+    # function
+    # TODO: make a function for the np.ones
+    th_dim.zip(x_dim).starmap(lambda th, x: np.ones((th, 1, x))).connect(
+        sineogram
+    )
 
     rec = (
-        sineogram.map(tomopy.minus_log)
+        sineogram.map(np.nan_to_num)
+        .map(tomopy.minus_log)
+        .map(np.nan_to_num)
         .combine_latest(th_ext, center, emit_on=0)
         .starmap(tomopy.recon, algorithm=algorithm)
     )
