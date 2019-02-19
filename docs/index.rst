@@ -27,6 +27,7 @@ the help information.
    :maxdepth: 4
    :caption: Contents:
 
+   tips_and_tricks
    xpdtools
 
 
