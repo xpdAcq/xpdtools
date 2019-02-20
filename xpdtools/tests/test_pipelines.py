@@ -157,7 +157,7 @@ def test_tomo_pipeline_theta():
     ns = dict(qoi=Stream(), theta=Stream(), center=Stream())
 
     ns.update(tomo_pipeline_theta(**ns))
-    L = ns["tomo_node"].sink_to_list()
+    L = ns["rec"].sink_to_list()
     # np.random.seed(42)
 
     th_linspace = np.linspace(0, 180, 6)
