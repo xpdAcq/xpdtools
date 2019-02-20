@@ -146,7 +146,7 @@ def test_tomo_piecewise_pipeline():
             ns["qoi"].emit(np.random.random())
 
     assert len(L) == len(x_linspace) * len(th_linspace)
-    assert L[-1].shape == (1, len(x_linspace), len(th_linspace))
+    assert L[-1].shape == (len(x_linspace), len(th_linspace))
 
     destroy_pipeline(ns["qoi"])
     del ns
@@ -157,7 +157,7 @@ def test_tomo_pipeline_theta():
     ns = dict(qoi=Stream(), theta=Stream(), center=Stream())
 
     ns.update(tomo_pipeline_theta(**ns))
-    L = ns["tomo_node"].sink_to_list()
+    L = ns["rec"].sink_to_list()
     # np.random.seed(42)
 
     th_linspace = np.linspace(0, 180, 6)
@@ -168,3 +168,6 @@ def test_tomo_pipeline_theta():
         ns["qoi"].emit(np.random.random((6, 6)))
     assert len(L) == 6
     assert L[-1].shape == (6, 6, 6)
+    destroy_pipeline(ns["qoi"])
+    del ns
+    L.clear()
