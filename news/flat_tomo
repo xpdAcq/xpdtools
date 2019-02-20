@@ -1,0 +1,13 @@
+**Added:** None
+
+**Changed:**
+
+* Flatten pencil beam tomo output from (1, x, x) to (x, x)
+
+**Deprecated:** None
+
+**Removed:** None
+
+**Fixed:** None
+
+**Security:** None

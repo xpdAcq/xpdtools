@@ -3,6 +3,23 @@ import tomopy
 
 
 def append_data(acc, pt):
+    """Append data to array for full field tomo
+
+    Parameters
+    ----------
+    acc : tuple
+        Accumulated projection and theta data
+        ``(accumulated_projection, accumulated_theta)``
+    pt : tuple
+        The projection and theta data ``(new_projection, new_theta)``
+
+    Returns
+    -------
+    ap : ndarray
+        The accumulated projection
+    at : ndarray
+        The accumuated theta points
+    """
     p, t = pt
     ap, at = acc
     ap = np.concatenate((ap, p))
@@ -46,8 +63,8 @@ def fill_sinogram(esa, q_thp_xp):
     return esa
 
 
-def tomo_pipeline_theta(qoi, theta, center, algorithm="gridrec"):
-    tomo_node = (
+def tomo_pipeline_theta(qoi, theta, center, algorithm="gridrec", **kwargs):
+    rec = (
         qoi.map(reshape, stream_name="reshape")
         .map(tomopy.minus_log)
         .zip(theta)
@@ -105,5 +122,6 @@ def tomo_pipeline_piecewise(
         .map(np.nan_to_num)
         .combine_latest(th_ext, center, emit_on=0)
         .starmap(tomopy.recon, algorithm=algorithm)
+        .map(lambda x: np.reshape(x, x.shape[1:]))
     )
     return locals()
