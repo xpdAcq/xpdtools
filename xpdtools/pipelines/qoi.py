@@ -1,6 +1,7 @@
 import numpy as np
 
 from toolz import get
+from xpdtools.tools import decomp
 
 
 def max_intensity_mean(mean, q, **kwargs):
@@ -20,6 +21,12 @@ def max_gr_mean(pdf, **kwargs):
     gr_max = gr.map(np.nanmax)
     return locals()
 
+
+def pca_pipeline(data, start, variance=.9, **kwargs):
+    concat_data = data.accumulate(lambda acc, x: acc.append(x), start=[])
+    start.sink(lambda x: concat_data.state.clear())
+    pca = concat_data.map(decomp, variance=variance)
+    return locals()
 
 """
 r = pdf.pluck(0)

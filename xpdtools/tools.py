@@ -580,3 +580,11 @@ def ignore_streamz_input(func):
         return func(*args, **kwargs)
 
     return inner
+
+
+def decomp(data, variance=.9):
+    from sklearn.decomposition import PCA
+    m = PCA(variance)
+    m.fit(data)
+    eigen = m.components_
+    return eigen
