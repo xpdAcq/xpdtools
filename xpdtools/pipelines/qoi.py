@@ -25,7 +25,7 @@ def max_gr_mean(pdf, **kwargs):
 def pca_pipeline(data, start, variance=.9, **kwargs):
     concat_data = data.accumulate(lambda acc, x: acc.append(x), start=[])
     start.sink(lambda x: concat_data.state.clear())
-    pca = concat_data.map(decomp, variance=variance)
+    pca = concat_data.map(decomp, variance=variance, **kwargs)
     return locals()
 
 """
