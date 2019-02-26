@@ -177,36 +177,189 @@
 </div>
 <div class="section" id="module-xpdtools.pipelines.raw_pipeline">
 <span id="xpdtools-pipelines-raw-pipeline-module"></span><h2>xpdtools.pipelines.raw_pipeline module<a class="headerlink" href="#module-xpdtools.pipelines.raw_pipeline" title="Permalink to this headline">¶</a></h2>
-<p>Main pipeline for processing images to I(Q) and PDF</p>
+<p>Main pipeline chunks for processing images to I(Q) and PDF</p>
 <dl class="function">
 <dt id="xpdtools.pipelines.raw_pipeline.calibration">
 <code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">calibration</code><span class="sig-paren">(</span><em>wavelength</em>, <em>calibrant</em>, <em>detector</em>, <em>is_calibration_img</em>, <em>geo_input</em>, <em>bg_corrected_img</em>, <em>img_shape</em>, <em>calib_setting=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#calibration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.calibration" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Pipeline chunk for performing and loading calibration</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>wavelength</strong> (<em>Stream</em>)</li>
+<li><strong>calibrant</strong> (<em>Stream</em>)</li>
+<li><strong>detector</strong> (<em>Stream</em>)</li>
+<li><strong>is_calibration_img</strong> (<em>Stream</em>)</li>
+<li><strong>geo_input</strong> (<em>Stream</em>)</li>
+<li><strong>bg_corrected_img</strong> (<em>Stream</em>)</li>
+<li><strong>img_shape</strong> (<em>Stream</em>)</li>
+<li><strong>calib_setting</strong> (<em>None or dict, optional</em>) – The calibration setting, if set to <code class="docutils literal notranslate"><span class="pre">{&quot;setting&quot;:</span> <span class="pre">False}</span></code> the user
+will not be prompted to perform calibration on calibration samples.
+This is useful for not performing calibration when re analyzing an
+entire experiment.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ns</strong> – The namespace created by the chunk</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="xpdtools.pipelines.raw_pipeline.gen_mask">
 <code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">gen_mask</code><span class="sig-paren">(</span><em>pol_corrected_img</em>, <em>cal_binner</em>, <em>img_counter</em>, <em>mask_setting=None</em>, <em>mask_kwargs=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#gen_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.gen_mask" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Pipeline chunk for creating masks</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first">
+<li><p class="first"><strong>pol_corrected_img</strong> (<em>Stream</em>)</p>
+</li>
+<li><p class="first"><strong>cal_binner</strong> (<em>Stream</em>)</p>
+</li>
+<li><p class="first"><strong>img_counter</strong> (<em>Stream</em>)</p>
+</li>
+<li><p class="first"><strong>mask_setting</strong> (<em>dict, optional</em>) – The setting for the frequency of the mask. If set to
+<code class="docutils literal notranslate"><span class="pre">{'setting':</span> <span class="pre">'auto'}</span></code> each image gets a mask generated for it, if
+set to <code class="docutils literal notranslate"><span class="pre">{'setting':</span> <span class="pre">'first'}</span></code> only the first image in the series has
+a mask generated for it and all subsequent images in the series use
+that mask, if set to <code class="docutils literal notranslate"><span class="pre">{'setting':</span> <span class="pre">'none'}</span></code> then no image is masked.
+Defaults to <code class="docutils literal notranslate"><span class="pre">{'setting':</span> <span class="pre">'auto'}</span></code>.</p>
+</li>
+<li><p class="first"><strong>mask_kwargs</strong> (<em>dict, optional</em>) – The keyword arguments passed to <code class="docutils literal notranslate"><span class="pre">xpdtools.tools.mask_img</span></code>.
+Defaults to <a href="#id1"><span class="problematic" id="id2">``</span></a>dict(edge=30, lower_thresh=0.0, upper_thresh=None,</p>
+<blockquote>
+<div><p>alpha=3, auto_type=”median”, tmsk=None,)``</p>
+</div></blockquote>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ns</strong> – The namespace created by the chunk</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="xpdtools.pipelines.raw_pipeline.image_process">
 <code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">image_process</code><span class="sig-paren">(</span><em>raw_foreground</em>, <em>raw_foreground_dark</em>, <em>raw_background</em>, <em>raw_background_dark</em>, <em>bg_scale=1.0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#image_process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.image_process" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Pipeline chunk to perform image processing, including dark and
+background subtraction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>raw_foreground</strong> (<em>Stream</em>)</li>
+<li><strong>raw_foreground_dark</strong> (<em>Stream</em>)</li>
+<li><strong>raw_background</strong> (<em>Stream</em>)</li>
+<li><strong>raw_background_dark</strong> (<em>Stream</em>)</li>
+<li><strong>bg_scale</strong> (<em>float, optional</em>) – The background scale factor. Defaults to 1</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ns</strong> – The namespace created by the chunk</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="xpdtools.pipelines.raw_pipeline.integration">
 <code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">integration</code><span class="sig-paren">(</span><em>map_res</em>, <em>mask</em>, <em>wavelength</em>, <em>pol_corrected_img</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#integration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.integration" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Pipeline chunk for computing azimuthal integration</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>map_res</strong> (<em>Stream</em>)</li>
+<li><strong>mask</strong> (<em>Stream</em>)</li>
+<li><strong>wavelength</strong> (<em>Stream</em>)</li>
+<li><strong>pol_corrected_img</strong> (<em>Stream</em>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ns</strong> – The namespace created by the chunk</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="xpdtools.pipelines.raw_pipeline.pdf_gen">
 <code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">pdf_gen</code><span class="sig-paren">(</span><em>q</em>, <em>mean</em>, <em>composition</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#pdf_gen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.pdf_gen" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Pipeline chunk for computing the Structure Factor S(Q), Reduced
+Structure Factor F(Q) and Atomic Pair Distribution Function (PDF).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>q</strong> (<em>Stream</em>)</li>
+<li><strong>mean</strong> (<em>Stream</em>)</li>
+<li><strong>composition</strong> (<em>Stream</em>)</li>
+<li><strong>kwargs</strong> (<em>Any</em>) – The keyword arguments passed to the PDF creation, please see PDFgetx3
+for more details</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ns</strong> – The namespace created by the chunk</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="xpdtools.pipelines.raw_pipeline.scattering_correction">
 <code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">scattering_correction</code><span class="sig-paren">(</span><em>geometry</em>, <em>img_shape</em>, <em>bg_corrected_img</em>, <em>polarization_factor=0.99</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#scattering_correction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.scattering_correction" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Pipeline chunk for performing scattering corrections on images,
+including the polarization correction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>geometry</strong> (<em>Stream</em>)</li>
+<li><strong>img_shape</strong> (<em>Stream</em>)</li>
+<li><strong>bg_corrected_img</strong> (<em>Stream</em>)</li>
+<li><strong>polarization_factor</strong> (<em>float, optional</em>) – The polarization factor used to correct the image. Defaults to .99</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ns</strong> – The namespace created by the chunk</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 <div class="section" id="module-xpdtools.pipelines">
