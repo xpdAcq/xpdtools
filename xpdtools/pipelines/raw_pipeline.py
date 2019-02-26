@@ -1,4 +1,4 @@
-"""Main pipeline for processing images to I(Q) and PDF"""
+"""Main pipeline chunks for processing images to I(Q) and PDF"""
 import operator as op
 
 import numpy as np
@@ -47,6 +47,23 @@ def image_process(
     bg_scale=1.,
     **kwargs
 ):
+    """Pipeline chunk to perform image processing, including dark and
+    background subtraction.
+
+    Parameters
+    ----------
+    raw_foreground : Stream
+    raw_foreground_dark : Stream
+    raw_background : Stream
+    raw_background_dark : Stream
+    bg_scale : float, optional
+        The background scale factor. Defaults to 1
+
+    Returns
+    -------
+    ns : dict
+        The namespace created by the chunk
+    """
     # Get the image shape for the binner
     dark_corrected_foreground = raw_foreground.combine_latest(
         raw_foreground_dark, emit_on=0
@@ -74,6 +91,29 @@ def calibration(
     calib_setting=None,
     **kwargs
 ):
+    """Pipeline chunk for performing and loading calibration
+
+    Parameters
+    ----------
+    wavelength : Stream
+    calibrant : Stream
+    detector : Stream
+    is_calibration_img : Stream
+    geo_input : Stream
+    bg_corrected_img : Stream
+    img_shape : Stream
+    calib_setting : None or dict, optional
+        The calibration setting, if set to ``{"setting": False}`` the user
+        will not be prompted to perform calibration on calibration samples.
+        This is useful for not performing calibration when re analyzing an
+        entire experiment.
+
+    Returns
+    -------
+    ns : dict
+        The namespace created by the chunk
+
+    """
     # Calibration management
 
     if calib_setting is None:
@@ -113,6 +153,22 @@ def calibration(
 def scattering_correction(
     geometry, img_shape, bg_corrected_img, polarization_factor=.99, **kwargs
 ):
+    """Pipeline chunk for performing scattering corrections on images,
+    including the polarization correction.
+
+    Parameters
+    ----------
+    geometry : Stream
+    img_shape : Stream
+    bg_corrected_img : Stream
+    polarization_factor : float, optional
+        The polarization factor used to correct the image. Defaults to .99
+
+    Returns
+    -------
+    ns : dict
+        The namespace created by the chunk
+    """
 
     polarization_callable = geometry.map(getattr, "polarization")
 
@@ -135,6 +191,31 @@ def gen_mask(
     mask_kwargs=None,
     **kwargs
 ):
+    """Pipeline chunk for creating masks
+
+    Parameters
+    ----------
+    pol_corrected_img : Stream
+    cal_binner : Stream
+    img_counter : Stream
+    mask_setting : dict, optional
+        The setting for the frequency of the mask. If set to
+        ``{'setting': 'auto'}`` each image gets a mask generated for it, if
+        set to ``{'setting': 'first'}`` only the first image in the series has
+        a mask generated for it and all subsequent images in the series use
+        that mask, if set to ``{'setting': 'none'}`` then no image is masked.
+        Defaults to ``{'setting': 'auto'}``.
+    mask_kwargs : dict, optional
+        The keyword arguments passed to ``xpdtools.tools.mask_img``.
+        Defaults to ``dict(edge=30, lower_thresh=0.0, upper_thresh=None,
+         alpha=3, auto_type="median", tmsk=None,)``
+
+    Returns
+    -------
+    ns : dict
+        The namespace created by the chunk
+
+    """
     if mask_kwargs is None:
         mask_kwargs = dict(
             edge=30,
@@ -199,6 +280,20 @@ def gen_mask(
 
 
 def integration(map_res, mask, wavelength, pol_corrected_img, **kwargs):
+    """Pipeline chunk for computing azimuthal integration
+
+    Parameters
+    ----------
+    map_res : Stream
+    mask : Stream
+    wavelength : Stream
+    pol_corrected_img : Stream
+
+    Returns
+    -------
+    ns : dict
+        The namespace created by the chunk
+    """
     # Integration
     binner = (
         map_res.combine_latest(mask, emit_on=1)
@@ -223,6 +318,23 @@ def integration(map_res, mask, wavelength, pol_corrected_img, **kwargs):
 
 
 def pdf_gen(q, mean, composition, **kwargs):
+    """Pipeline chunk for computing the Structure Factor S(Q), Reduced
+    Structure Factor F(Q) and Atomic Pair Distribution Function (PDF).
+
+    Parameters
+    ----------
+    q : Stream
+    mean : Stream
+    composition : Stream
+    kwargs : Any
+         The keyword arguments passed to the PDF creation, please see PDFgetx3
+         for more details
+
+    Returns
+    -------
+    ns : dict
+        The namespace created by the chunk
+    """
 
     # PDF
     iq_comp = q.combine_latest(mean, emit_on=1).combine_latest(
