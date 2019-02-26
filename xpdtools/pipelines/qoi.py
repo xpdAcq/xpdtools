@@ -21,6 +21,11 @@ def max_gr_mean(pdf, **kwargs):
     return locals()
 
 
+def pdfmorph_pipeline(data, ref, **kwargs):
+    data_ref = data.combine_latest(ref, emit_on=0)
+    pdfmorph_res = data_ref.starmap(lambda x, y: (*x, *y)).starmap(pdfmorph)
+    return locals()
+
 """
 r = pdf.pluck(0)
 true_pdf = pdf.pluck(1)
