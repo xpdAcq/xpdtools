@@ -601,9 +601,12 @@ def decomp(data, n_components=.9, model=PCA, **kwargs):
     Returns
     -------
     eigen : ndarray
-        The eigenvalues
+        The eigenvectors
+    scores : ndarray
+        The scores for each component
+
     """
     m = model(n_components, **kwargs)
     m.fit(data)
     eigen = m.components_
-    return eigen
+    return eigen, m.transform(data)
