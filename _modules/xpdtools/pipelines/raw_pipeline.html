@@ -148,7 +148,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for xpdtools.pipelines.raw_pipeline</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Main pipeline for processing images to I(Q) and PDF&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Main pipeline chunks for processing images to I(Q) and PDF&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">operator</span> <span class="k">as</span> <span class="nn">op</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -197,6 +197,23 @@
     <span class="n">bg_scale</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pipeline chunk to perform image processing, including dark and</span>
+<span class="sd">    background subtraction.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    raw_foreground : Stream</span>
+<span class="sd">    raw_foreground_dark : Stream</span>
+<span class="sd">    raw_background : Stream</span>
+<span class="sd">    raw_background_dark : Stream</span>
+<span class="sd">    bg_scale : float, optional</span>
+<span class="sd">        The background scale factor. Defaults to 1</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ns : dict</span>
+<span class="sd">        The namespace created by the chunk</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Get the image shape for the binner</span>
     <span class="n">dark_corrected_foreground</span> <span class="o">=</span> <span class="n">raw_foreground</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span>
         <span class="n">raw_foreground_dark</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">0</span>
@@ -224,6 +241,29 @@
     <span class="n">calib_setting</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pipeline chunk for performing and loading calibration</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wavelength : Stream</span>
+<span class="sd">    calibrant : Stream</span>
+<span class="sd">    detector : Stream</span>
+<span class="sd">    is_calibration_img : Stream</span>
+<span class="sd">    geo_input : Stream</span>
+<span class="sd">    bg_corrected_img : Stream</span>
+<span class="sd">    img_shape : Stream</span>
+<span class="sd">    calib_setting : None or dict, optional</span>
+<span class="sd">        The calibration setting, if set to ``{&quot;setting&quot;: False}`` the user</span>
+<span class="sd">        will not be prompted to perform calibration on calibration samples.</span>
+<span class="sd">        This is useful for not performing calibration when re analyzing an</span>
+<span class="sd">        entire experiment.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ns : dict</span>
+<span class="sd">        The namespace created by the chunk</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Calibration management</span>
 
     <span class="k">if</span> <span class="n">calib_setting</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -263,6 +303,22 @@
 <div class="viewcode-block" id="scattering_correction"><a class="viewcode-back" href="../../../xpdtools.pipelines.html#xpdtools.pipelines.raw_pipeline.scattering_correction">[docs]</a><span class="k">def</span> <span class="nf">scattering_correction</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">,</span> <span class="n">img_shape</span><span class="p">,</span> <span class="n">bg_corrected_img</span><span class="p">,</span> <span class="n">polarization_factor</span><span class="o">=.</span><span class="mi">99</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pipeline chunk for performing scattering corrections on images,</span>
+<span class="sd">    including the polarization correction.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : Stream</span>
+<span class="sd">    img_shape : Stream</span>
+<span class="sd">    bg_corrected_img : Stream</span>
+<span class="sd">    polarization_factor : float, optional</span>
+<span class="sd">        The polarization factor used to correct the image. Defaults to .99</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ns : dict</span>
+<span class="sd">        The namespace created by the chunk</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">polarization_callable</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">getattr</span><span class="p">,</span> <span class="s2">&quot;polarization&quot;</span><span class="p">)</span>
 
@@ -285,6 +341,31 @@
     <span class="n">mask_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pipeline chunk for creating masks</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pol_corrected_img : Stream</span>
+<span class="sd">    cal_binner : Stream</span>
+<span class="sd">    img_counter : Stream</span>
+<span class="sd">    mask_setting : dict, optional</span>
+<span class="sd">        The setting for the frequency of the mask. If set to</span>
+<span class="sd">        ``{&#39;setting&#39;: &#39;auto&#39;}`` each image gets a mask generated for it, if</span>
+<span class="sd">        set to ``{&#39;setting&#39;: &#39;first&#39;}`` only the first image in the series has</span>
+<span class="sd">        a mask generated for it and all subsequent images in the series use</span>
+<span class="sd">        that mask, if set to ``{&#39;setting&#39;: &#39;none&#39;}`` then no image is masked.</span>
+<span class="sd">        Defaults to ``{&#39;setting&#39;: &#39;auto&#39;}``.</span>
+<span class="sd">    mask_kwargs : dict, optional</span>
+<span class="sd">        The keyword arguments passed to ``xpdtools.tools.mask_img``.</span>
+<span class="sd">        Defaults to ``dict(edge=30, lower_thresh=0.0, upper_thresh=None,</span>
+<span class="sd">         alpha=3, auto_type=&quot;median&quot;, tmsk=None,)``</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ns : dict</span>
+<span class="sd">        The namespace created by the chunk</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">mask_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">mask_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="n">edge</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
@@ -349,6 +430,20 @@
 
 
 <div class="viewcode-block" id="integration"><a class="viewcode-back" href="../../../xpdtools.pipelines.html#xpdtools.pipelines.raw_pipeline.integration">[docs]</a><span class="k">def</span> <span class="nf">integration</span><span class="p">(</span><span class="n">map_res</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">pol_corrected_img</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pipeline chunk for computing azimuthal integration</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    map_res : Stream</span>
+<span class="sd">    mask : Stream</span>
+<span class="sd">    wavelength : Stream</span>
+<span class="sd">    pol_corrected_img : Stream</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ns : dict</span>
+<span class="sd">        The namespace created by the chunk</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Integration</span>
     <span class="n">binner</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">map_res</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -373,6 +468,23 @@
 
 
 <div class="viewcode-block" id="pdf_gen"><a class="viewcode-back" href="../../../xpdtools.pipelines.html#xpdtools.pipelines.raw_pipeline.pdf_gen">[docs]</a><span class="k">def</span> <span class="nf">pdf_gen</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pipeline chunk for computing the Structure Factor S(Q), Reduced</span>
+<span class="sd">    Structure Factor F(Q) and Atomic Pair Distribution Function (PDF).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    q : Stream</span>
+<span class="sd">    mean : Stream</span>
+<span class="sd">    composition : Stream</span>
+<span class="sd">    kwargs : Any</span>
+<span class="sd">         The keyword arguments passed to the PDF creation, please see PDFgetx3</span>
+<span class="sd">         for more details</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ns : dict</span>
+<span class="sd">        The namespace created by the chunk</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># PDF</span>
     <span class="n">iq_comp</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">emit_on</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">combine_latest</span><span class="p">(</span>
