@@ -179,13 +179,14 @@ def test_pca_pipeline():
     ns.update(pca_pipeline(**ns))
     L = ns["scores"].sink_to_list()
 
+    np.random.seed(42)
     for i in range(10):
         a = np.zeros(10)
         a[i] = 1
         ns['data'].emit(a)
 
     assert len(L) == 10
-    assert L[-1].shape() == (10, 10)
+    assert L[-1].shape == (10, 9)
     destroy_pipeline(ns["data"])
     del ns
     L.clear()
