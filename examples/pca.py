@@ -5,7 +5,7 @@ from xpdtools.pipelines.qoi import pca_pipeline
 from rapidz import Stream
 
 import numpy as np
-from xpdview.waterfall import Waterfall
+from matplotlib.lines import Line2D
 
 # Create the streams data goes into
 source = Stream()
@@ -15,7 +15,7 @@ start = Stream()
 ns = pca_pipeline(source, start)
 
 # plot the data
-fig, axs = plt.subplots(1, 3)
+fig, axs = plt.subplots(1, 2)
 fig.tight_layout()
 
 
@@ -27,7 +27,7 @@ def plot_f(data):
 
 def plot_g(data):
     axs[1].cla()
-    for i, m in zip(range(data.shape[1]), ['.', 'o', '<']):
+    for i, m in zip(range(data.shape[1]), Line2D.filled_markers):
         axs[1].plot(data[:, i], marker=m)
 
 
