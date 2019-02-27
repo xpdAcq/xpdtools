@@ -12,7 +12,7 @@ source = Stream()
 start = Stream()
 
 # create the pipeline
-ns = pca_pipeline(source, start, n_components=.999)
+ns = pca_pipeline(source, start, n_components=.9)
 
 # plot the data
 fig, axs = plt.subplots(1, 3)
@@ -41,14 +41,7 @@ source.sink(plot_h)
 # ns['scores'].sink(axs[1].imshow, aspect='auto')
 
 z = np.linspace(0, np.pi * 2, 100)
-zz = np.linspace(0, 3, 100)
-# xs = [np.sin(z + zz) + np.random.random(100)*.5 for zz in z]
-
-x = zz + zz ** 2
-y = np.sin(z * 7)
-
-xs = [(x * i) + (y * 1 - i) for i in np.linspace(0, 1, 100)]
-
+xs = [np.sin(z + zz) + np.random.random(100)*.5 for zz in z]
 
 # Run the data into the pipeline
 for xx in xs:
