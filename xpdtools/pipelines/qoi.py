@@ -30,6 +30,7 @@ def pca_pipeline(data, start, n_components=.9, **kwargs):
     scores = pca.pluck(1)
     return locals()
 
+
 """
 r = pdf.pluck(0)
 true_pdf = pdf.pluck(1)
