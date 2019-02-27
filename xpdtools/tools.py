@@ -22,6 +22,7 @@ from scipy.integrate import simps
 from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
 from skbeam.core.mask import margin
 from xpdtools.jit_tools import mask_ring_median, mask_ring_mean, ring_zscore
+from sklearn.decomposition import PCA
 
 try:
     from diffpy.pdfgetx import PDFGetter
@@ -580,3 +581,32 @@ def ignore_streamz_input(func):
         return func(*args, **kwargs)
 
     return inner
+
+
+def decomp(data, n_components=.9, model=PCA, **kwargs):
+    """Perform a decomposision of the data
+
+    Parameters
+    ----------
+    data : list of ndarray
+        The list of data to be decomposed
+    n_components : int, flot, None or str
+        The number of components passed to the model initiaion
+    model : class
+        The model class, must take in ``n_components``, have a ``fit`` method
+        and a ``components_`` attribute
+    kwargs : dict
+        The kwargs to pass to the model creation
+
+    Returns
+    -------
+    eigen : ndarray
+        The eigenvectors
+    scores : ndarray
+        The scores for each component
+
+    """
+    m = model(n_components, **kwargs)
+    m.fit(data)
+    eigen = m.components_
+    return eigen, m.transform(data)

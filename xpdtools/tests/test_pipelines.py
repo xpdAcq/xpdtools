@@ -4,7 +4,11 @@ import pytest
 import tifffile
 
 from xpdsim import pyfai_poni, image_file
-from xpdtools.pipelines.qoi import max_intensity_mean, max_gr_mean
+from xpdtools.pipelines.qoi import (
+    max_intensity_mean,
+    max_gr_mean,
+    pca_pipeline,
+)
 from xpdtools.pipelines.raw_pipeline import (
     pipeline_order,
     namespace as g_namespace,
@@ -169,5 +173,24 @@ def test_tomo_pipeline_theta():
     assert len(L) == 6
     assert L[-1].shape == (6, 6, 6)
     destroy_pipeline(ns["qoi"])
+    del ns
+    L.clear()
+
+
+def test_pca_pipeline():
+    ns = dict(data=Stream(), start=Stream())
+
+    ns.update(pca_pipeline(**ns))
+    L = ns["scores"].sink_to_list()
+
+    # np.random.seed(42)
+    for i in range(10):
+        a = np.zeros(10)
+        a[i] = 1
+        ns["data"].emit(a)
+
+    assert len(L) == 10
+    assert L[-1].shape == (10, 9)
+    destroy_pipeline(ns["data"])
     del ns
     L.clear()
