@@ -4,6 +4,24 @@
 
 .. current developments
 
+v0.6.0
+====================
+
+**Added:**
+
+* Principle Component Analysis pipeline and tooling
+
+**Changed:**
+
+* Flatten pencil beam tomo output from (1, x, x) to (x, x)
+
+**Fixed:**
+
+* Automatically make the calibration directory
+* Tomo pipeline now has ``np.nan_to_num`` before and after reconstruction
+
+
+
 v0.5.0
 ====================
 
