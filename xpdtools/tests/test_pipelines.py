@@ -179,7 +179,7 @@ def test_pca_pipeline():
     ns.update(pca_pipeline(**ns))
     L = ns["scores"].sink_to_list()
 
-    np.random.seed(42)
+    # np.random.seed(42)
     for i in range(10):
         a = np.zeros(10)
         a[i] = 1
