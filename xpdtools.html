@@ -322,6 +322,34 @@ accurate. Defaults to median.</li>
 <dd></dd></dl>
 
 <dl class="function">
+<dt id="xpdtools.tools.decomp">
+<code class="descclassname">xpdtools.tools.</code><code class="descname">decomp</code><span class="sig-paren">(</span><em>data</em>, <em>n_components=0.9</em>, <em>model=&lt;class 'sklearn.decomposition.pca.PCA'&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#decomp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.decomp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a decomposision of the data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>list of ndarray</em>) – The list of data to be decomposed</li>
+<li><strong>n_components</strong> (<em>int, flot, None or str</em>) – The number of components passed to the model initiaion</li>
+<li><strong>model</strong> (<em>class</em>) – The model class, must take in <code class="docutils literal notranslate"><span class="pre">n_components</span></code>, have a <code class="docutils literal notranslate"><span class="pre">fit</span></code> method
+and a <code class="docutils literal notranslate"><span class="pre">components_</span></code> attribute</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – The kwargs to pass to the model creation</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>eigen</strong> (<em>ndarray</em>) – The eigenvectors</li>
+<li><strong>scores</strong> (<em>ndarray</em>) – The scores for each component</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="xpdtools.tools.fq_getter">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">fq_getter</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>composition</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#fq_getter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.fq_getter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process the data to F(Q)</p>

@@ -173,6 +173,7 @@
 <span class="kn">from</span> <span class="nn">skbeam.core.accumulators.binned_statistic</span> <span class="k">import</span> <span class="n">BinnedStatistic1D</span>
 <span class="kn">from</span> <span class="nn">skbeam.core.mask</span> <span class="k">import</span> <span class="n">margin</span>
 <span class="kn">from</span> <span class="nn">xpdtools.jit_tools</span> <span class="k">import</span> <span class="n">mask_ring_median</span><span class="p">,</span> <span class="n">mask_ring_mean</span><span class="p">,</span> <span class="n">ring_zscore</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="k">import</span> <span class="n">PCA</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">diffpy.pdfgetx</span> <span class="k">import</span> <span class="n">PDFGetter</span>
@@ -731,6 +732,35 @@
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">inner</span></div>
+
+
+<div class="viewcode-block" id="decomp"><a class="viewcode-back" href="../../xpdtools.html#xpdtools.tools.decomp">[docs]</a><span class="k">def</span> <span class="nf">decomp</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=.</span><span class="mi">9</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">PCA</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Perform a decomposision of the data</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : list of ndarray</span>
+<span class="sd">        The list of data to be decomposed</span>
+<span class="sd">    n_components : int, flot, None or str</span>
+<span class="sd">        The number of components passed to the model initiaion</span>
+<span class="sd">    model : class</span>
+<span class="sd">        The model class, must take in ``n_components``, have a ``fit`` method</span>
+<span class="sd">        and a ``components_`` attribute</span>
+<span class="sd">    kwargs : dict</span>
+<span class="sd">        The kwargs to pass to the model creation</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    eigen : ndarray</span>
+<span class="sd">        The eigenvectors</span>
+<span class="sd">    scores : ndarray</span>
+<span class="sd">        The scores for each component</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">n_components</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">eigen</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">components_</span>
+    <span class="k">return</span> <span class="n">eigen</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
