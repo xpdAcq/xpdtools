@@ -5,6 +5,7 @@
 ./_modules/xpdtools/shim.html
 ./_modules/xpdtools/tools.html
 ./_sources/index.rst.txt
+./_sources/tips_and_tricks.rst.txt
 ./_sources/xpdtools.cli.rst.txt
 ./_sources/xpdtools.pipelines.rst.txt
 ./_sources/xpdtools.rst.txt
@@ -69,6 +70,7 @@
 ./py-modindex.html
 ./search.html
 ./searchindex.js
+./tips_and_tricks.html
 ./xpdtools.cli.html
 ./xpdtools.html
 ./xpdtools.pipelines.html

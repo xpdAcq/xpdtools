@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Python Module Index &mdash; xpdtools 0.5.0 documentation</title>
+  <title>Tips and Tricks &mdash; xpdtools 0.5.0 documentation</title>
   
 
   
@@ -35,9 +35,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
- 
-
-
+    <link rel="next" title="xpdtools package" href="xpdtools.html" />
+    <link rel="prev" title="Welcome to xpdtools’s documentation!" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -86,8 +85,12 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="tips_and_tricks.html">Tips and Tricks</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tips and Tricks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#weak-scattering-and-air-scattering">Weak Scattering and Air Scattering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#median-vs-mean-masking">Median vs. Mean masking</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="xpdtools.html">xpdtools package</a></li>
 </ul>
 
@@ -134,10 +137,14 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Python Module Index</li>
+      <li>Tips and Tricks</li>
     
     
       <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/tips_and_tricks.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -149,70 +156,53 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-
-   <h1>Python Module Index</h1>
-
-   <div class="modindex-jumpbox">
-   <a href="#cap-x"><strong>x</strong></a>
-   </div>
-
-   <table class="indextable modindextable">
-     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
-     <tr class="cap" id="cap-x"><td></td><td>
-       <strong>x</strong></td><td></td></tr>
-     <tr>
-       <td><img src="_static/minus.png" class="toggler"
-              id="toggle-1" style="display: none" alt="-" /></td>
-       <td>
-       <a href="xpdtools.html#module-xpdtools"><code class="xref">xpdtools</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="xpdtools.html#module-xpdtools.calib"><code class="xref">xpdtools.calib</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="xpdtools.cli.html#module-xpdtools.cli"><code class="xref">xpdtools.cli</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="xpdtools.cli.html#module-xpdtools.cli.process_tiff"><code class="xref">xpdtools.cli.process_tiff</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="xpdtools.html#module-xpdtools.dev_utils"><code class="xref">xpdtools.dev_utils</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="xpdtools.pipelines.html#module-xpdtools.pipelines"><code class="xref">xpdtools.pipelines</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="xpdtools.pipelines.html#module-xpdtools.pipelines.raw_pipeline"><code class="xref">xpdtools.pipelines.raw_pipeline</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="xpdtools.html#module-xpdtools.shim"><code class="xref">xpdtools.shim</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="xpdtools.html#module-xpdtools.tools"><code class="xref">xpdtools.tools</code></a></td><td>
-       <em></em></td></tr>
-   </table>
+  <div class="section" id="tips-and-tricks">
+<h1>Tips and Tricks<a class="headerlink" href="#tips-and-tricks" title="Permalink to this headline">¶</a></h1>
+<p>Here is a collection of tips and tricks for using xpdtools.</p>
+<div class="section" id="weak-scattering-and-air-scattering">
+<h2>Weak Scattering and Air Scattering<a class="headerlink" href="#weak-scattering-and-air-scattering" title="Permalink to this headline">¶</a></h2>
+<p>Weak scattering data benefits from image to image background subtraction.
+Often for weak scattering materials the air scattering of the beamline becomes
+non trivial.
+At this point we need to remove the air scattering (although minimizing it on
+the experimental side is preferable).
+After the experiment is done one way to remove air scattering (and its shadows)
+is to perform background subtraction on the images.
+Since the air scattering is non azimuthally symmetric simple integration and
+subtraction of the integrated background will not work, as the integration
+has removed any azimuthal information from the data.
+<code class="docutils literal notranslate"><span class="pre">xpdtools</span></code> provides a flag, <code class="docutils literal notranslate"><span class="pre">--bg_file</span></code>, to have a background image
+subtracted from the foreground image.
+The effect of this can be seen in the standard deviation and the z score.</p>
+</div>
+<div class="section" id="median-vs-mean-masking">
+<h2>Median vs. Mean masking<a class="headerlink" href="#median-vs-mean-masking" title="Permalink to this headline">¶</a></h2>
+<p>The automasking code has a few flags to modify its behavior, one of the most
+important is <code class="docutils literal notranslate"><span class="pre">--auto_type</span></code>.
+This flag governs which algorithm is used to create the statistical mask.
+The default is <code class="docutils literal notranslate"><span class="pre">median</span></code> which does a single pass for each azimuthal ring
+and finds outliers.
+The flag can also be set to <code class="docutils literal notranslate"><span class="pre">mean</span></code> which computes the mean for each ring
+and removes a single pixel repeatidely until the all the outliers with
+a z score greater than <code class="docutils literal notranslate"><span class="pre">alpha</span></code> have been removed.
+The <code class="docutils literal notranslate"><span class="pre">mean</span></code> method is much slower, but is generally more accurate.</p>
+</div>
+</div>
 
 
            </div>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="xpdtools.html" class="btn btn-neutral float-right" title="xpdtools package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to xpdtools’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
