@@ -64,12 +64,15 @@ def fill_sinogram(esa, q_thp_xp):
 
 
 def tomo_pipeline_theta(qoi, theta, center, algorithm="gridrec", **kwargs):
-    rec = (
+    sinogram_theta = (
         qoi.map(reshape, stream_name="reshape")
         .map(tomopy.minus_log)
         .zip(theta)
         .accumulate(append_data)
-        .combine_latest(center, emit_on=0)
+    )
+    sinogram = sinogram_theta.pluck(0)
+    rec = (
+        sinogram_theta.combine_latest(center, emit_on=0)
         .map(flatten)
         .starmap(tomopy.recon, algorithm=algorithm)
     )
@@ -108,20 +111,19 @@ def tomo_pipeline_piecewise(
 ):
     """Perform a tomographic reconstruction on a QOI"""
     a = qoi.zip(th_pos, x_pos)
-    sineogram = a.accumulate(fill_sinogram)
+    sinogram = a.accumulate(fill_sinogram)
     # This is created at the start document and bypasses the fill_sinogram
     # function
     # TODO: make a function for the np.ones
-    th_dim.zip(x_dim).starmap(lambda th, x: np.ones((th, 1, x))).connect(
-        sineogram
+    th_dim.zip(x_dim).starmap(lambda th, x: np.ones((th, 1, x))).sink(
+        lambda x: setattr(sinogram, "state", x)
     )
 
     rec = (
-        sineogram.map(np.nan_to_num)
+        sinogram.map(np.nan_to_num)
         .map(tomopy.minus_log)
         .map(np.nan_to_num)
         .combine_latest(th_ext, center, emit_on=0)
         .starmap(tomopy.recon, algorithm=algorithm)
-        .map(np.squeeze)
     )
     return locals()
