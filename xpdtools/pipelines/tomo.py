@@ -122,6 +122,6 @@ def tomo_pipeline_piecewise(
         .map(np.nan_to_num)
         .combine_latest(th_ext, center, emit_on=0)
         .starmap(tomopy.recon, algorithm=algorithm)
-        .map(lambda x: np.reshape(x, x.shape[1:]))
+        .map(np.squeeze)
     )
     return locals()
