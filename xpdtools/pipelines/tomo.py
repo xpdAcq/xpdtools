@@ -38,13 +38,16 @@ def recon_wrapper(projection, theta, center, **kwargs):
         # (th, img_i, img_j, x)
         # Parallelize this?
         for i in range(shape[2]):
-            outs.append(tomopy.recon(projection[:, :, i, :], theta, center,
-                                     **kwargs))
+            outs.append(
+                tomopy.recon(projection[:, :, i, :], theta, center, **kwargs)
+            )
         outs2 = [np.expand_dims(o, axis=2) for o in outs]
         out = np.concatenate(outs2, axis=2)
     else:
-        raise RuntimeError(f'There is not a reconstruction system setup for'
-                           'a {len(shape)} array')
+        raise RuntimeError(
+            f"There is not a reconstruction system setup for"
+            "a {len(shape)} array"
+        )
     return np.squeeze(out)
 
 
@@ -108,12 +111,14 @@ def fill_sinogram(esa, q_thp_xp):
     esa[thp, xp] = q
     return esa
 
+
 def conditional_squeeze(arr, axis):
     shape = arr.shape
     if shape[axis] == 1:
         return np.squeeze(arr, axis)
     else:
         return arr
+
 
 # TODO: unify the reconstruction section of the pipeline and make the prep
 #  produce the sinograms
@@ -127,11 +132,13 @@ def tomo_pipeline_theta(qoi, theta, center, algorithm="gridrec", **kwargs):
         .zip(theta)
         .accumulate(append_data)
     )
-    sinogram = (sinogram_theta
-                # Sort the sinogram by theta for out of order scans
-                .starmap(lambda s, x: s[x.argsort()[::-1]])
-                # The sinogram accumulates over theta so we can squeeze
-                .map(conditional_squeeze, 1))
+    sinogram = (
+        sinogram_theta
+        # Sort the sinogram by theta for out of order scans
+        .starmap(lambda s, x: s[x.argsort()[::-1]])
+        # The sinogram accumulates over theta so we can squeeze
+        .map(conditional_squeeze, 1)
+    )
     rec = (
         sinogram_theta.combine_latest(center, emit_on=0)
         .map(flatten)
@@ -168,7 +175,7 @@ def tomo_pipeline_piecewise(
     center,
     th_ext,
     algorithm="gridrec",
-    **kwargs
+    **kwargs,
 ):
     """Perform a tomographic reconstruction on a QOI"""
     a = qoi.zip(th_pos, x_pos)
