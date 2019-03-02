@@ -63,7 +63,7 @@ def amorphsivity_pipeline(pdf, lower_bound_percentage=.66):
     index = gr.map(len).map(op.mul, lower_bound_percentage).map(int)
     abs_max = gr.map(np.abs).map(np.max)
     integrated_max = (
-        gr.combine_latest(index, emit_on=0)
+        gr.zip(index, emit_on=0)
         .starmap(lambda x, y: x[y:])
         .map(np.abs)
         .map(np.sum)
