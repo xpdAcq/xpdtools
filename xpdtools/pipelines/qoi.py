@@ -2,6 +2,7 @@ import numpy as np
 
 from toolz import get
 from xpdtools.tools import decomp
+import operator as op
 
 
 def max_intensity_mean(mean, q, **kwargs):
@@ -28,6 +29,46 @@ def pca_pipeline(data, start, n_components=.9, **kwargs):
     pca = concat_data.map(decomp, n_components=n_components, **kwargs)
     components = pca.pluck(0)
     scores = pca.pluck(1)
+    return locals()
+
+
+def amorphsivity_pipeline(pdf, lower_bound_percentage=.66):
+    """Compute the amorphsivity of the material via the G(r).
+
+    This computes a proxy of how amorphous the material is by comparing the
+    integrated norm probability of finding an interatomic distance at high
+    distance values against the highest peak in the PDF. Crystalline samples
+    will have peaks at high distances, as the probability of finding an atom
+    at a particular distance is highly localized to certain distances.
+    Amorphous samples have fewer peaks with lower intensity at high distances,
+    at those interatomic distances the probability of finding an atom is
+    roughly the same as any other distance.
+
+    Parameters
+    ----------
+    pdf : Stream
+        The stream of PDFs
+    lower_bound_percentage : float, optional
+        The fraction of the PDF used to define the lower bound of high
+        distances. .9 would include only the last few data points, while .5
+        would include half the PDF, defaults to .66
+
+    Returns
+    -------
+    locals : dict
+        The locals
+    """
+    gr = pdf.pluck(1)
+    # Get the lower bound index
+    index = gr.map(len).map(op.mul, lower_bound_percentage).map(int)
+    abs_max = gr.map(np.abs).map(np.max)
+    integrated_max = (
+        gr.combine_latest(index, emit_on=0)
+        .starmap(lambda x, y: x[y:])
+        .map(np.abs)
+        .map(np.sum)
+    )
+    amorphsivity = integrated_max.zip(abs_max).starmap(op.truediv)
     return locals()
 
 
