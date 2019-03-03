@@ -30,6 +30,8 @@ from xpdtools.tools import (
     generate_binner,
     move_center,
     avg_curvature,
+    complete_pearson,
+    group_pearson
 )
 from xpdtools.jit_tools import mask_ring_median, mask_ring_mean
 
@@ -142,3 +144,31 @@ def test_avg_curvature():
 
     assert avg_curvature(damp_sin(t, .05), t, 40) \
         < avg_curvature(damp_sin(t, .03), t, 40)
+
+
+def test_complete_pearson():
+    x_dif = []
+    x_same = []
+    t = np.linspace(0, 200)
+    y = np.sin(5 * t)
+    for i in np.arange(20)[1:]:
+        x_dif.append(np.sin(i * t))
+        x_same.append(np.sin(5 * t))
+    dif = complete_pearson(x_dif, y)
+    same = complete_pearson(x_same, y)
+    assert (np.array_equal(same, np.ones(len(x_same)))) \
+        and not (np.array_equal(same, dif))
+
+
+def test_group_pearson():
+    x_dif = []
+    x_same = []
+    t = np.linspace(0, 200)
+    for i in np.arange(20)[1:]:
+        x_dif.append(np.sin(i * t))
+        x_same.append(np.sin(5 * t))
+    dif = group_pearson(x_dif)
+    same = group_pearson(x_same)
+    same = np.asarray(same)
+    assert (np.array_equal(same, np.ones(same.shape))) \
+        and not (np.array_equal(same, dif))

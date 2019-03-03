@@ -1,7 +1,7 @@
 import numpy as np
-
+from streamz import collect
 from toolz import get
-from xpdtools.tools import avg_curvature
+from xpdtools.tools import avg_curvature,group_pearson,complete_pearson
 
 def max_intensity_mean(mean, q, **kwargs):
     q_at_mean_max = (

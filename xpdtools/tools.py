@@ -19,6 +19,7 @@ from functools import wraps
 
 import numpy as np
 from scipy.integrate import simps
+import scipy.stats as stats
 from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
 from skbeam.core.mask import margin
 from xpdtools.jit_tools import mask_ring_median, mask_ring_mean, ring_zscore
@@ -583,7 +584,7 @@ def ignore_streamz_input(func):
 
 
 def avg_curvature(y, x, high_val):
-    """Computes the average of the curvature of a given signal past a
+    """Computes the average of the curvature of a given signal beyond a
     (currently) user provided high Q value, this will be used as the scalar
      representation for fluctuations at high Q values.
 
@@ -607,3 +608,54 @@ def avg_curvature(y, x, high_val):
     first_der = np.gradient(y[idx:], x[idx:])
     sec_der = np.gradient(first_der, x[idx:])
     return np.average(np.abs(sec_der)/(1+first_der**2)**(3/2))
+
+
+def complete_pearson(group, y):
+    """ Computes a array of scalars representing the similarity of a given
+    dataset to others in a group. This function returns an array of Pearson
+    Product-Moment Correlation coefficients corresponding to the inputed dataset
+    and every member of the inputed group.
+
+    Parameters
+    ----------
+    y : ndarray
+        data that is to be compared to rest of the group.
+
+    group : ndarray
+        group of data to be compared to.
+    Returns
+    -------
+    ndarray :
+        Array of Pearson's Correlation coefficients, index corresponds to
+        the index of group member.
+
+    """
+    pearsons = []
+    for i in group:
+        r, p = stats.pearsonr(y, i)
+        pearsons.append(r)
+    pearsons = np.asarray(pearsons)
+    return pearsons
+
+
+def group_pearson(group):
+    """ This function returns an array of an array of Pearson Product-Moment
+    Correlation coefficients corresponding the similarity between members in the
+    group.
+
+    Parameters
+    ----------
+    group : ndarray
+        group of data to be compared.
+    Returns
+    -------
+    ndarray :
+       Array of arrays Pearson's Correlation coefficients, index corresponds to
+       index of group member.
+
+        """
+    pearson_list = []
+    for i, x in enumerate(group):
+        pearson_list.append(complete_pearson(group, x))
+    pearson_list = np.asarray(pearson_list)
+    return pearson_list
