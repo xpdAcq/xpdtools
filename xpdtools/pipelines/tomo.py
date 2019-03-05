@@ -12,7 +12,7 @@ def recon_wrapper(projection, theta, center, **kwargs):
         The sinogram of the projection data. The first axis is theta, the last
         is x. If additional axes are included these will be looped over and
         put back to gether
-    theta : 1darray
+    theta : ndarray
         The theta values
     center : float
         The rotation axis of the sample in pixels
@@ -28,7 +28,7 @@ def recon_wrapper(projection, theta, center, **kwargs):
     if len(shape) == 2:
         data = np.expand_dims(projection, axis=1)
         out = tomopy.recon(data, theta, center, **kwargs)
-    # This is a measurement of images (in full field, [x, y, th]) or a
+    # This is a measurement of images (in full field, [th, y, x]) or a
     # measurment of vectors (in pencil, [th, v_dim, x])
     elif len(shape) == 3:
         out = tomopy.recon(projection, theta, center, **kwargs)
