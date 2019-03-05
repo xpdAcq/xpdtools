@@ -65,13 +65,14 @@ ns2 = tomo_pipeline_piecewise(
 )
 ns.update(**ns2)
 z = ns["rec"]
+z.sink(print)
 zz = (
     z
     # .buffer(1000).gather()
-    .pluck(0).sink(li.update)
+    .sink(li.update)
 )
 (
-    ns["sineogram"].map(lambda x: x[:, 0, :])
+    ns["sinogram"]
     # .buffer(1000).gather()
     .sink(li2.update)
 )
@@ -88,8 +89,8 @@ x_extents.emit([0, proj.shape[-1]])
 lb = 145
 ub = 147
 
-ns["sineogram"].state[:, :, :lb] = proj[:, :, :lb]
-ns["sineogram"].state[:, :, ub:] = proj[:, :, ub:]
+ns["sinogram"].state[:, :lb] = proj[:, 0, :lb]
+ns["sinogram"].state[:, ub:] = proj[:, 0, ub:]
 # input()
 
 for i in range(lb, ub):

@@ -2,6 +2,55 @@ import numpy as np
 import tomopy
 
 
+def recon_wrapper(projection, theta, center, **kwargs):
+    """A wrapper around ``tomopy.recon`` which properly adds or loops over
+    dimensions to make the tomographic reconstruction work.
+
+    Parameters
+    ----------
+    projection : ndarray
+        The sinogram of the projection data. The first axis is theta, the last
+        is x. If additional axes are included these will be looped over and
+        put back to gether
+    theta : ndarray
+        The theta values
+    center : float
+        The rotation axis of the sample in pixels
+
+    Returns
+    -------
+    out : ndarray
+        The reconstructed data
+        The output dimension will match the input dimension
+    """
+    shape = projection.shape
+    # This is a measurement of scalars (put onto a th, x grid)
+    if len(shape) == 2:
+        data = np.expand_dims(projection, axis=1)
+        out = tomopy.recon(data, theta, center, **kwargs)
+    # This is a measurement of images (in full field, [th, y, x]) or a
+    # measurment of vectors (in pencil, [th, v_dim, x])
+    elif len(shape) == 3:
+        out = tomopy.recon(projection, theta, center, **kwargs)
+    # This is a measurement of diffraction images (2D, 4D total)
+    elif len(shape) == 4:
+        outs = []
+        # (th, img_i, img_j, x)
+        # Parallelize this?
+        for i in range(shape[2]):
+            outs.append(
+                tomopy.recon(projection[:, :, i, :], theta, center, **kwargs)
+            )
+        outs2 = [np.expand_dims(o, axis=2) for o in outs]
+        out = np.concatenate(outs2, axis=2)
+    else:
+        raise RuntimeError(
+            f"There is not a reconstruction system setup for"
+            "a {len(shape)} array"
+        )
+    return np.squeeze(out)
+
+
 def append_data(acc, pt):
     """Append data to array for full field tomo
 
@@ -59,19 +108,41 @@ def fill_sinogram(esa, q_thp_xp):
     q, thp, xp = q_thp_xp
     # Copy the array so we have independent access to it
     # esa = esa.copy()
-    esa[thp, 0, xp] = q
+    esa[thp, xp] = q
     return esa
 
 
+def conditional_squeeze(arr, axis):
+    shape = arr.shape
+    if shape[axis] == 1:
+        return np.squeeze(arr, axis)
+    else:
+        return arr
+
+
+# TODO: unify the reconstruction section of the pipeline and make the prep
+#  produce the sinograms
+
+
 def tomo_pipeline_theta(qoi, theta, center, algorithm="gridrec", **kwargs):
-    rec = (
+    sinogram_theta = (
+        # replace with expand_dims
         qoi.map(reshape, stream_name="reshape")
         .map(tomopy.minus_log)
         .zip(theta)
         .accumulate(append_data)
-        .combine_latest(center, emit_on=0)
+    )
+    sinogram = (
+        sinogram_theta
+        # Sort the sinogram by theta for out of order scans
+        .starmap(lambda s, x: s[x.argsort()[::-1]])
+        # The sinogram accumulates over theta so we can squeeze
+        .map(conditional_squeeze, 1)
+    )
+    rec = (
+        sinogram_theta.combine_latest(center, emit_on=0)
         .map(flatten)
-        .starmap(tomopy.recon, algorithm=algorithm)
+        .starmap(recon_wrapper, algorithm=algorithm)
     )
     return locals()
 
@@ -104,24 +175,23 @@ def tomo_pipeline_piecewise(
     center,
     th_ext,
     algorithm="gridrec",
-    **kwargs
+    **kwargs,
 ):
     """Perform a tomographic reconstruction on a QOI"""
     a = qoi.zip(th_pos, x_pos)
-    sineogram = a.accumulate(fill_sinogram)
+    sinogram = a.accumulate(fill_sinogram)
     # This is created at the start document and bypasses the fill_sinogram
     # function
     # TODO: make a function for the np.ones
-    th_dim.zip(x_dim).starmap(lambda th, x: np.ones((th, 1, x))).connect(
-        sineogram
+    th_dim.zip(x_dim).starmap(lambda th, x: np.ones((th, x))).sink(
+        lambda x: setattr(sinogram, "state", x)
     )
 
     rec = (
-        sineogram.map(np.nan_to_num)
+        sinogram.map(np.nan_to_num)
         .map(tomopy.minus_log)
         .map(np.nan_to_num)
         .combine_latest(th_ext, center, emit_on=0)
-        .starmap(tomopy.recon, algorithm=algorithm)
-        .map(lambda x: np.reshape(x, x.shape[1:]))
+        .starmap(recon_wrapper, algorithm=algorithm)
     )
     return locals()
