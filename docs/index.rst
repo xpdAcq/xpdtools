@@ -22,9 +22,9 @@ ships with a dedicated command prompt) and type
 
 ``conda install xpdtools -c conda-forge``
 
-this will install the xpdtools software and all of its dependencies.
+and follow the prompts. This will install the xpdtools software and all of its dependencies.
 
-Please check that the software is installed by typing ``image_to_iq -- --help``.
+Please check that the software is installed by typing in the terminal (in any directory), ``image_to_iq -- --help``.
 This should display a help description of how to use the ``image_to_iq``
 command line interface.
 
