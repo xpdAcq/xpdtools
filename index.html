@@ -159,7 +159,16 @@ distribution functions. The tools are put together via a <code class="docutils l
 </div>
 <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">xpdtools</span></code> is installable via the <code class="docutils literal notranslate"><span class="pre">conda</span></code> package manager.
+If you don’t have Anaconda (or miniconda) installed please follow the instructions
+from <a class="reference external" href="https://datacarpentry.org/2016-05-29-PyCon/install.html">Data Carpentry</a>.</p>
+<p>With Anaconda or miniconda please enter into a terminal (on Windows Anaconda
+ships with a dedicated command prompt) and type</p>
 <p><code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">xpdtools</span> <span class="pre">-c</span> <span class="pre">conda-forge</span></code></p>
+<p>and follow the prompts. This will install the xpdtools software and all of its dependencies.</p>
+<p>Please check that the software is installed by typing in the terminal (in any directory), <code class="docutils literal notranslate"><span class="pre">image_to_iq</span> <span class="pre">--</span> <span class="pre">--help</span></code>.
+This should display a help description of how to use the <code class="docutils literal notranslate"><span class="pre">image_to_iq</span></code>
+command line interface.</p>
 </div>
 <div class="section" id="quickstart">
 <h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h1>
@@ -167,6 +176,11 @@ distribution functions. The tools are put together via a <code class="docutils l
 <code class="docutils literal notranslate"><span class="pre">image_to_iq</span> <span class="pre">&lt;poni_file&gt;</span> <span class="pre">&lt;image_file&gt;</span></code>.
 For more information about CLI options <code class="docutils literal notranslate"><span class="pre">image_to_iq</span> <span class="pre">--</span> <span class="pre">--help</span></code> will provide
 the help information.</p>
+<p>Note that you will need pyFAI calibration files (<code class="docutils literal notranslate"><span class="pre">.poni</span></code> files) which are
+generated via <code class="docutils literal notranslate"><span class="pre">pyFAI-calib</span></code>.
+For most usages the pyFAI calibration is
+<code class="docutils literal notranslate"><span class="pre">pyFAI-calib</span> <span class="pre">-D</span> <span class="pre">Perkin</span> <span class="pre">-w</span> <span class="pre">&lt;wavelength&gt;</span> <span class="pre">-c</span> <span class="pre">Ni</span> <span class="pre">&lt;calibration_img&gt;</span></code>.
+Please see <a class="reference external" href="https://pyfai.readthedocs.io/en/latest/man/pyFAI-calib.html">pyFAI’s documentation</a> and see our <a class="reference external" href="https://xpdacq.github.io/xpdAcq/features.html?highlight=calibration#automated-calibration-capture">docs for how to use pyFAI</a>.</p>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
