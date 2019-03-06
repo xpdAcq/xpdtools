@@ -32,7 +32,7 @@ def pca_pipeline(data, start, n_components=.9, **kwargs):
     return locals()
 
 
-def amorphsivity_pipeline(pdf, lower_bound_percentage=.66):
+def amorphsivity_pipeline(pdf, lower_bound_percentage=.66, **kwargs):
     """Compute the amorphsivity of the material via the G(r).
 
     This computes a proxy of how amorphous the material is by comparing the
@@ -58,12 +58,11 @@ def amorphsivity_pipeline(pdf, lower_bound_percentage=.66):
     locals : dict
         The locals
     """
-    gr = pdf.pluck(1)
     # Get the lower bound index
-    index = gr.map(len).map(op.mul, lower_bound_percentage).map(int)
-    abs_max = gr.map(np.abs).map(np.max)
+    index = pdf.map(len).map(op.mul, lower_bound_percentage).map(int)
+    abs_max = pdf.map(np.abs).map(np.max)
     integrated_max = (
-        gr.zip(index)
+        pdf.zip(index)
         .starmap(lambda x, y: x[y:])
         .map(np.abs)
         .map(np.sum)
