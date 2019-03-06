@@ -201,5 +201,5 @@ def test_amorphous_pipeline():
     ns = amorphsivity_pipeline(pdf)
     L = ns['amorphsivity'].sink_to_list()
     a = np.ones(10)
-    pdf.emit((0, a))
+    pdf.emit(a)
     assert L[0] == np.sum(a[6:])
