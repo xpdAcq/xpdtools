@@ -211,6 +211,11 @@ def acc(old, new):
 
 
 def tomo_stack_2D(rec, stack_position, start, **kwargs):
-    rec_3D = rec.map(np.atleast_3d).combine_latest(stack_position, emit_on=0).accumulate(acc).pluck(0)
-    start.sink(lambda x: setattr(rec_3D, 'start', no_default))
+    rec_3D = (
+        rec.map(np.atleast_3d)
+        .combine_latest(stack_position, emit_on=0)
+        .accumulate(acc)
+        .pluck(0)
+    )
+    start.sink(lambda x: setattr(rec_3D, "start", no_default))
     return locals()
