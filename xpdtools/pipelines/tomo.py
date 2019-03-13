@@ -1,5 +1,6 @@
 import numpy as np
 import tomopy
+from rapidz import no_default
 
 
 def recon_wrapper(projection, theta, center, **kwargs):
@@ -194,4 +195,27 @@ def tomo_pipeline_piecewise(
         .combine_latest(th_ext, center, emit_on=0)
         .starmap(recon_wrapper, algorithm=algorithm)
     )
+    return locals()
+
+
+def acc(old, new):
+    oldtomo, oldz = old
+    newtomo, newz = new
+    if oldz == newz:
+        # XXX: make sure that oldtomo is a 3D array, pad otherwise
+        oldtomo[..., -1] = np.squeeze(newtomo)
+    else:
+        # XXX: we might need to use a slightly different function
+        oldtomo = np.dstack((oldtomo, newtomo))
+    return oldtomo, newz
+
+
+def tomo_stack_2D(rec, stack_position, start, **kwargs):
+    rec_3D = (
+        rec.map(np.atleast_3d)
+        .combine_latest(stack_position, emit_on=0)
+        .accumulate(acc)
+        .pluck(0)
+    )
+    start.sink(lambda x: setattr(rec_3D, "start", no_default))
     return locals()
