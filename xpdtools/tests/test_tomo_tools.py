@@ -26,16 +26,16 @@ def test_tomo_stack_2D():
     stack_position = Stream()
     start = Stream()
     ns = tomo_stack_2D(rec, stack_position, start)
-    L = ns['rec_3D'].sink_to_list()
+    L = ns["rec_3D"].sink_to_list()
 
     stack_position.emit(0)
     rec.emit(np.ones((10, 10)))
     stack_position.emit(0)
-    rec.emit(np.ones((10, 10))*2)
-    assert_array_almost_equal(L[-1], np.ones((10, 10, 1))*2)
+    rec.emit(np.ones((10, 10)) * 2)
+    assert_array_almost_equal(L[-1], np.ones((10, 10, 1)) * 2)
 
     stack_position.emit(1)
     rec.emit(np.ones((10, 10, 1)) * 3)
     assert_array_almost_equal(
-        L[-1],
-        np.dstack((np.ones((10, 10, 1)) * 2, np.ones((10, 10, 1))*3)))
+        L[-1], np.dstack((np.ones((10, 10, 1)) * 2, np.ones((10, 10, 1)) * 3))
+    )
