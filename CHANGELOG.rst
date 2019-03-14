@@ -4,6 +4,30 @@
 
 .. current developments
 
+v0.7.0
+====================
+
+**Added:**
+
+* ``amorphsivity_pipeline`` for measuring if a PDF is amorphous
+* ``xpdtools.pipelines.tomo.sort_sinogram`` for sorting sinograms by their
+  theta values
+* Ability to stack 2D tomographic reconstructions into 3D for pencil beam
+* ``xpdtools.pipelines.tomo.recon_wrapper`` function which wraps ``tomopy.recon`` to 
+  handle 2, 3 and 4D arrays
+
+**Changed:**
+
+* ``xpdotools.pipelines.tomo.tomo_pipeline_theta`` uses ``sort_sinogram`` 
+  rather than a lambda for provenance
+* ``xpdtools.pipelines.tomo`` pipelines use the ``recon_wrapper`` rather than ``tomopy.recon``
+
+**Fixed:**
+
+* Don't use ``pluck`` since we can pass in just the G(r)
+
+
+
 v0.6.0
 ====================
 
