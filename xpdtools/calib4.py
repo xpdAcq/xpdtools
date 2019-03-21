@@ -175,7 +175,6 @@ def findrings(image):
 
 	"""  
 	center_pt=findringcenter(image)
-	print(center_pt)
 
 	#create horizontal slyces from the center of the inner ring (but use 5 and find the median value to avoid issues with hot pixels)
 	cs1=Slyce('h',center_pt[0]-2,image)
@@ -231,32 +230,34 @@ def findrings(image):
 	print(points_image)
 	print(center_pt)
 
-
-
 	return points_image, center_pt
 
 points_image,center_pt=findrings(imarray)
 
+#vis=True
+vis=False
 
-new_img = np.empty((imarray.shape[0],imarray.shape[1],4))
-max_img = np.amax(imarray)
-min_img = np.amin(imarray)
-for i, row in enumerate(new_img):
-	for j, elem in enumerate(row):
-		old_val = imarray[i][j]
-		scaled = (old_val-min_img)/(max_img-min_img)
-		new_img[i][j] = np.array([1.0-scaled, 1.0-scaled, 1.0-scaled, 1.0])
+if vis:
 
-for point_image in points_image:
+	new_img = np.empty((imarray.shape[0],imarray.shape[1],4))
+	max_img = np.amax(imarray)
+	min_img = np.amin(imarray)
+	for i, row in enumerate(new_img):
+		for j, elem in enumerate(row):
+			old_val = imarray[i][j]
+			scaled = (old_val-min_img)/(max_img-min_img)
+			new_img[i][j] = np.array([1.0-scaled, 1.0-scaled, 1.0-scaled, 1.0])
+
+	for point_image in points_image:
+		for i in range(-2,2):
+			for j in range(-2,2):
+				new_img[point_image[0]+i][point_image[1]+j]=np.array([1.0, 0.0, 0.0, 1.0])
+
 	for i in range(-2,2):
 		for j in range(-2,2):
-			new_img[point_image[0]+i][point_image[1]+j]=np.array([1.0, 0.0, 0.0, 1.0])
-
-for i in range(-2,2):
-	for j in range(-2,2):
-		new_img[center_pt[0]+i][center_pt+j]=np.array([1.0, 0.0, 0.0, 1.0])
+			new_img[center_pt[0]+i][center_pt[1]+j]=np.array([1.0, 0.0, 0.0, 1.0])
 
 
 
-plt.imshow(new_img)
-plt.show()
+	plt.imshow(new_img)
+	plt.show()
