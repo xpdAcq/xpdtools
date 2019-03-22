@@ -7,21 +7,17 @@ import matplotlib as mpl
 mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 
-filename = 'Ni_pin_20181101-075909_973de2_0001.tiff'
-
-
-imarray=tf.imread(filename)
 
 
 class Slyce():
 	def __init__(self,direction,index,image):
 		self.direction=direction
-		self.index=index
+		self.index=int(index)
 		self.pixels=[]
 		if direction=='v':
-			self.data=list(image[:,index])
+			self.data=list(image[:, self.index])
 		if direction=='h':
-			self.data=list(image[index,:])
+			self.data=list(image[self.index,:])
 
 def findcenter(image):
 	"""
@@ -78,11 +74,11 @@ def finddistance(a,b):
 		np.float64 corresponding to distance between two points
 	"""
 
-   	dif1=a[1]-b[1]
-   	dif2=a[0]-b[0]
-   	d_sq=np.abs(dif1**2+dif2**2)
+	dif1=a[1]-b[1]
+	dif2=a[0]-b[0]
+	d_sq=np.abs(dif1**2+dif2**2)
    
-   	return np.sqrt(d_sq)
+	return np.sqrt(d_sq)
 
 def findringcenter(image,thres=0.2,d=20):
 	"""
@@ -134,7 +130,7 @@ def findringcenter(image,thres=0.2,d=20):
 		#between that point and the points that have been identified on the inner ring through the clickpoints() function
 		#the point that has the smallest range of distances is identified as the center
 		for row in range (int(r-3*d),int(r+3*d)):
-		   for col in range (int(c-3*d),int(c+3*d)):
+			for col in range (int(c-3*d),int(c+3*d)):
 				pointdist=[]
 				for point in points2click:
 					pointdist.append(finddistance([row,col],point))
@@ -158,7 +154,7 @@ def zerocross(lines):
 	"""
 	z=[]
 	for i in range(1,len(lines)-1):
-	   if (np.sign(lines[i]) == -1) and (np.sign(lines[i-1]) in [0,1]):
+		if (np.sign(lines[i]) == -1) and (np.sign(lines[i-1]) in [0,1]):
 			if np.abs(lines[i]-lines[i-1])>np.max(lines)/80.0:
 				z.append(i)
 	return z
@@ -232,7 +228,6 @@ def findrings(image):
 
 	return points_image, center_pt
 
-points_image,center_pt=findrings(imarray)
 
 #vis=True
 vis=False
