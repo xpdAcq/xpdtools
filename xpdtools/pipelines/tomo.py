@@ -124,6 +124,24 @@ def conditional_squeeze(arr, axis):
 # TODO: unify the reconstruction section of the pipeline and make the prep
 #  produce the sinograms
 
+def sort_sinogram(sinogram, theta):
+    """Sort a sinogram by its theta values for easy viewing
+
+    Parameters
+    ----------
+    sinogram : ndarray
+        The sinogram, theta must be the first axis
+    theta : ndarray
+        The theta values
+
+    Returns
+    -------
+    ndarray :
+        The sorted array
+
+    """
+    return sinogram[theta.argsort()[::-1]]
+
 
 def tomo_pipeline_theta(qoi, theta, center, algorithm="gridrec", **kwargs):
     sinogram_theta = (
@@ -136,7 +154,7 @@ def tomo_pipeline_theta(qoi, theta, center, algorithm="gridrec", **kwargs):
     sinogram = (
         sinogram_theta
         # Sort the sinogram by theta for out of order scans
-        .starmap(lambda s, x: s[x.argsort()[::-1]])
+        .starmap(sort_sinogram)
         # The sinogram accumulates over theta so we can squeeze
         .map(conditional_squeeze, 1)
     )
