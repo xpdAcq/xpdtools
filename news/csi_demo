@@ -1,0 +1,13 @@
+**Added:** None
+
+**Changed:**
+
+* Replace lambda function for sorting the sinogram with actual function
+
+**Deprecated:** None
+
+**Removed:** None
+
+**Fixed:** None
+
+**Security:** None
