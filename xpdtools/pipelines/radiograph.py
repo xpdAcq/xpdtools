@@ -1,7 +1,8 @@
 """Pipeline chunks for handling radiographs (full field tomography
 preprocessing)"""
-from rapidz import Stream, identity
 import operator as op
+
+from rapidz import Stream
 from tomopy import normalize
 
 
@@ -34,6 +35,14 @@ def unique_data(data, **kwargs):
     return locals()
 
 
+def radiograph_correction(img: Stream, dark: Stream, flat_field: Stream,
+                          **kwargs):
+    norm_img = img.combine_latest(flat_field, dark, emit_on=0).starmap(
+        normalize)
+
+    return locals()
+
+
 def average(data: Stream, reset: Stream = None, **kwargs):
     """Perform a running average
 
@@ -55,13 +64,5 @@ def average(data: Stream, reset: Stream = None, **kwargs):
                                 start=0,
                                 reset_stream=reset)
     ave_img = img_sum.zip(img_count).starmap(op.truediv)
-
-    return locals()
-
-
-def radiograph_correction(img: Stream, dark: Stream, flat_field: Stream,
-                          motors: Stream, **kwargs):
-    norm_img = img.combine_latest(flat_field, dark, emit_on=0).starmap(
-        normalize)
 
     return locals()
