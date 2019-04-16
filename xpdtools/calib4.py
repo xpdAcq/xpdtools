@@ -170,6 +170,10 @@ def findrings(image):
 		pixel index of point on center ring and pixel indices of points on rings 0,1,2,5
 
 	"""  
+
+	if not isinstance(image,np.ndarray):
+		raise RuntimeError('input type must be ndarray')
+	
 	center_pt=findringcenter(image)
 
 	#create horizontal slyces from the center of the inner ring (but use 5 and find the median value to avoid issues with hot pixels)

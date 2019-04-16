@@ -33,7 +33,8 @@ def test_2Darray():
 	with pytest.raises(IndexError):
 		findrings(np.random.rand(2048))
 
-def test_inputtype():
-	with pytest.raises(AttributeError):
-		findrings([1,2,3])
+@pytest.mark.parametrize("wrong_input",[[1,2,3],3,2.7,(2,3),'banana'])
+def test_inputtype(wrong_input):
+	with pytest.raises(RuntimeError):
+		findrings(wrong_input)
 
