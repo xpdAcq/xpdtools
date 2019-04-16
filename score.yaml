@@ -11,6 +11,8 @@ build:
   python:
     default: {conda: python=$TRAVIS_PYTHON_VERSION}
 run:
+  nomkl:
+    default: {conda: nomkl}
   numpy:
     default: {conda: numpy}
   pyfai:
@@ -25,7 +27,7 @@ run:
   xpdsim:
     default: {conda: xpdsim}
   numba:
-    default: {conda: numba}
+    default: {conda: numba=0.38}
   fabio:
     default: {conda: fabio}
   pyyaml:
