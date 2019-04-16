@@ -14,7 +14,7 @@ run:
   nomkl:
     default: {conda: mkl}
   numpy:
-    default: {conda: numpy}
+    default: {conda: numpy=1.16.2-py36_blas_openblash1522bff_0}
   pyfai:
     default: {conda: pyfai}
   scikit-beam:
