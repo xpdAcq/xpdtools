@@ -12,7 +12,7 @@ build:
     default: {conda: python=$TRAVIS_PYTHON_VERSION}
 run:
   nomkl:
-    default: {conda: nomkl}
+    default: {conda: mkl}
   numpy:
     default: {conda: numpy}
   pyfai:
