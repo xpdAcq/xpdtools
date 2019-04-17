@@ -232,7 +232,7 @@ def test_average_unique_data_pipeline():
     assert len(mul) == 0
     assert icl[-1] == 2
     assert len(L) == 2
-    assert_allclose(L[-1], (imgs[0] + imgs[1])/2)
+    assert_allclose(L[-1], (imgs[0] + imgs[1]) / 2)
 
     start_ns['img'].emit(imgs[2])
     start_ns['motors'].emit({'hi': 'new'})
