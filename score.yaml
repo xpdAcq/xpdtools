@@ -39,7 +39,7 @@ run:
   distributed:
     default: {cconda: distributed}
   tomopy:
-    default: {cconda: tomopy}
+    default: {cconda: tomopy=1.2.1}
   scikit-learn:
     default: {cconda: scikit-learn}
 test:
