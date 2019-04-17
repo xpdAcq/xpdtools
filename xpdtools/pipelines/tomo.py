@@ -143,10 +143,10 @@ def sort_sinogram(sinogram, theta):
     return sinogram[theta.argsort()[::-1]]
 
 
-def tomo_pipeline_theta(img, theta, center, algorithm="gridrec", **kwargs):
+def tomo_pipeline_theta(qoi, theta, center, algorithm="gridrec", **kwargs):
     sinogram_theta = (
         # replace with expand_dims
-        img.map(reshape, stream_name="reshape")
+        qoi.map(reshape, stream_name="reshape")
         .map(tomopy.minus_log)
         .zip(theta)
         .accumulate(append_data)
@@ -158,6 +158,7 @@ def tomo_pipeline_theta(img, theta, center, algorithm="gridrec", **kwargs):
         # The sinogram accumulates over theta so we can squeeze
         .map(conditional_squeeze, 1)
     )
+    sinogram.sink(print)
     rec = (
         sinogram_theta.combine_latest(center, emit_on=0)
         .map(flatten)
