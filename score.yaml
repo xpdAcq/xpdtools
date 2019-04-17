@@ -7,60 +7,60 @@ section_order:
 install: python -m pip install . --no-deps -vvv
 build:
   pip:
-    default: {conda: setuptools}
+    default: {cconda: setuptools}
   python:
-    default: {conda: python=$TRAVIS_PYTHON_VERSION}
+    default: {cconda: python=$TRAVIS_PYTHON_VERSION}
 run:
   numpy:
-    default: {conda: numpy}
+    default: {cconda: numpy}
   pyfai:
-    default: {conda: pyfai}
+    default: {cconda: pyfai}
   scikit-beam:
-    default: {conda: scikit-beam}
+    default: {cconda: scikit-beam}
   scipy:
-    default: {conda: scipy}
+    default: {cconda: scipy}
   rapidz:
-    default: {conda: rapidz}
+    default: {cconda: rapidz}
     bleeding: {pip: 'git+https://github.com/xpdAcq/rapidz.git'}
   xpdsim:
-    default: {conda: xpdsim}
+    default: {cconda: xpdsim}
   numba:
-    default: {conda: numba=0.38}
+    default: {cconda: numba=0.38}
   fabio:
-    default: {conda: fabio}
+    default: {cconda: fabio}
   pyyaml:
-    default: {conda: pyyaml}
+    default: {cconda: pyyaml}
   fire:
-    default: {conda: fire}
+    default: {cconda: fire}
   pims:
-    default: {conda: pims}
+    default: {cconda: pims}
   tqdm:
-    default: {conda: tqdm}
+    default: {cconda: tqdm}
   distributed:
-    default: {conda: distributed}
+    default: {cconda: distributed}
   tomopy:
-    default: {conda: tomopy}
+    default: {cconda: tomopy}
   scikit-learn:
-    default: {conda: scikit-learn}
+    default: {cconda: scikit-learn}
 test:
   pytest:
-    default: {conda: pytest==3.10.1}
+    default: {cconda: pytest==3.10.1}
   flake8:
-    default: {conda: flake8}
+    default: {cconda: flake8}
   codecov:
-    default: {conda: codecov}
+    default: {cconda: codecov}
   coverage:
-    default: {conda: coverage}
+    default: {cconda: coverage}
   pytest-env:
-    default: {conda: pytest-env}
+    default: {cconda: pytest-env}
   nose:
-    default: {conda: nose}
+    default: {cconda: nose}
   pytest-tornado:
-    default: {conda: pytest-tornado}
+    default: {cconda: pytest-tornado}
 docs:
   doctr:
-    default: {conda: doctr}
+    default: {cconda: doctr}
   sphinx:
-    default: {conda: sphinx}
+    default: {cconda: sphinx}
   sphinx_rtd_theme:
-    default: {conda: sphinx_rtd_theme}
+    default: {cconda: sphinx_rtd_theme}

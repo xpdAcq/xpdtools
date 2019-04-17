@@ -124,6 +124,7 @@ def conditional_squeeze(arr, axis):
 # TODO: unify the reconstruction section of the pipeline and make the prep
 #  produce the sinograms
 
+
 def sort_sinogram(sinogram, theta):
     """Sort a sinogram by its theta values for easy viewing
 
@@ -158,6 +159,7 @@ def tomo_pipeline_theta(qoi, theta, center, algorithm="gridrec", **kwargs):
         # The sinogram accumulates over theta so we can squeeze
         .map(conditional_squeeze, 1)
     )
+    sinogram.sink(print)
     rec = (
         sinogram_theta.combine_latest(center, emit_on=0)
         .map(flatten)

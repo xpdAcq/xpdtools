@@ -9,6 +9,7 @@ from xpdtools.pipelines.qoi import (
     max_gr_mean,
     pca_pipeline,
     amorphsivity_pipeline)
+from xpdtools.pipelines.radiograph import average, unique_data
 from xpdtools.pipelines.raw_pipeline import (
     pipeline_order,
     namespace as g_namespace,
@@ -21,6 +22,7 @@ from xpdtools.pipelines.tomo import (
     tomo_pipeline_theta,
 )
 from rapidz import destroy_pipeline, Stream
+from numpy.testing import assert_allclose
 
 img = tifffile.imread(image_file)
 geo = pyFAI.load(pyfai_poni)
@@ -203,3 +205,47 @@ def test_amorphous_pipeline():
     a = np.ones(10)
     pdf.emit(a)
     assert L[0] == np.sum(a[6:])
+
+
+def test_average_unique_data_pipeline():
+    start_ns = {k: Stream() for k in ['img', 'motors']}
+    ud_ns = unique_data(start_ns['motors'])
+    ns = average(data=start_ns['img'], reset=ud_ns['unique'])
+
+    L = ns['ave_img'].sink_to_list()
+    mul = ud_ns['unique'].sink_to_list()
+    icl = ns['img_count'].sink_to_list()
+
+    imgs = [np.random.random((2, 2)) for i in range(3)]
+
+    start_ns['img'].emit(imgs[0])
+    start_ns['motors'].emit({'hi': 'world'})
+
+    assert len(mul) == 0
+    assert icl[-1] == 1
+    assert len(L) == 1
+    assert_allclose(L[-1], imgs[0])
+
+    start_ns['img'].emit(imgs[1])
+    start_ns['motors'].emit({'hi': 'world'})
+
+    assert len(mul) == 0
+    assert icl[-1] == 2
+    assert len(L) == 2
+    assert_allclose(L[-1], (imgs[0] + imgs[1]) / 2)
+
+    start_ns['img'].emit(imgs[2])
+    start_ns['motors'].emit({'hi': 'new'})
+
+    assert len(mul) == 1
+    assert icl[-1] == 3
+    assert len(L) == 3
+    assert_allclose(L[-1], (imgs[0] + imgs[1] + imgs[2]) / 3)
+
+    start_ns['img'].emit(imgs[0])
+    start_ns['motors'].emit({'hi': 'new'})
+
+    assert len(mul) == 1
+    assert icl[-1] == 1
+    assert len(L) == 4
+    assert_allclose(L[-1], imgs[0])
