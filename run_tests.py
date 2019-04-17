@@ -14,7 +14,7 @@ if __name__ == "__main__":
     # args.extend(['--cov', 'xpdAcq'])
     # call pytest and exit with the return code from pytest so that
     # travis will fail correctly if tests fail
-    for f in os.listdir('xpdtools/tests'):
-        a = args.copy() + [f'xpdtools/tests/{f}']
+    for f in os.listdir("xpdtools/tests"):
+        a = args.copy() + [f"xpdtools/tests/{f}"]
         exit_res = pytest.main(a)
     sys.exit(exit_res)

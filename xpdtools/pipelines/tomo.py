@@ -124,6 +124,7 @@ def conditional_squeeze(arr, axis):
 # TODO: unify the reconstruction section of the pipeline and make the prep
 #  produce the sinograms
 
+
 def sort_sinogram(sinogram, theta):
     """Sort a sinogram by its theta values for easy viewing
 
