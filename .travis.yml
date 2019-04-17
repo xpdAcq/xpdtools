@@ -35,7 +35,7 @@ install:
   - export GIT_FULL_HASH=`git rev-parse HEAD`
   - conda create --yes -n testenv python=$TRAVIS_PYTHON_VERSION orch
   - source activate testenv
-  - orch score.yaml
+  - orch score.yaml --rc=orch.xsh
 #  - python -m pip install . --no-deps -vv
 #  - conda create --yes -n testenv python=3.6 setuptools
 #  - source activate testenv
