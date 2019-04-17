@@ -188,53 +188,49 @@ subtracted I(Q) files.</p>
 <p>The data processing steps included in this protocol are:
 background subtraction, polarization correction, automated masking, and
 pixel resolution integration</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>poni_file</strong> (<em>str or None, optional</em>) – File generated from pyFAI’s calibration, if None look in the
-current working directory for the poni file, defaults to None.</li>
-<li><strong>image_files</strong> (<em>str or None, optional</em>) – File to process, if None use all the valid files in the directory,
-defaults to None.</li>
-<li><strong>bg_file</strong> (<em>str or None, optional</em>) – Background image, if None no background subtraction is performed,
-defaults to None.</li>
-<li><strong>mask_file</strong> (<em>str or None, optional</em>) – Mask file to include in the data processing, if None don’t use one,
-defaults to None.</li>
-<li><strong>polarization</strong> (<em>float, optional</em>) – The polzarization factor to use, defaults to .99, if None do not
-perform polarization correction</li>
-<li><strong>edge</strong> (<em>int, optional</em>) – The number of pixels from the edge to mask with an edge mask,
-defaults to 20, if None no edge mask used</li>
-<li><strong>lower_thresh</strong> (<em>float, optional</em>) – Threshold for lower threshold mask, all pixels with value less than
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>poni_file</strong> (<em>str or None, optional</em>) – File generated from pyFAI’s calibration, if None look in the
+current working directory for the poni file, defaults to None.</p></li>
+<li><p><strong>image_files</strong> (<em>str or None, optional</em>) – File to process, if None use all the valid files in the directory,
+defaults to None.</p></li>
+<li><p><strong>bg_file</strong> (<em>str or None, optional</em>) – Background image, if None no background subtraction is performed,
+defaults to None.</p></li>
+<li><p><strong>mask_file</strong> (<em>str or None, optional</em>) – Mask file to include in the data processing, if None don’t use one,
+defaults to None.</p></li>
+<li><p><strong>polarization</strong> (<em>float, optional</em>) – The polzarization factor to use, defaults to .99, if None do not
+perform polarization correction</p></li>
+<li><p><strong>edge</strong> (<em>int, optional</em>) – The number of pixels from the edge to mask with an edge mask,
+defaults to 20, if None no edge mask used</p></li>
+<li><p><strong>lower_thresh</strong> (<em>float, optional</em>) – Threshold for lower threshold mask, all pixels with value less than
 this value (after background subtraction if applicable), defaults
-to 1. if None do not apply lower theshold mask</li>
-<li><strong>upper_thresh</strong> (<em>float, optional</em>) – Threshold for upper threshold mask, all pixels with value greater
+to 1. if None do not apply lower theshold mask</p></li>
+<li><p><strong>upper_thresh</strong> (<em>float, optional</em>) – Threshold for upper threshold mask, all pixels with value greater
 than this value (after background subtraction if applicable),
-defaults to None if None do not apply upper theshold mask</li>
-<li><strong>alpha</strong> (<em>float, optional</em>) – Number of standard deviations away from the ring mean to mask,
-defaults to 3. if None do not apply automated masking</li>
-<li><strong>auto_type</strong> (<em>{‘median’, ‘mean’}, optional</em>) – The type of automasking to use, median is faster, mean is more
-accurate. Defaults to ‘median’.</li>
-<li><strong>mask_settings</strong> (<em>{‘auto’, ‘first’, none}, optional</em>) – If auto mask every image, if first only mask first image, if None
-mask no images. Defaults to None</li>
-<li><strong>flip_input_mask</strong> (<em>bool, optional</em>) – If True flip the input mask up down, this helps when using fit2d
-defaults to True.</li>
-<li><strong>bg_scale</strong> (<em>float, optional</em>) – The scale for the image to image background subtraction, defaults
-to 1</li>
+defaults to None if None do not apply upper theshold mask</p></li>
+<li><p><strong>alpha</strong> (<em>float, optional</em>) – Number of standard deviations away from the ring mean to mask,
+defaults to 3. if None do not apply automated masking</p></li>
+<li><p><strong>auto_type</strong> (<em>{‘median’, ‘mean’}, optional</em>) – The type of automasking to use, median is faster, mean is more
+accurate. Defaults to ‘median’.</p></li>
+<li><p><strong>mask_settings</strong> (<em>{‘auto’, ‘first’, none}, optional</em>) – If auto mask every image, if first only mask first image, if None
+mask no images. Defaults to None</p></li>
+<li><p><strong>flip_input_mask</strong> (<em>bool, optional</em>) – If True flip the input mask up down, this helps when using fit2d
+defaults to True.</p></li>
+<li><p><strong>bg_scale</strong> (<em>float, optional</em>) – The scale for the image to image background subtraction, defaults
+to 1</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>q_l</strong> (<em>list of ndarrays</em>) – The list of q values</li>
-<li><strong>mean_l</strong> (<em>list of ndarrays</em>) – The list of mean values</li>
-<li><strong>median_l</strong> (<em>list of ndarrays</em>) – The list of median values</li>
-<li><strong>std_l</strong> (<em>list of ndarrays</em>) – The list of standard deviation values</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>q_l</strong> (<em>list of ndarrays</em>) – The list of q values</p></li>
+<li><p><strong>mean_l</strong> (<em>list of ndarrays</em>) – The list of mean values</p></li>
+<li><p><strong>median_l</strong> (<em>list of ndarrays</em>) – The list of median values</p></li>
+<li><p><strong>std_l</strong> (<em>list of ndarrays</em>) – The list of standard deviation values</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">

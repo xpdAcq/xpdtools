@@ -196,14 +196,12 @@
 <dt id="xpdtools.calib.img_calibration">
 <code class="descclassname">xpdtools.calib.</code><code class="descname">img_calibration</code><span class="sig-paren">(</span><em>img</em>, <em>wavelength</em>, <em>calibrant='Ni'</em>, <em>detector='perkin_elmer'</em>, <em>calib_ref_fp=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/calib.html#img_calibration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.calib.img_calibration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to calibrate experimental geometry for an image</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>img</strong> (<em>ndarray</em>) – 2D powder diffraction image from calibrant</li>
-<li><strong>wavelength</strong> (<em>float</em>) – x-ray wavelength in angstrom.</li>
-<li><strong>calibrant</strong> (<em>str, optional</em>) – calibrant being used, default is ‘Ni’.
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>ndarray</em>) – 2D powder diffraction image from calibrant</p></li>
+<li><p><strong>wavelength</strong> (<em>float</em>) – x-ray wavelength in angstrom.</p></li>
+<li><p><strong>calibrant</strong> (<em>str, optional</em>) – calibrant being used, default is ‘Ni’.
 input could be “full file path” to customized d-spacing file with
 “.D” extension or one of pre-defined calibrant names.
 List of pre-defined calibrant names:
@@ -211,25 +209,23 @@ List of pre-defined calibrant names:
 ‘Si_SRM640a’, ‘alpha_Al2O3’, ‘LaB6_SRM660b’, ‘TiO2’, ‘CrOx’,
 ‘LaB6_SRM660c’, ‘CeO2’, ‘Si_SRM640c’, ‘CuO’, ‘Si_SRM640e’,
 ‘PBBA’, ‘ZnO’, ‘Si’, ‘C14H30O’, ‘cristobaltite’, ‘LaB6_SRM660a’,
-‘Au’, ‘Cr2O3’, ‘Si_SRM640b’, ‘LaB6’, ‘Al’, ‘mock’]</li>
-<li><strong>detector</strong> (<em>str or pyFAI.detector.Detector instance, optional.</em>) – detector used to collect data. default value is ‘perkin-elmer’.
-other allowed values are in pyFAI documentation.</li>
-<li><strong>calib_ref_fp</strong> (<em>str, optional</em>) – full file path to where the native pyFAI calibration information
-will be saved. Default to current working directory.</li>
-<li><strong>kwargs</strong> – Additional keyword argument for calibration. please refer to
-pyFAI documentation for all options.</li>
+‘Au’, ‘Cr2O3’, ‘Si_SRM640b’, ‘LaB6’, ‘Al’, ‘mock’]</p></li>
+<li><p><strong>detector</strong> (<em>str or pyFAI.detector.Detector instance, optional.</em>) – detector used to collect data. default value is ‘perkin-elmer’.
+other allowed values are in pyFAI documentation.</p></li>
+<li><p><strong>calib_ref_fp</strong> (<em>str, optional</em>) – full file path to where the native pyFAI calibration information
+will be saved. Default to current working directory.</p></li>
+<li><p><strong>kwargs</strong> – Additional keyword argument for calibration. please refer to
+pyFAI documentation for all options.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ai</strong> – instance of AzimuthalIntegrator. Can be used to integrate 2D
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ai</strong> – instance of AzimuthalIntegrator. Can be used to integrate 2D
 images directly.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pyFAI.AzimuthalIntegrator</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pyFAI.AzimuthalIntegrator</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <p>calib Ni image with pyFAI default <code class="docutils literal notranslate"><span class="pre">Ni.D</span></code> d-spacing
 with wavlength 0.1823 angstrom</p>
@@ -280,29 +276,25 @@ with wavlength 0.1823 angstrom</p>
 <dt id="xpdtools.tools.binned_outlier">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">binned_outlier</code><span class="sig-paren">(</span><em>img</em>, <em>binner</em>, <em>alpha=3</em>, <em>tmsk=None</em>, <em>mask_method='median'</em>, <em>pool=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#binned_outlier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.binned_outlier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sigma Clipping based masking</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>img</strong> (<em>np.ndarray</em>) – The image</li>
-<li><strong>binner</strong> (<em>BinnedStatistic1D instance</em>) – The binned statistics information</li>
-<li><strong>alpha</strong> (<em>float, optional</em>) – The number of standard deviations to clip, defaults to 3</li>
-<li><strong>tmsk</strong> (<em>np.ndarray, optional</em>) – Prior mask. If None don’t use a prior mask, defaults to None.</li>
-<li><strong>mask_method</strong> (<em>{‘median’, ‘mean’}, optional</em>) – The method to use for creating the mask, median is faster, mean is more
-accurate. Defaults to median.</li>
-<li><strong>pool</strong> (<em>Executor instance</em>) – A pool against which jobs can be submitted for parallel processing</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>np.ndarray</em>) – The image</p></li>
+<li><p><strong>binner</strong> (<em>BinnedStatistic1D instance</em>) – The binned statistics information</p></li>
+<li><p><strong>alpha</strong> (<em>float, optional</em>) – The number of standard deviations to clip, defaults to 3</p></li>
+<li><p><strong>tmsk</strong> (<em>np.ndarray, optional</em>) – Prior mask. If None don’t use a prior mask, defaults to None.</p></li>
+<li><p><strong>mask_method</strong> (<em>{‘median’, ‘mean’}, optional</em>) – The method to use for creating the mask, median is faster, mean is more
+accurate. Defaults to median.</p></li>
+<li><p><strong>pool</strong> (<em>Executor instance</em>) – A pool against which jobs can be submitted for parallel processing</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The mask</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The mask</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -325,106 +317,90 @@ accurate. Defaults to median.</li>
 <dt id="xpdtools.tools.decomp">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">decomp</code><span class="sig-paren">(</span><em>data</em>, <em>n_components=0.9</em>, <em>model=&lt;class 'sklearn.decomposition.pca.PCA'&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#decomp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.decomp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a decomposision of the data</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>list of ndarray</em>) – The list of data to be decomposed</li>
-<li><strong>n_components</strong> (<em>int, flot, None or str</em>) – The number of components passed to the model initiaion</li>
-<li><strong>model</strong> (<em>class</em>) – The model class, must take in <code class="docutils literal notranslate"><span class="pre">n_components</span></code>, have a <code class="docutils literal notranslate"><span class="pre">fit</span></code> method
-and a <code class="docutils literal notranslate"><span class="pre">components_</span></code> attribute</li>
-<li><strong>kwargs</strong> (<em>dict</em>) – The kwargs to pass to the model creation</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>list of ndarray</em>) – The list of data to be decomposed</p></li>
+<li><p><strong>n_components</strong> (<em>int, flot, None or str</em>) – The number of components passed to the model initiaion</p></li>
+<li><p><strong>model</strong> (<em>class</em>) – The model class, must take in <code class="docutils literal notranslate"><span class="pre">n_components</span></code>, have a <code class="docutils literal notranslate"><span class="pre">fit</span></code> method
+and a <code class="docutils literal notranslate"><span class="pre">components_</span></code> attribute</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – The kwargs to pass to the model creation</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>eigen</strong> (<em>ndarray</em>) – The eigenvectors</li>
-<li><strong>scores</strong> (<em>ndarray</em>) – The scores for each component</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>eigen</strong> (<em>ndarray</em>) – The eigenvectors</p></li>
+<li><p><strong>scores</strong> (<em>ndarray</em>) – The scores for each component</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="xpdtools.tools.fq_getter">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">fq_getter</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>composition</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#fq_getter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.fq_getter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process the data to F(Q)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<em>ndarray</em>) – The q or tth values</li>
-<li><strong>y</strong> (<em>ndarray</em>) – The scattered intensity</li>
-<li><strong>composition</strong> (<em>str</em>) – The composition</li>
-<li><strong>kwargs</strong> (<em>dict</em>) – Additional kwargs for PDFGetter</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>ndarray</em>) – The q or tth values</p></li>
+<li><p><strong>y</strong> (<em>ndarray</em>) – The scattered intensity</p></li>
+<li><p><strong>composition</strong> (<em>str</em>) – The composition</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Additional kwargs for PDFGetter</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>q</strong> (<em>ndarray</em>) – The radial values</li>
-<li><strong>fq</strong> (<em>ndarray</em>) – The reduced structure function</li>
-<li><strong>config</strong> (<em>dict</em>) – The PDFGetter config</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>q</strong> (<em>ndarray</em>) – The radial values</p></li>
+<li><p><strong>fq</strong> (<em>ndarray</em>) – The reduced structure function</p></li>
+<li><p><strong>config</strong> (<em>dict</em>) – The PDFGetter config</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="xpdtools.tools.generate_binner">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">generate_binner</code><span class="sig-paren">(</span><em>geo</em>, <em>img_shape</em>, <em>mask=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#generate_binner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.generate_binner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a pixel resolution BinnedStats1D instance</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>geo</strong> (<em>pyFAI.geometry.Geometry instance</em>) – The calibrated geometry</li>
-<li><strong>img_shape</strong> (<em>tuple, optional</em>) – The shape of the image, if None pull from the mask. Defaults to None.</li>
-<li><strong>mask</strong> (<em>np.ndarray, optional</em>) – The mask to be applied, if None no mask is applied. Defaults to None.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geo</strong> (<em>pyFAI.geometry.Geometry instance</em>) – The calibrated geometry</p></li>
+<li><p><strong>img_shape</strong> (<em>tuple, optional</em>) – The shape of the image, if None pull from the mask. Defaults to None.</p></li>
+<li><p><strong>mask</strong> (<em>np.ndarray, optional</em>) – The mask to be applied, if None no mask is applied. Defaults to None.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The configured instance of the binner.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">BinnedStatistic1D</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The configured instance of the binner.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>BinnedStatistic1D</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="xpdtools.tools.generate_map_bin">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">generate_map_bin</code><span class="sig-paren">(</span><em>geo</em>, <em>img_shape</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#generate_map_bin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.generate_map_bin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a q map and the pixel resolution bins</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>geo</strong> (<em>pyFAI.geometry.Geometry instance</em>) – The calibrated geometry</li>
-<li><strong>img_shape</strong> (<em>tuple, optional</em>) – The shape of the image, if None pull from the mask. Defaults to None.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geo</strong> (<em>pyFAI.geometry.Geometry instance</em>) – The calibrated geometry</p></li>
+<li><p><strong>img_shape</strong> (<em>tuple, optional</em>) – The shape of the image, if None pull from the mask. Defaults to None.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>q</strong> (<em>ndarray</em>) – The q map</li>
-<li><strong>qbin</strong> (<em>ndarray</em>) – The pixel resolution bins</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>q</strong> (<em>ndarray</em>) – The q map</p></li>
+<li><p><strong>qbin</strong> (<em>ndarray</em>) – The pixel resolution bins</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -436,155 +412,134 @@ and a <code class="docutils literal notranslate"><span class="pre">components_</
 <dt id="xpdtools.tools.load_geo">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">load_geo</code><span class="sig-paren">(</span><em>cal_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#load_geo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.load_geo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a pyFAI geometry from a dict of calibration parameters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cal_params</strong> (<em>dict</em>) – The calibration parameters</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The calibrate azimuthal integrator (which inherits from the geometry)</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">AzimuthalIntegrator</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cal_params</strong> (<em>dict</em>) – The calibration parameters</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The calibrate azimuthal integrator (which inherits from the geometry)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>AzimuthalIntegrator</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="xpdtools.tools.map_to_binner">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">map_to_binner</code><span class="sig-paren">(</span><em>pixel_map</em>, <em>bins</em>, <em>mask=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#map_to_binner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.map_to_binner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transforms pixel map and bins into a binner</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>pixel_map</strong> (<em>np.ndarray</em>) – The map between pixels and values</li>
-<li><strong>bins</strong> (<em>np.ndarray</em>) – The bins to use in the binner</li>
-<li><strong>mask</strong> (<em>np.ndarray, optional</em>) – The mask for the pixel map</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pixel_map</strong> (<em>np.ndarray</em>) – The map between pixels and values</p></li>
+<li><p><strong>bins</strong> (<em>np.ndarray</em>) – The bins to use in the binner</p></li>
+<li><p><strong>mask</strong> (<em>np.ndarray, optional</em>) – The mask for the pixel map</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The binner</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">BinnedStatistic1D</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The binner</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>BinnedStatistic1D</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="xpdtools.tools.mask_img">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">mask_img</code><span class="sig-paren">(</span><em>img</em>, <em>binner</em>, <em>edge=30</em>, <em>lower_thresh=0.0</em>, <em>upper_thresh=None</em>, <em>alpha=3</em>, <em>auto_type='median'</em>, <em>tmsk=None</em>, <em>pool=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#mask_img"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.mask_img" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mask an image based off of various methods</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>img</strong> (<em>np.ndarray</em>) – The image to be masked</li>
-<li><strong>binner</strong> (<em>BinnedStatistic1D instance</em>) – The binned statistics information</li>
-<li><strong>edge</strong> (<em>int, optional</em>) – The number of edge pixels to mask. Defaults to 30. If None, no edge
-mask is applied</li>
-<li><strong>lower_thresh</strong> (<em>float, optional</em>) – Pixels with values less than or equal to this threshold will be masked.
-Defaults to 0.0. If None, no lower threshold mask is applied</li>
-<li><strong>upper_thresh</strong> (<em>float, optional</em>) – Pixels with values greater than or equal to this threshold will be
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>np.ndarray</em>) – The image to be masked</p></li>
+<li><p><strong>binner</strong> (<em>BinnedStatistic1D instance</em>) – The binned statistics information</p></li>
+<li><p><strong>edge</strong> (<em>int, optional</em>) – The number of edge pixels to mask. Defaults to 30. If None, no edge
+mask is applied</p></li>
+<li><p><strong>lower_thresh</strong> (<em>float, optional</em>) – Pixels with values less than or equal to this threshold will be masked.
+Defaults to 0.0. If None, no lower threshold mask is applied</p></li>
+<li><p><strong>upper_thresh</strong> (<em>float, optional</em>) – Pixels with values greater than or equal to this threshold will be
 masked.
-Defaults to None. If None, no upper threshold mask is applied.</li>
-<li><strong>alpha</strong> (<em>float, optional</em>) – Then number of acceptable standard deviations, if tuple then we use
+Defaults to None. If None, no upper threshold mask is applied.</p></li>
+<li><p><strong>alpha</strong> (<em>float, optional</em>) – Then number of acceptable standard deviations, if tuple then we use
 a linear distribution of alphas from alpha[0] to alpha[1], if array
 then we just use that as the distribution of alphas. Defaults to 3.
-If None, no outlier masking applied.</li>
-<li><strong>auto_type</strong> (<em>{‘median’, ‘mean’}, optional</em>) – The type of binned outlier masking to be done, ‘median’ is faster,
-where ‘mean’ is more accurate, defaults to ‘median’.</li>
-<li><strong>tmsk</strong> (<em>np.ndarray, optional</em>) – The starting mask to be compounded on. Defaults to None. If None mask
-generated from scratch.</li>
-<li><strong>pool</strong> (<em>Executor instance</em>) – A pool against which jobs can be submitted for parallel processing</li>
+If None, no outlier masking applied.</p></li>
+<li><p><strong>auto_type</strong> (<em>{‘median’, ‘mean’}, optional</em>) – The type of binned outlier masking to be done, ‘median’ is faster,
+where ‘mean’ is more accurate, defaults to ‘median’.</p></li>
+<li><p><strong>tmsk</strong> (<em>np.ndarray, optional</em>) – The starting mask to be compounded on. Defaults to None. If None mask
+generated from scratch.</p></li>
+<li><p><strong>pool</strong> (<em>Executor instance</em>) – A pool against which jobs can be submitted for parallel processing</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>tmsk</strong> – The mask as a boolean array. True pixels are good pixels, False pixels
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>tmsk</strong> – The mask as a boolean array. True pixels are good pixels, False pixels
 are masked out.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="xpdtools.tools.move_center">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">move_center</code><span class="sig-paren">(</span><em>motors</em>, <em>geometry</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#move_center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.move_center" title="Permalink to this definition">¶</a></dt>
 <dd><p>Move the PONI for pyFAI based off of a diffx/diffy motor move</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>motors</strong> (<em>tuple</em>) – X, Y diff from geometry position</li>
-<li><strong>geometry</strong> (<em>pyFAI.geometry.Geometry</em>)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>motors</strong> (<em>tuple</em>) – X, Y diff from geometry position</p></li>
+<li><p><strong>geometry</strong> (<em>pyFAI.geometry.Geometry</em>)</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="xpdtools.tools.nu_fq_getter">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">nu_fq_getter</code><span class="sig-paren">(</span><em>q</em>, <em>iq</em>, <em>composition</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#nu_fq_getter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.nu_fq_getter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process the data to F(Q) on a non uniform grid</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>q</strong> (<em>ndarray</em>) – The q or tth values</li>
-<li><strong>iq</strong> (<em>ndarray</em>) – The scattered intensity</li>
-<li><strong>composition</strong> (<em>str</em>) – The composition</li>
-<li><strong>kwargs</strong> (<em>dict</em>) – Additional kwargs for PDFGetter</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>q</strong> (<em>ndarray</em>) – The q or tth values</p></li>
+<li><p><strong>iq</strong> (<em>ndarray</em>) – The scattered intensity</p></li>
+<li><p><strong>composition</strong> (<em>str</em>) – The composition</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Additional kwargs for PDFGetter</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>q</strong> (<em>ndarray</em>) – The radial values</li>
-<li><strong>fq</strong> (<em>ndarray</em>) – The reduced structure function</li>
-<li><strong>config</strong> (<em>dict</em>) – The PDFGetter config</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>q</strong> (<em>ndarray</em>) – The radial values</p></li>
+<li><p><strong>fq</strong> (<em>ndarray</em>) – The reduced structure function</p></li>
+<li><p><strong>config</strong> (<em>dict</em>) – The PDFGetter config</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="xpdtools.tools.nu_pdf_getter">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">nu_pdf_getter</code><span class="sig-paren">(</span><em>q</em>, <em>fq</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#nu_pdf_getter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.nu_pdf_getter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process a non uniform F(Q) to the PDF</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>q</strong> (<em>ndarray</em>) – The q or tth values</li>
-<li><strong>fq</strong> (<em>ndarray</em>) – The reduced structure funciton</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>q</strong> (<em>ndarray</em>) – The q or tth values</p></li>
+<li><p><strong>fq</strong> (<em>ndarray</em>) – The reduced structure funciton</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>r</strong> (<em>ndarray</em>) – The radial values</li>
-<li><strong>gr</strong> (<em>ndarray</em>) – The PDF</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>r</strong> (<em>ndarray</em>) – The radial values</p></li>
+<li><p><strong>gr</strong> (<em>ndarray</em>) – The PDF</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -597,28 +552,24 @@ are masked out.</p>
 <dt id="xpdtools.tools.pdf_getter">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">pdf_getter</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>composition</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#pdf_getter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.pdf_getter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process the data to the PDF</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<em>ndarray</em>) – The q or tth values</li>
-<li><strong>y</strong> (<em>ndarray</em>) – The scattered intensity</li>
-<li><strong>composition</strong> (<em>str</em>) – The composition</li>
-<li><strong>kwargs</strong> (<em>dict</em>) – Additional kwargs for PDFGetter</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>ndarray</em>) – The q or tth values</p></li>
+<li><p><strong>y</strong> (<em>ndarray</em>) – The scattered intensity</p></li>
+<li><p><strong>composition</strong> (<em>str</em>) – The composition</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Additional kwargs for PDFGetter</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>r</strong> (<em>ndarray</em>) – The radial values</li>
-<li><strong>gr</strong> (<em>ndarray</em>) – The PDF</li>
-<li><strong>config</strong> (<em>dict</em>) – The PDFGetter config</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>r</strong> (<em>ndarray</em>) – The radial values</p></li>
+<li><p><strong>gr</strong> (<em>ndarray</em>) – The PDF</p></li>
+<li><p><strong>config</strong> (<em>dict</em>) – The PDFGetter config</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -631,25 +582,21 @@ are masked out.</p>
 <dt id="xpdtools.tools.polarization_correction">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">polarization_correction</code><span class="sig-paren">(</span><em>img</em>, <em>geo</em>, <em>polarization_factor=0.99</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#polarization_correction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.polarization_correction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform polarization correction on an image</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>img</strong> (<em>ndarray</em>) – The image</li>
-<li><strong>geo</strong> (<em>pyFAI.geometry.Geometry instance</em>) – The calibrated geometry</li>
-<li><strong>polarization_factor</strong> (<em>float</em>) – The polarization factor to apply</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>ndarray</em>) – The image</p></li>
+<li><p><strong>geo</strong> (<em>pyFAI.geometry.Geometry instance</em>) – The calibrated geometry</p></li>
+<li><p><strong>polarization_factor</strong> (<em>float</em>) – The polarization factor to apply</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The corrected image</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The corrected image</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -661,70 +608,61 @@ are masked out.</p>
 <dt id="xpdtools.tools.splay_tuple">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">splay_tuple</code><span class="sig-paren">(</span><em>iter_of_tuple</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#splay_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.splay_tuple" title="Permalink to this definition">¶</a></dt>
 <dd><p>Splay all tuples in an iterable</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>iter_of_tuple</strong> (<em>iterable</em>) – An iterable which may contain tuples</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The splayed output</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iter_of_tuple</strong> (<em>iterable</em>) – An iterable which may contain tuples</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The splayed output</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="xpdtools.tools.sq_getter">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">sq_getter</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>composition</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#sq_getter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.sq_getter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process the data to F(Q)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<em>ndarray</em>) – The q or tth values</li>
-<li><strong>y</strong> (<em>ndarray</em>) – The scattered intensity</li>
-<li><strong>composition</strong> (<em>str</em>) – The composition</li>
-<li><strong>kwargs</strong> (<em>dict</em>) – Additional kwargs for PDFGetter</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>ndarray</em>) – The q or tth values</p></li>
+<li><p><strong>y</strong> (<em>ndarray</em>) – The scattered intensity</p></li>
+<li><p><strong>composition</strong> (<em>str</em>) – The composition</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Additional kwargs for PDFGetter</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>q</strong> (<em>ndarray</em>) – The radial values</li>
-<li><strong>fq</strong> (<em>ndarray</em>) – The reduced structure function</li>
-<li><strong>config</strong> (<em>dict</em>) – The PDFGetter config</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>q</strong> (<em>ndarray</em>) – The radial values</p></li>
+<li><p><strong>fq</strong> (<em>ndarray</em>) – The reduced structure function</p></li>
+<li><p><strong>config</strong> (<em>dict</em>) – The PDFGetter config</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="xpdtools.tools.z_score_image">
 <code class="descclassname">xpdtools.tools.</code><code class="descname">z_score_image</code><span class="sig-paren">(</span><em>img</em>, <em>binner</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#z_score_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.tools.z_score_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Z score an image according to the azimuthal average</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>img</strong> (<em>ndarray</em>) – The image</li>
-<li><strong>binner</strong> (<em>BinnedStatistic1D instance</em>) – The binner</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>ndarray</em>) – The image</p></li>
+<li><p><strong>binner</strong> (<em>BinnedStatistic1D instance</em>) – The binner</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The z scored image</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The z scored image</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
