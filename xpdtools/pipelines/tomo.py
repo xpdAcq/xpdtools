@@ -159,7 +159,6 @@ def tomo_pipeline_theta(qoi, theta, center, algorithm="gridrec", **kwargs):
         # The sinogram accumulates over theta so we can squeeze
         .map(conditional_squeeze, 1)
     )
-    sinogram.sink(print)
     rec = (
         sinogram_theta.combine_latest(center, emit_on=0)
         .map(flatten)
@@ -234,6 +233,7 @@ def tomo_stack_2D(rec, stack_position, start, **kwargs):
     rec_3D = (
         rec.map(np.atleast_3d)
         .combine_latest(stack_position, emit_on=0)
+        # TODO: use reset syntax here
         .accumulate(acc)
         .pluck(0)
     )

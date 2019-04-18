@@ -210,7 +210,7 @@ def test_amorphous_pipeline():
 def test_average_unique_data_pipeline():
     start_ns = {k: Stream() for k in ['img', 'motors']}
     ud_ns = unique_data(start_ns['motors'])
-    ns = average(data=start_ns['img'], reset=ud_ns['unique'])
+    ns = average(norm_img=start_ns['img'], reset=ud_ns['unique'])
 
     L = ns['ave_img'].sink_to_list()
     mul = ud_ns['unique'].sink_to_list()
