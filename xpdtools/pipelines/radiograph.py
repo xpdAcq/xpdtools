@@ -43,12 +43,12 @@ def radiograph_correction(img: Stream, dark: Stream, flat_field: Stream,
     return locals()
 
 
-def average(data: Stream, reset: Stream = None, **kwargs):
+def average(norm_img: Stream, reset: Stream = None, **kwargs):
     """Perform a running average
 
     Parameters
     ----------
-    data : Stream
+    norm_img : Stream
         The data to be averaged as a stream
     reset : Stream, optional
         If provided, when data comes from this stream reset the averaging
@@ -59,10 +59,10 @@ def average(data: Stream, reset: Stream = None, **kwargs):
         The locals
 
     """
-    img_sum = data.accumulate(op.add, reset_stream=reset)
-    img_count = data.accumulate(sum_state,
-                                start=0,
-                                reset_stream=reset)
+    img_sum = norm_img.accumulate(op.add, reset_stream=reset)
+    img_count = norm_img.accumulate(sum_state,
+                                    start=0,
+                                    reset_stream=reset)
     ave_img = img_sum.zip(img_count).starmap(op.truediv)
 
     return locals()
