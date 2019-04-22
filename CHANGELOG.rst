@@ -4,6 +4,16 @@
 
 .. current developments
 
+v0.8.0
+====================
+
+**Changed:**
+
+* Replace lambda function for sorting the sinogram with actual function
+* radiograph pipeline `data` -> `norm_img`
+
+
+
 v0.7.0
 ====================
 
