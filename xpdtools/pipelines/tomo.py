@@ -144,7 +144,7 @@ def sort_sinogram(sinogram, theta):
     return sinogram[theta.argsort()[::-1]]
 
 
-def tomo_pipeline_theta(qoi, theta, center, algorithm="gridrec", **kwargs):
+def tomo_pipeline_theta(qoi, theta, center, algorithm="fbp", **kwargs):
     sinogram_theta = (
         # replace with expand_dims
         qoi.map(reshape, stream_name="reshape")
@@ -194,7 +194,7 @@ def tomo_pipeline_piecewise(
     x_dim,
     center,
     th_ext,
-    algorithm="gridrec",
+    algorithm="fbp",
     **kwargs,
 ):
     """Perform a tomographic reconstruction on a QOI"""
