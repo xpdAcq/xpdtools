@@ -8,7 +8,8 @@ from xpdtools.pipelines.qoi import (
     max_intensity_mean,
     max_gr_mean,
     pca_pipeline,
-    amorphsivity_pipeline)
+    amorphsivity_pipeline,
+)
 from xpdtools.pipelines.raw_pipeline import (
     pipeline_order,
     namespace as g_namespace,
@@ -199,7 +200,7 @@ def test_pca_pipeline():
 def test_amorphous_pipeline():
     pdf = Stream()
     ns = amorphsivity_pipeline(pdf)
-    L = ns['amorphsivity'].sink_to_list()
+    L = ns["amorphsivity"].sink_to_list()
     a = np.ones(10)
     pdf.emit(a)
     assert L[0] == np.sum(a[6:])
