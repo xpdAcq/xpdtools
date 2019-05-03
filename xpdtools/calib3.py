@@ -4,7 +4,6 @@ import numpy as np
 import tifffile as tf
 
 
-
 filename = 'Ni_pin_20181101-075909_973de2_0001.tiff'
 
 
