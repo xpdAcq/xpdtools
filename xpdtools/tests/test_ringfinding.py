@@ -10,6 +10,7 @@ from pkg_resources import resource_filename as rs_fn
 import os
 import pytest
 
+
 DATA_DIR=rs_fn("xpdtools", "data/")
 
 filename=["Ni_onTape_forSlimes_andWahsers_20180812-234250_fe70b9_0001.tiff", 
@@ -27,21 +28,27 @@ filename=["Ni_onTape_forSlimes_andWahsers_20180812-234250_fe70b9_0001.tiff",
 	                                 (filename[5], os.path.splitext(filename[5])[0]+'.edf'),
 	                                 (filename[6], os.path.splitext(filename[6])[0]+'.edf'),
 	                                 (filename[7], os.path.splitext(filename[7])[0]+'.edf')  ])
+
+
+
 def test_ringfinding(filename, poni):
-	impath=os.path.join(DATA_DIR, filename)
-	imarray = tf.imread(impath)
-	pointsimage, center_pt=findrings(imarray)
-	d=pyFAI.load(poni)
-	centerx=d.getFit2D()['centerX']
-	centery=d.getFit2D()['centerY']
-	assert abs(center_pt[1]-centerx)<=8 and abs(center_pt[0]-centery)<=8
+    impath = os.path.join(DATA_DIR, filename)
+    imarray = tf.imread(impath)
+    pointsimage, center_pt = findrings(imarray)
+    d = pyFAI.load(poni)
+    centerx = d.getFit2D()["centerX"]
+    centery = d.getFit2D()["centerY"]
+    assert (
+        abs(center_pt[1] - centerx) <= 8 and abs(center_pt[0] - centery) <= 8
+    )
+
 
 def test_2Darray():
-	with pytest.raises(IndexError):
-		findrings(np.random.rand(2048))
+    with pytest.raises(IndexError):
+        findrings(np.random.rand(2048))
 
-@pytest.mark.parametrize("wrong_input",[[1,2,3],3,2.7,(2,3),'banana'])
+
+@pytest.mark.parametrize("wrong_input", [[1, 2, 3], 3, 2.7, (2, 3), "banana"])
 def test_inputtype(wrong_input):
-	with pytest.raises(RuntimeError):
-		findrings(wrong_input)
-
+    with pytest.raises(RuntimeError):
+        findrings(wrong_input)
