@@ -4,6 +4,20 @@
 
 .. current developments
 
+v0.8.1
+====================
+
+**Changed:**
+
+* Default pipelines to filtered back projection algorithm rather than grid 
+  reconstruction algorithm
+
+**Removed:**
+
+* no ``minus_log`` step for diffraction tomo
+
+
+
 v0.8.0
 ====================
 
