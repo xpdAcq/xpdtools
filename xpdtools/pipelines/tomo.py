@@ -209,8 +209,6 @@ def tomo_pipeline_piecewise(
 
     rec = (
         sinogram.map(np.nan_to_num)
-        .map(tomopy.minus_log)
-        .map(np.nan_to_num)
         .combine_latest(th_ext, center, emit_on=0)
         .starmap(recon_wrapper, algorithm=algorithm)
     )
