@@ -115,8 +115,8 @@ def test_qoi_pipeline():
     assert len(sl) == 1
     sl.clear()
 
-
-def test_tomo_piecewise_pipeline():
+@pytest.mark.parametrize("rand_size", [None, 10])
+def test_tomo_piecewise_pipeline(rand_size):
     ns = dict(
         qoi=Stream(),
         x=Stream(),
@@ -149,11 +149,13 @@ def test_tomo_piecewise_pipeline():
         for th in th_linspace:
             ns["x"].emit(x)
             ns["th"].emit(th)
-            ns["qoi"].emit(np.random.random())
+            ns["qoi"].emit(np.random.random(rand_size))
 
     assert len(L) == len(x_linspace) * len(th_linspace)
-    assert L[-1].shape == (len(x_linspace), len(th_linspace))
-
+    if rand_size:
+        assert L[-1].shape == (len(x_linspace), rand_size, len(th_linspace))
+    else:
+        assert L[-1].shape == (len(x_linspace), len(th_linspace))
     destroy_pipeline(ns["qoi"])
     del ns
     L.clear()

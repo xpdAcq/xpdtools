@@ -109,7 +109,12 @@ def fill_sinogram(esa, q_thp_xp):
     q, thp, xp = q_thp_xp
     # Copy the array so we have independent access to it
     # esa = esa.copy()
-    esa[thp, xp] = q
+
+    # If q is an array then most likely the sinogram array is not the correct
+    # shape, so make the correct shape
+    if hasattr(q, 'shape') and esa[thp, ..., xp].shape != q.shape:
+        esa = np.ones((esa.shape[0], *q.shape, esa.shape[1]))
+    esa[thp, ..., xp] = q
     return esa
 
 
