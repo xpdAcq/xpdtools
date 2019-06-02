@@ -181,7 +181,7 @@
 <p>Main pipeline chunks for processing images to I(Q) and PDF</p>
 <dl class="function">
 <dt id="xpdtools.pipelines.raw_pipeline.calibration">
-<code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">calibration</code><span class="sig-paren">(</span><em>wavelength</em>, <em>calibrant</em>, <em>detector</em>, <em>is_calibration_img</em>, <em>geo_input</em>, <em>bg_corrected_img</em>, <em>img_shape</em>, <em>calib_setting=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#calibration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.calibration" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="sig-name descname">calibration</code><span class="sig-paren">(</span><em class="sig-param">wavelength</em>, <em class="sig-param">calibrant</em>, <em class="sig-param">detector</em>, <em class="sig-param">is_calibration_img</em>, <em class="sig-param">geo_input</em>, <em class="sig-param">bg_corrected_img</em>, <em class="sig-param">img_shape</em>, <em class="sig-param">calib_setting=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#calibration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.calibration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipeline chunk for performing and loading calibration</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -210,7 +210,7 @@ entire experiment.</p></li>
 
 <dl class="function">
 <dt id="xpdtools.pipelines.raw_pipeline.gen_mask">
-<code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">gen_mask</code><span class="sig-paren">(</span><em>pol_corrected_img</em>, <em>cal_binner</em>, <em>img_counter</em>, <em>mask_setting=None</em>, <em>mask_kwargs=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#gen_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.gen_mask" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="sig-name descname">gen_mask</code><span class="sig-paren">(</span><em class="sig-param">pol_corrected_img</em>, <em class="sig-param">cal_binner</em>, <em class="sig-param">img_counter</em>, <em class="sig-param">mask_setting=None</em>, <em class="sig-param">mask_kwargs=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#gen_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.gen_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipeline chunk for creating masks</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -243,7 +243,7 @@ Defaults to <a href="#id1"><span class="problematic" id="id2">``</span></a>dict(
 
 <dl class="function">
 <dt id="xpdtools.pipelines.raw_pipeline.image_process">
-<code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">image_process</code><span class="sig-paren">(</span><em>raw_foreground</em>, <em>raw_foreground_dark</em>, <em>raw_background</em>, <em>raw_background_dark</em>, <em>bg_scale=1.0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#image_process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.image_process" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="sig-name descname">image_process</code><span class="sig-paren">(</span><em class="sig-param">raw_foreground</em>, <em class="sig-param">raw_foreground_dark</em>, <em class="sig-param">raw_background</em>, <em class="sig-param">raw_background_dark</em>, <em class="sig-param">bg_scale=1.0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#image_process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.image_process" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipeline chunk to perform image processing, including dark and
 background subtraction.</p>
 <dl class="field-list simple">
@@ -267,7 +267,7 @@ background subtraction.</p>
 
 <dl class="function">
 <dt id="xpdtools.pipelines.raw_pipeline.integration">
-<code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">integration</code><span class="sig-paren">(</span><em>map_res</em>, <em>mask</em>, <em>wavelength</em>, <em>pol_corrected_img</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#integration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.integration" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="sig-name descname">integration</code><span class="sig-paren">(</span><em class="sig-param">map_res</em>, <em class="sig-param">mask</em>, <em class="sig-param">wavelength</em>, <em class="sig-param">pol_corrected_img</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#integration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.integration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipeline chunk for computing azimuthal integration</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -287,9 +287,14 @@ background subtraction.</p>
 </dl>
 </dd></dl>
 
+<dl class="data">
+<dt id="xpdtools.pipelines.raw_pipeline.namespace">
+<code class="sig-prename descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="sig-name descname">namespace</code><em class="property"> = {'bg_scale': 1, 'calib_setting': {'setting': True}, 'calibrant': &lt;calibrant; Stream&gt;, 'composition': &lt;composition; Stream&gt;, 'detector': &lt;detector; Stream&gt;, 'geo_input': &lt;geometry; Stream&gt;, 'img_counter': &lt;img counter; Stream&gt;, 'is_calibration_img': &lt;Is Calibration; Stream&gt;, 'mask_setting': {'setting': 'auto'}, 'polarization_factor': 0.99, 'raw_background': &lt;raw background; Stream&gt;, 'raw_background_dark': &lt;raw background dark; Stream&gt;, 'raw_foreground': &lt;raw foreground; Stream&gt;, 'raw_foreground_dark': &lt;raw foreground dark; Stream&gt;, 'wavelength': &lt;wavelength; Stream&gt;}</em><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.namespace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="function">
 <dt id="xpdtools.pipelines.raw_pipeline.pdf_gen">
-<code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">pdf_gen</code><span class="sig-paren">(</span><em>q</em>, <em>mean</em>, <em>composition</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#pdf_gen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.pdf_gen" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="sig-name descname">pdf_gen</code><span class="sig-paren">(</span><em class="sig-param">q</em>, <em class="sig-param">mean</em>, <em class="sig-param">composition</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#pdf_gen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.pdf_gen" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipeline chunk for computing the Structure Factor S(Q), Reduced
 Structure Factor F(Q) and Atomic Pair Distribution Function (PDF).</p>
 <dl class="field-list simple">
@@ -311,9 +316,14 @@ for more details</p></li>
 </dl>
 </dd></dl>
 
+<dl class="data">
+<dt id="xpdtools.pipelines.raw_pipeline.pipeline_order">
+<code class="sig-prename descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="sig-name descname">pipeline_order</code><em class="property"> = [&lt;function image_process&gt;, &lt;function calibration&gt;, &lt;function scattering_correction&gt;, &lt;function gen_mask&gt;, &lt;function integration&gt;, &lt;function pdf_gen&gt;]</em><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.pipeline_order" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="function">
 <dt id="xpdtools.pipelines.raw_pipeline.scattering_correction">
-<code class="descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="descname">scattering_correction</code><span class="sig-paren">(</span><em>geometry</em>, <em>img_shape</em>, <em>bg_corrected_img</em>, <em>polarization_factor=0.99</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#scattering_correction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.scattering_correction" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">xpdtools.pipelines.raw_pipeline.</code><code class="sig-name descname">scattering_correction</code><span class="sig-paren">(</span><em class="sig-param">geometry</em>, <em class="sig-param">img_shape</em>, <em class="sig-param">bg_corrected_img</em>, <em class="sig-param">polarization_factor=0.99</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/pipelines/raw_pipeline.html#scattering_correction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.pipelines.raw_pipeline.scattering_correction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipeline chunk for performing scattering corrections on images,
 including the polarization correction.</p>
 <dl class="field-list simple">
