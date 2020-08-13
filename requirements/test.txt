@@ -1,5 +1,5 @@
 flake8
-pytest
+pytest==5.4
 xpdsim
 nose
 codecov
