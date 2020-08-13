@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import sys
+from pathlib import Path
 import pytest
-import os
+
 
 if __name__ == "__main__":
     # show output results from every test function
@@ -14,6 +15,8 @@ if __name__ == "__main__":
     # args.extend(['--cov', 'xpdAcq'])
     # call pytest and exit with the return code from pytest so that
     # travis will fail correctly if tests fail
-    a = args.copy() + ["xpdtools/tests"]
-    exit_res = pytest.main(a)
+    exit_res = 0
+    for test_file in Path("xpdtools/tests").glob("test_*.py"):
+        a = args.copy() + [str(test_file)]
+        exit_res = pytest.main(a)
     sys.exit(exit_res)
