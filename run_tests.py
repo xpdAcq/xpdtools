@@ -16,6 +16,7 @@ if __name__ == "__main__":
     # call pytest and exit with the return code from pytest so that
     # travis will fail correctly if tests fail
     exit_res = 0
+    # the test filse are run separately to avoid FileNotFound Bug in numbda
     for test_file in Path("xpdtools/tests").glob("test_*.py"):
         a = args.copy() + [str(test_file)]
         exit_res = pytest.main(a)
