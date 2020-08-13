@@ -17,8 +17,6 @@ matrix:
   allow_failures:
     - env: PRECEDENCE='default'
 
-python:
-  - 3.6
 before_install:
   - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
   - "export DISPLAY=:99.0"
@@ -27,31 +25,22 @@ before_install:
   - ./miniconda.sh -b -p ~/mc
   - export PATH=~/mc/bin:$PATH
   - conda config --set always_yes yes --set changeps1 no --set quiet true
-  - conda config --add channels conda-forge
-  - conda update conda --yes
+  - conda config --append channels nsls2forge
+  - conda config --append channels conda-forge
 
 
 install:
   - export GIT_FULL_HASH=`git rev-parse HEAD`
-  - conda create --yes -n testenv python=$TRAVIS_PYTHON_VERSION orch
+  - conda create -n testenv --file requirements/build.txt --file requirements/run.txt --file requirements/test.txt --file requirements/docs.txt
   - source activate testenv
-  - orch score.yaml
-  - conda list
-#  - python -m pip install . --no-deps -vv
-#  - conda create --yes -n testenv python=3.6 setuptools
-#  - source activate testenv
-#  - conda install --file requirements/run.txt
-#  - conda install --file requirements/test.txt
-#  - conda install --file requirements/docs.txt
-#  - python setup.py install
+  - python -m pip install . --no-deps -vv
+
 script:
   - set -e
   - image_to_iq -- --help
   - coverage run run_tests.py
   - coverage report -m
-  - codecov
+  - bash <(curl -s https://codecov.io/bash)
   - flake8
-  - cd docs
-  - make html
-  - cd ..
-  - doctr deploy . --built-docs ./docs/_build/html;
+  - make -C docs html
+  - doctr deploy . --built-docs docs/_build/html
