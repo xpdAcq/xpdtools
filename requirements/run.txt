@@ -6,7 +6,7 @@ fire
 pims
 fabio
 numba
-streamz_ext
+rapidz
 scikit-beam
 xpdsim
 tqdm
