@@ -11,4 +11,4 @@ scikit-beam
 scikit-learn
 xpdsim
 tqdm
-sklearn
+tomopy
