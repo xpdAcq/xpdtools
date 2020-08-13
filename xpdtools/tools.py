@@ -13,6 +13,8 @@
 # See LICENSE.txt for license information.
 #
 ##############################################################################
+from sklearn.decomposition import PCA
+
 import copy
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import wraps
@@ -22,7 +24,6 @@ from scipy.integrate import simps
 from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
 from skbeam.core.mask import margin
 from xpdtools.jit_tools import mask_ring_median, mask_ring_mean, ring_zscore
-from sklearn.decomposition import PCA
 
 try:
     from diffpy.pdfgetx import PDFGetter
