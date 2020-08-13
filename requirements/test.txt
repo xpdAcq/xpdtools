@@ -4,3 +4,4 @@ xpdsim
 nose
 codecov
 coverage
+pytest-tornado
