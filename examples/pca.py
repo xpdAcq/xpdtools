@@ -41,11 +41,11 @@ source.sink(plot_h)
 # ns['scores'].sink(axs[1].imshow, aspect='auto')
 
 z = np.linspace(0, np.pi * 2, 100)
-xs = [np.sin(z + zz) + np.random.random(100)*.5 for zz in z]
+xs = [np.sin(z + zz) + np.random.random(100) * .5 for zz in z]
 
 # Run the data into the pipeline
 for xx in xs:
     source.emit(xx)
     plt.pause(.1)
-#    input()
+
 plt.show()

@@ -46,8 +46,8 @@ def recon_wrapper(projection, theta, center, **kwargs):
         out = np.concatenate(outs2, axis=2)
     else:
         raise RuntimeError(
-            f"There is not a reconstruction system setup for"
-            "a {len(shape)} array"
+            "There is not a reconstruction system setup for"
+            "a {} array".format(len(shape))
         )
     return np.squeeze(out)
 

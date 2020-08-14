@@ -1,5 +1,5 @@
 from tifffile import imread
-from xpdtools.tools import binned_outlier, map_to_binner, mask_img
+from xpdtools.tools import binned_outlier, map_to_binner
 from profilehooks import profile
 import pyFAI
 
