@@ -1,8 +1,6 @@
-from time import time
-import numpy as np
 from tifffile import imread
 import pyFAI
-from xpdtools.tools import *
+from xpdtools.tools import map_to_binner, z_score_image
 from profilehooks import profile
 
 # dark_corrected_background.sink(print)

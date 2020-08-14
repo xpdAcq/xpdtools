@@ -129,5 +129,6 @@ def test_mask_img(mask_method):
 def test_move_center():
     m = (.1, .1)
     g2 = move_center(m, geo)
-    for mm, n in zip(m, ["poni1", "poni2"]):
+    nn = ("poni1", "poni2")
+    for mm, n in zip(m, nn):
         assert getattr(g2, n) == getattr(geo, n) + mm

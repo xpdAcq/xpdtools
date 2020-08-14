@@ -2,12 +2,9 @@ import time
 
 import numpy as np
 import pyFAI
-import pytest
 import tifffile
-from distributed import Client
 from rapidz import destroy_pipeline, Stream
 from rapidz.link import link
-from tornado import gen
 from xpdsim import pyfai_poni, image_file
 from xpdtools.pipelines.demo_parallel import (
     pipeline_order,
@@ -66,8 +63,8 @@ def raw_pipeline_parallel():
     time_diff = [LL[i] - LL[i - 1] for i in range(1, ii)]
     print(max(time_diff), min(time_diff), sum(time_diff) / len(time_diff))
     # print([l - min(LL) for l in LL])
-    print([l - t0 for l in LL])
-    print(max([l - t0 for l in LL]) / ii)
+    print([_ - t0 for _ in LL])
+    print(max([_ - t0 for _ in LL]) / ii)
     destroy_pipeline(raw_foreground)
     del namespace
     futures.clear()

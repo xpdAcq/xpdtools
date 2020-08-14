@@ -1,4 +1,3 @@
-import numpy as np
 import tomopy
 import dxchange
 import os
@@ -91,7 +90,6 @@ ub = 147
 
 ns["sinogram"].state[:, :lb] = proj[:, 0, :lb]
 ns["sinogram"].state[:, ub:] = proj[:, 0, ub:]
-# input()
 
 for i in range(lb, ub):
     for j in range(0, len(theta)):

@@ -1,17 +1,16 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from pyFAI.geometry import Geometry
-from xpdtools.tools import generate_binner
-from matplotlib.colors import LogNorm, SymLogNorm
 from bluesky.callbacks.broker import LiveImage
 from bluesky.utils import install_qt_kicker
 
-from xpdtools.pipelines.flatfield import *
+from xpdtools.pipelines.flatfield import mask_setting, raw_background_dark, \
+    raw_background, ave_ff, mean_array, raw_foreground, is_calibration_img, \
+    geo_input, img_counter, motors, move_center, raw_foreground_dark
 
 install_qt_kicker()
 
 ff = np.ones((2048, 2048))
-# ff = np.random.random((2048, 2048))
 
 ff *= np.random.normal(1, .01, size=(2048, 2048))
 quad = np.ones((2048, 2048))
@@ -19,8 +18,6 @@ quad[1024:, 1024:] *= .5
 ff *= quad
 ff = np.abs(ff)
 mask_setting["setting"] = "none"
-# '''
-# '''
 k = 5
 geo = Geometry(
     wavelength=.18e-10,
