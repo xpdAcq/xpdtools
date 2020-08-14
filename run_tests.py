@@ -15,9 +15,10 @@ if __name__ == "__main__":
     # args.extend(['--cov', 'xpdAcq'])
     # call pytest and exit with the return code from pytest so that
     # travis will fail correctly if tests fail
-    exit_res = 0
-    # the test filse are run separately to avoid FileNotFound Bug in numba
+    exit_ress = list()
+    # the test files are run separately to avoid FileNotFound Bug in numba
     for test_file in Path("xpdtools/tests").glob("test_*.py"):
         a = args.copy() + [str(test_file)]
         exit_res = pytest.main(a)
-    sys.exit(exit_res)
+        exit_ress.append(exit_res)
+    sys.exit(max(exit_ress, key=abs))
