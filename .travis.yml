@@ -38,7 +38,7 @@ install:
 script:
   - set -e
   - image_to_iq -- --help
-  - coverage run run_tests.py
+  - coverage run -m pytest xpdtools/tests --showlocals
   - coverage report -m
   - bash <(curl -s https://codecov.io/bash)
   - flake8
