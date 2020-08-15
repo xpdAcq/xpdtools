@@ -4,17 +4,6 @@
 
 .. current developments
 
-v0.4.2
-====================
-
-**Fixed:**
-
-* Move the "import PCA" to the top to avoid import error.
-
-* Add missing required packages in requirements
-
-
-
 v0.8.1
 ====================
 
