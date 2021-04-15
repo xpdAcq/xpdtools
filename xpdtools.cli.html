@@ -1,38 +1,41 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>xpdtools.cli package &mdash; xpdtools 0.8.1 documentation</title>
+  <title>xpdtools.cli package &mdash; xpdtools 0.8.2 documentation</title>
   
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="xpdtools.pipelines package" href="xpdtools.pipelines.html" />
@@ -77,6 +80,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -111,6 +115,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -145,11 +150,13 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="xpdtools.html">xpdtools package</a> &raquo;</li>
         
@@ -158,7 +165,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/xpdtools.cli.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -180,9 +187,9 @@
 <div class="section" id="module-xpdtools.cli.process_tiff">
 <span id="xpdtools-cli-process-tiff-module"></span><h2>xpdtools.cli.process_tiff module<a class="headerlink" href="#module-xpdtools.cli.process_tiff" title="Permalink to this headline">¶</a></h2>
 <p>Main entry point for processing images to I(Q)</p>
-<dl class="function">
+<dl class="py function">
 <dt id="xpdtools.cli.process_tiff.main">
-<code class="sig-prename descclassname">xpdtools.cli.process_tiff.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param">poni_file=None</em>, <em class="sig-param">image_files=None</em>, <em class="sig-param">bg_file=None</em>, <em class="sig-param">mask_file=None</em>, <em class="sig-param">polarization=0.99</em>, <em class="sig-param">edge=20</em>, <em class="sig-param">lower_thresh=1.0</em>, <em class="sig-param">upper_thresh=None</em>, <em class="sig-param">alpha=3.0</em>, <em class="sig-param">auto_type='median'</em>, <em class="sig-param">mask_settings='auto'</em>, <em class="sig-param">flip_input_mask=True</em>, <em class="sig-param">bg_scale=1</em><span class="sig-paren">)</span><a class="headerlink" href="#xpdtools.cli.process_tiff.main" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">xpdtools.cli.process_tiff.</span></code><code class="sig-name descname"><span class="pre">main</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">poni_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polarization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'median'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flip_input_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xpdtools.cli.process_tiff.main" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the data processing protocol taking raw images to background
 subtracted I(Q) files.</p>
 <p>The data processing steps included in this protocol are:
@@ -233,19 +240,19 @@ to 1</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="xpdtools.cli.process_tiff.make_main">
-<code class="sig-prename descclassname">xpdtools.cli.process_tiff.</code><code class="sig-name descname">make_main</code><span class="sig-paren">(</span><em class="sig-param">_output_sinks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/cli/process_tiff.html#make_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.cli.process_tiff.make_main" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">xpdtools.cli.process_tiff.</span></code><code class="sig-name descname"><span class="pre">make_main</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_output_sinks</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/cli/process_tiff.html#make_main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.cli.process_tiff.make_main" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="xpdtools.cli.process_tiff.make_pipeline">
-<code class="sig-prename descclassname">xpdtools.cli.process_tiff.</code><code class="sig-name descname">make_pipeline</code><span class="sig-paren">(</span><em class="sig-param">_output_sinks=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/cli/process_tiff.html#make_pipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.cli.process_tiff.make_pipeline" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">xpdtools.cli.process_tiff.</span></code><code class="sig-name descname"><span class="pre">make_pipeline</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_output_sinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/cli/process_tiff.html#make_pipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.cli.process_tiff.make_pipeline" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="xpdtools.cli.process_tiff.run_main">
-<code class="sig-prename descclassname">xpdtools.cli.process_tiff.</code><code class="sig-name descname">run_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/cli/process_tiff.html#run_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xpdtools.cli.process_tiff.run_main" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">xpdtools.cli.process_tiff.</span></code><code class="sig-name descname"><span class="pre">run_main</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/cli/process_tiff.html#run_main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.cli.process_tiff.run_main" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -259,29 +266,29 @@ to 1</p></li>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="xpdtools.pipelines.html" class="btn btn-neutral float-right" title="xpdtools.pipelines package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="xpdtools.html" class="btn btn-neutral float-left" title="xpdtools package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="xpdtools.pipelines.html" class="btn btn-neutral float-right" title="xpdtools.pipelines package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="xpdtools.html" class="btn btn-neutral float-left" title="xpdtools package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Author
+        &#169; Copyright 2017, Author.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -289,7 +296,6 @@ to 1</p></li>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
