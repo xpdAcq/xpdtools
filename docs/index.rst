@@ -39,7 +39,7 @@ Note that you will need pyFAI calibration files (``.poni`` files) which are
 generated via ``pyFAI-calib``.
 For most usages the pyFAI calibration is
 ``pyFAI-calib -D Perkin -w <wavelength> -c Ni <calibration_img>``.
-Please see `pyFAI's documentation <https://pyfai.readthedocs.io/en/latest/man/pyFAI-calib.html>`_ and see our `docs for how to use pyFAI <https://xpdacq.github.io/xpdAcq/features.html?highlight=calibration#automated-calibration-capture>`_.
+Please see `pyFAI's documentation <https://pyfai.readthedocs.io/en/latest/man/pyFAI-calib2.html>`_ and see our `docs for how to use pyFAI <https://xpdacq.github.io/xpdAcq/features.html?highlight=calibration#automated-calibration-capture>`_.
 
 
 .. toctree::
