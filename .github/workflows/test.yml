@@ -3,7 +3,7 @@ name: Test
 on:
   push:
     branches:
-      - main
+      - mas
   pull_request:
   workflow_dispatch:
 
