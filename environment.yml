@@ -1,0 +1,6 @@
+name: xpdtools
+channels:
+  - conda-forge
+dependencies:
+  - python=3
+  - pip
