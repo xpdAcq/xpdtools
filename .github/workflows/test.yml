@@ -37,6 +37,7 @@ jobs:
           auto-activate-base: false
 
       - name: install requirements
+        shell: bash -l {0}
         run: |
           conda config --set always_yes yes --set changeps1 no
           conda config --add channels conda-forge
@@ -46,6 +47,7 @@ jobs:
 
 
       - name: run the tests and check for test coverage
+        shell: bash -l {0}
         run: |
           conda activate test
           coverage run -m pytest
@@ -53,6 +55,7 @@ jobs:
           codecov
 
       - name: check the code style
+        shell: bash -l {0}
         run: |
           conda activate test
           flake8
