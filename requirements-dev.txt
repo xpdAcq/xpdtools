@@ -1,6 +1,5 @@
 flake8
 pytest
-xpdsim
 nose
 codecov
 coverage
