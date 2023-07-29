@@ -1,94 +1,51 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>xpdtools package &mdash; xpdtools 0.8.2 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="xpdtools.cli package" href="xpdtools.cli.html" />
     <link rel="prev" title="Tips and Tricks" href="tips_and_tricks.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
           
-            <a href="index.html" class="icon icon-home"> xpdtools
           
-
-          
+          <a href="index.html" class="icon icon-home">
+            xpdtools
           </a>
-
-          
-            
-            
               <div class="version">
                 0.8
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="tips_and_tricks.html">Tips and Tricks</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">xpdtools package</a><ul>
@@ -98,113 +55,111 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-xpdtools.calib">xpdtools.calib module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-xpdtools.calib">xpdtools.calib module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.calib.img_calibration"><code class="docutils literal notranslate"><span class="pre">img_calibration()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-xpdtools.dev_utils">xpdtools.dev_utils module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-xpdtools.shim">xpdtools.shim module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-xpdtools.tools">xpdtools.tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-xpdtools.shim">xpdtools.shim module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.shim.PDFGetterShim"><code class="docutils literal notranslate"><span class="pre">PDFGetterShim</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-xpdtools.tools">xpdtools.tools module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.binned_outlier"><code class="docutils literal notranslate"><span class="pre">binned_outlier()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.call_stream_element"><code class="docutils literal notranslate"><span class="pre">call_stream_element()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.check_in"><code class="docutils literal notranslate"><span class="pre">check_in()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.check_kwargs"><code class="docutils literal notranslate"><span class="pre">check_kwargs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.decomp"><code class="docutils literal notranslate"><span class="pre">decomp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.fq_getter"><code class="docutils literal notranslate"><span class="pre">fq_getter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.generate_binner"><code class="docutils literal notranslate"><span class="pre">generate_binner()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.generate_map_bin"><code class="docutils literal notranslate"><span class="pre">generate_map_bin()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.ignore_streamz_input"><code class="docutils literal notranslate"><span class="pre">ignore_streamz_input()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.load_geo"><code class="docutils literal notranslate"><span class="pre">load_geo()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.map_to_binner"><code class="docutils literal notranslate"><span class="pre">map_to_binner()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.mask_img"><code class="docutils literal notranslate"><span class="pre">mask_img()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.move_center"><code class="docutils literal notranslate"><span class="pre">move_center()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.nu_fq_getter"><code class="docutils literal notranslate"><span class="pre">nu_fq_getter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.nu_pdf_getter"><code class="docutils literal notranslate"><span class="pre">nu_pdf_getter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.overlay_mask"><code class="docutils literal notranslate"><span class="pre">overlay_mask()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.pdf_getter"><code class="docutils literal notranslate"><span class="pre">pdf_getter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.pluck_check"><code class="docutils literal notranslate"><span class="pre">pluck_check()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.polarization_correction"><code class="docutils literal notranslate"><span class="pre">polarization_correction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.progress_decorator"><code class="docutils literal notranslate"><span class="pre">progress_decorator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.splay_tuple"><code class="docutils literal notranslate"><span class="pre">splay_tuple()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.sq_getter"><code class="docutils literal notranslate"><span class="pre">sq_getter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xpdtools.tools.z_score_image"><code class="docutils literal notranslate"><span class="pre">z_score_image()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-xpdtools">Module contents</a></li>
 </ul>
 </li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">xpdtools</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
-      <li>xpdtools package</li>
-    
-    
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">xpdtools package</li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/xpdtools.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="xpdtools-package">
-<h1>xpdtools package<a class="headerlink" href="#xpdtools-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+             
+  <section id="xpdtools-package">
+<h1>xpdtools package<a class="headerlink" href="#xpdtools-package" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="xpdtools.cli.html">xpdtools.cli package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="xpdtools.cli.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="xpdtools.cli.html#module-xpdtools.cli.process_tiff">xpdtools.cli.process_tiff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xpdtools.cli.html#xpdtools-cli-process-tiff-module">xpdtools.cli.process_tiff module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="xpdtools.cli.html#module-xpdtools.cli">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="xpdtools.pipelines.html">xpdtools.pipelines package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="xpdtools.pipelines.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="xpdtools.pipelines.html#module-xpdtools.pipelines.raw_pipeline">xpdtools.pipelines.raw_pipeline module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xpdtools.pipelines.html#module-xpdtools.pipelines.raw_pipeline">xpdtools.pipelines.raw_pipeline module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="xpdtools.pipelines.html#xpdtools.pipelines.raw_pipeline.calibration"><code class="docutils literal notranslate"><span class="pre">calibration()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xpdtools.pipelines.html#xpdtools.pipelines.raw_pipeline.gen_mask"><code class="docutils literal notranslate"><span class="pre">gen_mask()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xpdtools.pipelines.html#xpdtools.pipelines.raw_pipeline.image_process"><code class="docutils literal notranslate"><span class="pre">image_process()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xpdtools.pipelines.html#xpdtools.pipelines.raw_pipeline.integration"><code class="docutils literal notranslate"><span class="pre">integration()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xpdtools.pipelines.html#xpdtools.pipelines.raw_pipeline.pdf_gen"><code class="docutils literal notranslate"><span class="pre">pdf_gen()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xpdtools.pipelines.html#xpdtools.pipelines.raw_pipeline.scattering_correction"><code class="docutils literal notranslate"><span class="pre">scattering_correction()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="xpdtools.pipelines.html#module-xpdtools.pipelines">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </div>
-</div>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-xpdtools.calib">
-<span id="xpdtools-calib-module"></span><h2>xpdtools.calib module<a class="headerlink" href="#module-xpdtools.calib" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-xpdtools.calib">
+<span id="xpdtools-calib-module"></span><h2>xpdtools.calib module<a class="headerlink" href="#module-xpdtools.calib" title="Permalink to this heading"></a></h2>
 <p>Tools for running pyFAI calibraion</p>
 <dl class="py function">
-<dt id="xpdtools.calib.img_calibration">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.calib.</span></code><code class="sig-name descname"><span class="pre">img_calibration</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibrant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Ni'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'perkin_elmer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calib_ref_fp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/calib.html#img_calibration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.calib.img_calibration" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.calib.img_calibration">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.calib.</span></span><span class="sig-name descname"><span class="pre">img_calibration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibrant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Ni'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'perkin_elmer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calib_ref_fp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/calib.html#img_calibration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.calib.img_calibration" title="Permalink to this definition"></a></dt>
 <dd><p>Function to calibrate experimental geometry for an image</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>img</strong> (<em>ndarray</em>) – 2D powder diffraction image from calibrant</p></li>
 <li><p><strong>wavelength</strong> (<em>float</em>) – x-ray wavelength in angstrom.</p></li>
@@ -225,11 +180,11 @@ will be saved. Default to current working directory.</p></li>
 pyFAI documentation for all options.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ai</strong> – instance of AzimuthalIntegrator. Can be used to integrate 2D
 images directly.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>pyFAI.AzimuthalIntegrator</p>
 </dd>
 </dl>
@@ -260,31 +215,31 @@ with wavlength 0.1823 angstrom</p>
 <a class="reference external" href="http://pyfai.readthedocs.io/en/latest/">http://pyfai.readthedocs.io/en/latest/</a></p>
 </dd></dl>
 
-</div>
-<div class="section" id="module-xpdtools.dev_utils">
-<span id="xpdtools-dev-utils-module"></span><h2>xpdtools.dev_utils module<a class="headerlink" href="#module-xpdtools.dev_utils" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-xpdtools.dev_utils">
+<span id="xpdtools-dev-utils-module"></span><h2>xpdtools.dev_utils module<a class="headerlink" href="#module-xpdtools.dev_utils" title="Permalink to this heading"></a></h2>
 <p>Utilities for making the developer’s lives easier</p>
-</div>
-<div class="section" id="module-xpdtools.shim">
-<span id="xpdtools-shim-module"></span><h2>xpdtools.shim module<a class="headerlink" href="#module-xpdtools.shim" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-xpdtools.shim">
+<span id="xpdtools-shim-module"></span><h2>xpdtools.shim module<a class="headerlink" href="#module-xpdtools.shim" title="Permalink to this heading"></a></h2>
 <p>Shims</p>
 <dl class="py class">
-<dt id="xpdtools.shim.PDFGetterShim">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">xpdtools.shim.</span></code><code class="sig-name descname"><span class="pre">PDFGetterShim</span></code><a class="reference internal" href="_modules/xpdtools/shim.html#PDFGetterShim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.shim.PDFGetterShim" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.shim.PDFGetterShim">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xpdtools.shim.</span></span><span class="sig-name descname"><span class="pre">PDFGetterShim</span></span><a class="reference internal" href="_modules/xpdtools/shim.html#PDFGetterShim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.shim.PDFGetterShim" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Shim for PDFGetX3</p>
 </dd></dl>
 
-</div>
-<div class="section" id="module-xpdtools.tools">
-<span id="xpdtools-tools-module"></span><h2>xpdtools.tools module<a class="headerlink" href="#module-xpdtools.tools" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-xpdtools.tools">
+<span id="xpdtools-tools-module"></span><h2>xpdtools.tools module<a class="headerlink" href="#module-xpdtools.tools" title="Permalink to this heading"></a></h2>
 <p>Tools for x-ray scattering data processing</p>
 <dl class="py function">
-<dt id="xpdtools.tools.binned_outlier">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">binned_outlier</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmsk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'median'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pool</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#binned_outlier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.binned_outlier" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.binned_outlier">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">binned_outlier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmsk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'median'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pool</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#binned_outlier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.binned_outlier" title="Permalink to this definition"></a></dt>
 <dd><p>Sigma Clipping based masking</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>img</strong> (<em>np.ndarray</em>) – The image</p></li>
 <li><p><strong>binner</strong> (<em>BinnedStatistic1D instance</em>) – The binned statistics information</p></li>
@@ -295,37 +250,37 @@ accurate. Defaults to median.</p></li>
 <li><p><strong>pool</strong> (<em>Executor instance</em>) – A pool against which jobs can be submitted for parallel processing</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The mask</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.call_stream_element">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">call_stream_element</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callable_item</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#call_stream_element"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.call_stream_element" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.call_stream_element">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">call_stream_element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callable_item</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#call_stream_element"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.call_stream_element" title="Permalink to this definition"></a></dt>
 <dd><p>Call callable_item on the args and kwargs</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.check_in">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">check_in</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#check_in"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.check_in" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.check_in">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">check_in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#check_in"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.check_in" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.check_kwargs">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">check_kwargs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#check_kwargs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.check_kwargs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.check_kwargs">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">check_kwargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#check_kwargs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.check_kwargs" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.decomp">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">decomp</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">data</span></em>, <em class="sig-param"><span class="pre">n_components=0.9</span></em>, <em class="sig-param"><span class="pre">model=&lt;class</span> <span class="pre">'sklearn.decomposition._pca.PCA'&gt;</span></em>, <em class="sig-param"><span class="pre">**kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#decomp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.decomp" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.decomp">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">decomp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_components=0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model=&lt;class</span> <span class="pre">'sklearn.decomposition._pca.PCA'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#decomp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.decomp" title="Permalink to this definition"></a></dt>
 <dd><p>Perform a decomposision of the data</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<em>list of ndarray</em>) – The list of data to be decomposed</p></li>
 <li><p><strong>n_components</strong> (<em>int, flot, None or str</em>) – The number of components passed to the model initiaion</p></li>
@@ -334,7 +289,7 @@ and a <code class="docutils literal notranslate"><span class="pre">components_</
 <li><p><strong>kwargs</strong> (<em>dict</em>) – The kwargs to pass to the model creation</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>eigen</strong> (<em>ndarray</em>) – The eigenvectors</p></li>
 <li><p><strong>scores</strong> (<em>ndarray</em>) – The scores for each component</p></li>
@@ -345,11 +300,11 @@ and a <code class="docutils literal notranslate"><span class="pre">components_</
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.fq_getter">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">fq_getter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#fq_getter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.fq_getter" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.fq_getter">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">fq_getter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#fq_getter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.fq_getter" title="Permalink to this definition"></a></dt>
 <dd><p>Process the data to F(Q)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<em>ndarray</em>) – The q or tth values</p></li>
 <li><p><strong>y</strong> (<em>ndarray</em>) – The scattered intensity</p></li>
@@ -357,7 +312,7 @@ and a <code class="docutils literal notranslate"><span class="pre">components_</
 <li><p><strong>kwargs</strong> (<em>dict</em>) – Additional kwargs for PDFGetter</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>q</strong> (<em>ndarray</em>) – The radial values</p></li>
 <li><p><strong>fq</strong> (<em>ndarray</em>) – The reduced structure function</p></li>
@@ -369,38 +324,38 @@ and a <code class="docutils literal notranslate"><span class="pre">components_</
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.generate_binner">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">generate_binner</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#generate_binner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.generate_binner" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.generate_binner">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">generate_binner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#generate_binner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.generate_binner" title="Permalink to this definition"></a></dt>
 <dd><p>Create a pixel resolution BinnedStats1D instance</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>geo</strong> (<em>pyFAI.geometry.Geometry instance</em>) – The calibrated geometry</p></li>
 <li><p><strong>img_shape</strong> (<em>tuple, optional</em>) – The shape of the image, if None pull from the mask. Defaults to None.</p></li>
 <li><p><strong>mask</strong> (<em>np.ndarray, optional</em>) – The mask to be applied, if None no mask is applied. Defaults to None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The configured instance of the binner.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>BinnedStatistic1D</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.generate_map_bin">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">generate_map_bin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_shape</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#generate_map_bin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.generate_map_bin" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.generate_map_bin">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">generate_map_bin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_shape</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#generate_map_bin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.generate_map_bin" title="Permalink to this definition"></a></dt>
 <dd><p>Create a q map and the pixel resolution bins</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>geo</strong> (<em>pyFAI.geometry.Geometry instance</em>) – The calibrated geometry</p></li>
 <li><p><strong>img_shape</strong> (<em>tuple, optional</em>) – The shape of the image, if None pull from the mask. Defaults to None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>q</strong> (<em>ndarray</em>) – The q map</p></li>
 <li><p><strong>qbin</strong> (<em>ndarray</em>) – The pixel resolution bins</p></li>
@@ -411,54 +366,54 @@ and a <code class="docutils literal notranslate"><span class="pre">components_</
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.ignore_streamz_input">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">ignore_streamz_input</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#ignore_streamz_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.ignore_streamz_input" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.ignore_streamz_input">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">ignore_streamz_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#ignore_streamz_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.ignore_streamz_input" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.load_geo">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">load_geo</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cal_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#load_geo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.load_geo" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.load_geo">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">load_geo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cal_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#load_geo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.load_geo" title="Permalink to this definition"></a></dt>
 <dd><p>Load a pyFAI geometry from a dict of calibration parameters</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>cal_params</strong> (<em>dict</em>) – The calibration parameters</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The calibrate azimuthal integrator (which inherits from the geometry)</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>AzimuthalIntegrator</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.map_to_binner">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">map_to_binner</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixel_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#map_to_binner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.map_to_binner" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.map_to_binner">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">map_to_binner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixel_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#map_to_binner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.map_to_binner" title="Permalink to this definition"></a></dt>
 <dd><p>Transforms pixel map and bins into a binner</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pixel_map</strong> (<em>np.ndarray</em>) – The map between pixels and values</p></li>
 <li><p><strong>bins</strong> (<em>np.ndarray</em>) – The bins to use in the binner</p></li>
 <li><p><strong>mask</strong> (<em>np.ndarray, optional</em>) – The mask for the pixel map</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The binner</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>BinnedStatistic1D</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.mask_img">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">mask_img</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'median'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmsk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pool</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#mask_img"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.mask_img" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.mask_img">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">mask_img</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'median'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmsk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pool</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#mask_img"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.mask_img" title="Permalink to this definition"></a></dt>
 <dd><p>Mask an image based off of various methods</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>img</strong> (<em>np.ndarray</em>) – The image to be masked</p></li>
 <li><p><strong>binner</strong> (<em>BinnedStatistic1D instance</em>) – The binned statistics information</p></li>
@@ -480,22 +435,22 @@ generated from scratch.</p></li>
 <li><p><strong>pool</strong> (<em>Executor instance</em>) – A pool against which jobs can be submitted for parallel processing</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>tmsk</strong> – The mask as a boolean array. True pixels are good pixels, False pixels
 are masked out.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.move_center">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">move_center</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">motors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#move_center"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.move_center" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.move_center">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">move_center</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">motors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#move_center"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.move_center" title="Permalink to this definition"></a></dt>
 <dd><p>Move the PONI for pyFAI based off of a diffx/diffy motor move</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>motors</strong> (<em>tuple</em>) – X, Y diff from geometry position</p></li>
 <li><p><strong>geometry</strong> (<em>pyFAI.geometry.Geometry</em>)</p></li>
@@ -505,11 +460,11 @@ are masked out.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.nu_fq_getter">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">nu_fq_getter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#nu_fq_getter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.nu_fq_getter" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.nu_fq_getter">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">nu_fq_getter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#nu_fq_getter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.nu_fq_getter" title="Permalink to this definition"></a></dt>
 <dd><p>Process the data to F(Q) on a non uniform grid</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>q</strong> (<em>ndarray</em>) – The q or tth values</p></li>
 <li><p><strong>iq</strong> (<em>ndarray</em>) – The scattered intensity</p></li>
@@ -517,7 +472,7 @@ are masked out.</p>
 <li><p><strong>kwargs</strong> (<em>dict</em>) – Additional kwargs for PDFGetter</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>q</strong> (<em>ndarray</em>) – The radial values</p></li>
 <li><p><strong>fq</strong> (<em>ndarray</em>) – The reduced structure function</p></li>
@@ -529,17 +484,17 @@ are masked out.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.nu_pdf_getter">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">nu_pdf_getter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fq</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#nu_pdf_getter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.nu_pdf_getter" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.nu_pdf_getter">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">nu_pdf_getter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fq</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#nu_pdf_getter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.nu_pdf_getter" title="Permalink to this definition"></a></dt>
 <dd><p>Process a non uniform F(Q) to the PDF</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>q</strong> (<em>ndarray</em>) – The q or tth values</p></li>
 <li><p><strong>fq</strong> (<em>ndarray</em>) – The reduced structure funciton</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>r</strong> (<em>ndarray</em>) – The radial values</p></li>
 <li><p><strong>gr</strong> (<em>ndarray</em>) – The PDF</p></li>
@@ -550,17 +505,17 @@ are masked out.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.overlay_mask">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">overlay_mask</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#overlay_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.overlay_mask" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.overlay_mask">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">overlay_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#overlay_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.overlay_mask" title="Permalink to this definition"></a></dt>
 <dd><p>Overlay mask on image, masked pixels are <code class="docutils literal notranslate"><span class="pre">np.nan</span></code></p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.pdf_getter">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">pdf_getter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#pdf_getter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.pdf_getter" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.pdf_getter">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">pdf_getter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#pdf_getter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.pdf_getter" title="Permalink to this definition"></a></dt>
 <dd><p>Process the data to the PDF</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<em>ndarray</em>) – The q or tth values</p></li>
 <li><p><strong>y</strong> (<em>ndarray</em>) – The scattered intensity</p></li>
@@ -568,7 +523,7 @@ are masked out.</p>
 <li><p><strong>kwargs</strong> (<em>dict</em>) – Additional kwargs for PDFGetter</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>r</strong> (<em>ndarray</em>) – The radial values</p></li>
 <li><p><strong>gr</strong> (<em>ndarray</em>) – The PDF</p></li>
@@ -580,60 +535,60 @@ are masked out.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.pluck_check">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">pluck_check</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'~~pluck_check_null~~'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#pluck_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.pluck_check" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.pluck_check">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">pluck_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'~~pluck_check_null~~'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#pluck_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.pluck_check" title="Permalink to this definition"></a></dt>
 <dd><p>Check if a position in an iterable is truthy or equal to eq</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.polarization_correction">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">polarization_correction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polarization_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.99</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#polarization_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.polarization_correction" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.polarization_correction">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">polarization_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polarization_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.99</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#polarization_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.polarization_correction" title="Permalink to this definition"></a></dt>
 <dd><p>Perform polarization correction on an image</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>img</strong> (<em>ndarray</em>) – The image</p></li>
 <li><p><strong>geo</strong> (<em>pyFAI.geometry.Geometry instance</em>) – The calibrated geometry</p></li>
 <li><p><strong>polarization_factor</strong> (<em>float</em>) – The polarization factor to apply</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The corrected image</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>ndarray</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.progress_decorator">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">progress_decorator</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#progress_decorator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.progress_decorator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.progress_decorator">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">progress_decorator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#progress_decorator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.progress_decorator" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.splay_tuple">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">splay_tuple</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_of_tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#splay_tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.splay_tuple" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.splay_tuple">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">splay_tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_of_tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#splay_tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.splay_tuple" title="Permalink to this definition"></a></dt>
 <dd><p>Splay all tuples in an iterable</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>iter_of_tuple</strong> (<em>iterable</em>) – An iterable which may contain tuples</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The splayed output</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.sq_getter">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">sq_getter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#sq_getter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.sq_getter" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.sq_getter">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">sq_getter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#sq_getter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.sq_getter" title="Permalink to this definition"></a></dt>
 <dd><p>Process the data to F(Q)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<em>ndarray</em>) – The q or tth values</p></li>
 <li><p><strong>y</strong> (<em>ndarray</em>) – The scattered intensity</p></li>
@@ -641,7 +596,7 @@ are masked out.</p>
 <li><p><strong>kwargs</strong> (<em>dict</em>) – Additional kwargs for PDFGetter</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>q</strong> (<em>ndarray</em>) – The radial values</p></li>
 <li><p><strong>fq</strong> (<em>ndarray</em>) – The reduced structure function</p></li>
@@ -653,77 +608,60 @@ are masked out.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="xpdtools.tools.z_score_image">
-<code class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></code><code class="sig-name descname"><span class="pre">z_score_image</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binner</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#z_score_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.z_score_image" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="xpdtools.tools.z_score_image">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.tools.</span></span><span class="sig-name descname"><span class="pre">z_score_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binner</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/tools.html#z_score_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.tools.z_score_image" title="Permalink to this definition"></a></dt>
 <dd><p>Z score an image according to the azimuthal average</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>img</strong> (<em>ndarray</em>) – The image</p></li>
 <li><p><strong>binner</strong> (<em>BinnedStatistic1D instance</em>) – The binner</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The z scored image</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>ndarray</p>
 </dd>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-xpdtools">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-xpdtools" title="Permalink to this headline">¶</a></h2>
-</div>
-</div>
+</section>
+<section id="module-xpdtools">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-xpdtools" title="Permalink to this heading"></a></h2>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="xpdtools.cli.html" class="btn btn-neutral float-right" title="xpdtools.cli package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="tips_and_tricks.html" class="btn btn-neutral float-left" title="Tips and Tricks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="xpdtools.cli.html" class="btn btn-neutral float-right" title="xpdtools.cli package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2017, Author.
-
-    </p>
+    <p>&#169; Copyright 2017, Author.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
