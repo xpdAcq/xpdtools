@@ -37,7 +37,7 @@ jobs:
           auto-activate-base: false
 
       - name: install requirements
-        run: >-
+        run: |
           conda install --file requirements.txt
           conda install --file requirements-dev.txt
 
