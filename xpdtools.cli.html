@@ -52,7 +52,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="xpdtools.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">xpdtools.cli package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xpdtools-cli-process-tiff-module">xpdtools.cli.process_tiff module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-xpdtools.cli.process_tiff">xpdtools.cli.process_tiff module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-xpdtools.cli">Module contents</a></li>
 </ul>
 </li>
@@ -99,8 +99,77 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
 </section>
-<section id="xpdtools-cli-process-tiff-module">
-<h2>xpdtools.cli.process_tiff module<a class="headerlink" href="#xpdtools-cli-process-tiff-module" title="Permalink to this heading"></a></h2>
+<section id="module-xpdtools.cli.process_tiff">
+<span id="xpdtools-cli-process-tiff-module"></span><h2>xpdtools.cli.process_tiff module<a class="headerlink" href="#module-xpdtools.cli.process_tiff" title="Permalink to this heading"></a></h2>
+<p>Main entry point for processing images to I(Q)</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="xpdtools.cli.process_tiff.main">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.cli.process_tiff.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">poni_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polarization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'median'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flip_input_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xpdtools.cli.process_tiff.main" title="Permalink to this definition"></a></dt>
+<dd><p>Run the data processing protocol taking raw images to background
+subtracted I(Q) files.</p>
+<p>The data processing steps included in this protocol are:
+background subtraction, polarization correction, automated masking, and
+pixel resolution integration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>poni_file</strong> (<em>str or None, optional</em>) – File generated from pyFAI’s calibration, if None look in the
+current working directory for the poni file, defaults to None.</p></li>
+<li><p><strong>image_files</strong> (<em>str or None, optional</em>) – File to process, if None use all the valid files in the directory,
+defaults to None.</p></li>
+<li><p><strong>bg_file</strong> (<em>str or None, optional</em>) – Background image, if None no background subtraction is performed,
+defaults to None.</p></li>
+<li><p><strong>mask_file</strong> (<em>str or None, optional</em>) – Mask file to include in the data processing, if None don’t use one,
+defaults to None.</p></li>
+<li><p><strong>polarization</strong> (<em>float, optional</em>) – The polzarization factor to use, defaults to .99, if None do not
+perform polarization correction</p></li>
+<li><p><strong>edge</strong> (<em>int, optional</em>) – The number of pixels from the edge to mask with an edge mask,
+defaults to 20, if None no edge mask used</p></li>
+<li><p><strong>lower_thresh</strong> (<em>float, optional</em>) – Threshold for lower threshold mask, all pixels with value less than
+this value (after background subtraction if applicable), defaults
+to 1. if None do not apply lower theshold mask</p></li>
+<li><p><strong>upper_thresh</strong> (<em>float, optional</em>) – Threshold for upper threshold mask, all pixels with value greater
+than this value (after background subtraction if applicable),
+defaults to None if None do not apply upper theshold mask</p></li>
+<li><p><strong>alpha</strong> (<em>float, optional</em>) – Number of standard deviations away from the ring mean to mask,
+defaults to 3. if None do not apply automated masking</p></li>
+<li><p><strong>auto_type</strong> (<em>{‘median’, ‘mean’}, optional</em>) – The type of automasking to use, median is faster, mean is more
+accurate. Defaults to ‘median’.</p></li>
+<li><p><strong>mask_settings</strong> (<em>{‘auto’, ‘first’, none}, optional</em>) – If auto mask every image, if first only mask first image, if None
+mask no images. Defaults to None</p></li>
+<li><p><strong>flip_input_mask</strong> (<em>bool, optional</em>) – If True flip the input mask up down, this helps when using fit2d
+defaults to True.</p></li>
+<li><p><strong>bg_scale</strong> (<em>float, optional</em>) – The scale for the image to image background subtraction, defaults
+to 1</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>q_l</strong> (<em>list of ndarrays</em>) – The list of q values</p></li>
+<li><p><strong>mean_l</strong> (<em>list of ndarrays</em>) – The list of mean values</p></li>
+<li><p><strong>median_l</strong> (<em>list of ndarrays</em>) – The list of median values</p></li>
+<li><p><strong>std_l</strong> (<em>list of ndarrays</em>) – The list of standard deviation values</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xpdtools.cli.process_tiff.make_main">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.cli.process_tiff.</span></span><span class="sig-name descname"><span class="pre">make_main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_output_sinks</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/cli/process_tiff.html#make_main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.cli.process_tiff.make_main" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xpdtools.cli.process_tiff.make_pipeline">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.cli.process_tiff.</span></span><span class="sig-name descname"><span class="pre">make_pipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_output_sinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/cli/process_tiff.html#make_pipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.cli.process_tiff.make_pipeline" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xpdtools.cli.process_tiff.run_main">
+<span class="sig-prename descclassname"><span class="pre">xpdtools.cli.process_tiff.</span></span><span class="sig-name descname"><span class="pre">run_main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/xpdtools/cli/process_tiff.html#run_main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xpdtools.cli.process_tiff.run_main" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="module-xpdtools.cli">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-xpdtools.cli" title="Permalink to this heading"></a></h2>
