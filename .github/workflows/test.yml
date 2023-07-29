@@ -1,21 +1,40 @@
 name: Test
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
 
 jobs:
-  main:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash -l {0}
+  miniconda:
+    name: Miniconda ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+        matrix:
+            os: ["ubuntu-latest"]
     steps:
-      - uses: actions/checkout@v2
+      - name: check out xpdtools
+        uses: actions/checkout@v3
+        with:
+          repository: xpdacq/xpdtools
+          # for bookkeeping have diffpy.snmf at the same level as everything else in the
+          # directory tree
+          path: .
 
-      - uses: conda-incubator/setup-miniconda@v2
+      - name: initialize miniconda
+        # this uses a marketplace action that sets up miniconda in a way that makes
+        # it easier to use.  I tried setting it up without this and it was a pain
+        uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: test
-          channels: conda-forge
+          # environment.yml file is needed by this action.  Because I don't want
+          # maintain this but rather maintain the requirements files it just has
+          # basic things in it like conda and pip
           auto-update-conda: true
+          environment-file: ./environment.yml
+          auto-activate-base: false
 
       - name: install requirements
         run: >-
@@ -34,3 +53,6 @@ jobs:
 
       - name: check the code style
         run: flake8
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
