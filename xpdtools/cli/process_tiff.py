@@ -166,6 +166,7 @@ def make_main(_output_sinks):
         import pyFAI
 
         ns = make_pipeline(_output_sinks)
+        print(type(ns))
 
         ns["polarization_array"].args = (polarization,)
         ns["dark_corrected_background"].args = (bg_scale,)

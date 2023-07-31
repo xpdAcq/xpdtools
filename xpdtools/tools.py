@@ -81,7 +81,7 @@ def binned_outlier(
     except AttributeError:
         idx = binner.xy.argsort()
     if tmsk is None:
-        tmsk = np.ones(np.shape(img), dtype=np.bool)
+        tmsk = np.ones(np.shape(img), dtype=bool)
     tmsk = tmsk.flatten()
     tmsk2 = tmsk[idx]
     vfs = img.flatten()[idx]
@@ -189,7 +189,7 @@ def mask_img(
             mask_method=auto_type,
             pool=pool,
         )
-    working_mask = working_mask.astype(np.bool)
+    working_mask = working_mask.astype(bool)
     return working_mask
 
 
