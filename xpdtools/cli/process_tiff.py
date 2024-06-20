@@ -101,7 +101,7 @@ def make_main(_output_sinks):
         flip_input_mask=True,
         bg_scale=1,
     ):
-        """Run the data processing protocol taking raw images to background
+        """update Run the data processing protocol taking raw images to background
         subtracted I(Q) files.
 
         The data processing steps included in this protocol are:
